@@ -1,0 +1,48 @@
+[
+{
+	"key":"şarap",
+	"lang":"TR"
+},
+{
+	"key":"sharaab",
+	"original":"شَراب",
+	"lang":"AR"
+},{
+	"key":"şurup",
+	"lang":"TR"
+},{
+	"key":"shurb",
+	"original":"شُرب",
+	"lang":"AR"
+},
+{
+	"key":"şerbet",
+	 
+	"lang":"TR"
+},{
+	"key":"sharba",
+	"original":"شَرْبَةٌ",
+	"lang":"AR"
+},{
+	"key":"meşrubat",
+	"lang":"TR"
+},{
+	"key":"celse",
+	"lang":"TR"
+},{
+	"key":"meclis",
+	"lang":"TR"
+},{
+	"key":"cülus",
+	"lang":"TR"
+},{
+	"key":"drink",
+	"lang":"EN"
+},{
+	"key":"wine",
+	"lang":"EN"
+},{
+	"key":"(le) vin",
+	"lang":"FR"
+}
+]
