@@ -1,0 +1,13 @@
+2024-06-30
+- etimoloji projeme başladım
+- ilk aşamada basit bir json okuyup ekrana bastırdım. Her dil için farklı renkli
+
+2024-07-01
+- npm run dev -- --port 3001
+- basit bir şekilde derives-from derives-to ilişkilerini tanımladım
+
+2024-07-02
+- birkaç relation daha tanımladım
+- sadece relationlara bakarak clusterlara ayıran kod yazdım
+- sonra bu clusterlar içinde root'ları buldum. Birden fazla root olabilir onu handle etmem lazım
+- roottan başlayıp edgeleri takip ederek her id (kelime) için depth hesabı yaptım.
