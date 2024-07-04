@@ -11,3 +11,9 @@
 - sadece relationlara bakarak clusterlara ayıran kod yazdım
 - sonra bu clusterlar içinde root'ları buldum. Birden fazla root olabilir onu handle etmem lazım
 - roottan başlayıp edgeleri takip ederek her id (kelime) için depth hesabı yaptım.
+
+2024-07-03
+- clusterları birbirinden ayırdım, dropdown ekledim geçici.
+- depth'leri aşağı gidecek şekilde ayarladım.
+- calculatePositions fonksiyonu ile parent ve çocukların konumlarını ayarladım. 
+- multiple parent, multiple root, ve overlap olabilecek boxlar için kodlar yazmalıyım.
