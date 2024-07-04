@@ -26,8 +26,11 @@ relations_json = json.load(f)
 #for i,doc in enumerate(  words_json):
 #    doc["id"] = i
 #    doc["rel"] = {}
- 
-relations_all = ["derives" , "loan", "homonym"]
+#    doc["rel"]["derives"] = {}
+#    doc["rel"]["loans"] = {}
+#    doc["rel"]["homonym"] = {}
+    
+relations_all = ["derives" , "loans", "homonym"]
 
 def extract_relation(rel): # to do: instead of first found relation, gather them together
     for x in relations_all:
@@ -36,12 +39,12 @@ def extract_relation(rel): # to do: instead of first found relation, gather them
         
         
 for rel in relations_json:
-    if "derives" in rel.keys():
-        
-        if "to" in rel["derives"].keys():
-            words_json[rel["id"]]["rel"]["to"] =  rel["derives"]["to"]
-            for target in  rel["derives"]["to"]:
-                words_json[target]["rel"]["from"] = rel["id"]
+    for x in relations_all:
+        if x in rel.keys():
+            if "to" in rel[x].keys():
+                words_json[rel["id"]]["rel"][x]["to"] =  rel[x]["to"]
+                for target in  rel[x]["to"]:
+                    words_json[target]["rel"][x]["from"] = rel["id"]
    
     
     
@@ -117,7 +120,13 @@ for root_now in root_id_to_cluster_dict.keys():
     
     
     
-    
+########## WRITE CLUSTER AND DEPTH VALUES ########## 
+for word_now in words_json:
+    idnow = word_now["id"]
+    depthnow = depth_dict.get(idnow)
+    clusternow = id_cluster_dict.get(idnow)
+    word_now["cluster"] =clusternow
+    word_now["depth"] =depthnow
     
 with open(words_json_path, 'w', encoding='utf-8') as file:
         json.dump(words_json, file, ensure_ascii=False, indent=4)
