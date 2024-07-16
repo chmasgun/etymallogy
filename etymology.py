@@ -23,12 +23,12 @@ f= open(relations_json_path, encoding='utf-8')
 relations_json = json.load(f)
 
 
-#for i,doc in enumerate(  words_json):
+for i,doc in enumerate(  words_json):
 #    doc["id"] = i
-#    doc["rel"] = {}
-#    doc["rel"]["derives"] = {}
-#    doc["rel"]["loans"] = {}
-#    doc["rel"]["homonym"] = {}
+    doc["rel"] = {}
+    doc["rel"]["derives"] = {}
+    doc["rel"]["loans"] = {}
+    doc["rel"]["homonym"] = {}
     
 relations_all = ["derives" , "loans", "homonym"]
 
