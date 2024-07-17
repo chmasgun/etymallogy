@@ -17,7 +17,7 @@ const langColors = {
 
 const DrawRelation = ({x1, x2, heightOffset, y, depthDiff}) => {
 
-    return <svg className="absolute overflow-visible"><line 
+    return <svg className="absolute overflow-visible z-0"><line 
         x1={x1}
         y1={heightOffset}
         x2={x2}

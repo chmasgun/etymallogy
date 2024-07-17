@@ -1,10 +1,11 @@
 "use client"
 import Image from "next/image";
 import * as data from '../public/0.json'
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import WordCard from "@/components/wordCard";
 import { DrawRelation ,langColors } from "@/functions/functions";
 import Legend from "@/components/legend";
+import Popup from "@/components/popup";
 import { useRouter } from 'next/navigation';
 //console.log(data[1]);
 
@@ -94,6 +95,8 @@ const calculateLines = (data, wordWidth,wordHeight, depthWidth, totalDepth, posi
 
 
 export default function Home() {
+
+
   const router = useRouter();
   console.log(data["words"]);
   const [selectedCluster, setSelectedCluster] = useState(0);
@@ -103,6 +106,7 @@ export default function Home() {
   const [lines, setLines] = useState([])
   const [languageList, setLanguageList] = useState([])
 
+  const popupRef = useRef();
   const [popupOpen, setPopupOpen] = useState(false)
   const [selectedWord, setSelectedWord] = useState(data["words"][0])
 
@@ -176,11 +180,13 @@ export default function Home() {
 
 
   return (
-    <main className={`flex min-h-screen flex-col items-center place-content-start p-24 ${popupOpen && "blur-xs"}`}>
+    <main className={`flex min-h-screen flex-col items-center place-content-start p-24 `}>
+      { popupOpen && 
+          <Popup word={selectedWord} popupRef={popupRef} 
+              setPopupOpen={setPopupOpen} 
+              setSelectedWord= {setSelectedWord}
+              allWords={filteredData[0]}></Popup>}
       <Legend languages= {languageList}></Legend>
-      { popupOpen && <div className="fixed left-0 top-0 w-full h-full  z-30 ">
-
-        </div>}
       <div className="z-10 mb-12 max-w-5xl w-full items-center justify-center   font-mono text-sm lg:flex">
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
 
@@ -201,7 +207,7 @@ export default function Home() {
       </div>
 
 
-      <div className="min-w-full flex self-start">
+      <div className={`min-w-full flex self-start ${popupOpen && "blur-xs"}`}>
 
         {
           filteredData.map((dataCluster, clusterIndex) =>
