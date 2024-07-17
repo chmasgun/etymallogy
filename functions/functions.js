@@ -4,13 +4,13 @@
 
 
 const langColors = {
-    "AR": ['bg-lime-500', "Arabic"],
-    "TR": ['bg-red-300', "Turkish"],
-    "EN": ['bg-sky-300',"English"],
-    "FR": ['bg-indigo-300',"French"],
-    "LA": ['bg-red-600',"Latin"],
-    "IT": ['bg-green-400',"Italian"],
-    "GR": ['bg-sky-500',"Greek"]
+    "AR": ["bg-lime-500", "Arabic"],
+    "TR": ["bg-red-300", "Turkish"],
+    "EN": ["bg-sky-300","English"],
+    "FR": ["bg-indigo-300","French"],
+    "LA": ["bg-red-600","Latin"],
+    "IT": ["bg-green-400","Italian"],
+    "GR": ["bg-sky-500","Greek"]
 
 }
 

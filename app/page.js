@@ -1,11 +1,11 @@
 "use client"
 import Image from "next/image";
-import * as data from '../public/data.json'
-import { useState } from "react";
+import * as data from '../public/0.json'
+import { useEffect, useState } from "react";
 import WordCard from "@/components/wordCard";
-import { DrawRelation } from "./functions";
+import { DrawRelation ,langColors } from "@/functions/functions";
 import Legend from "@/components/legend";
-
+import { useRouter } from 'next/navigation';
 //console.log(data[1]);
 
 const depthMarginPx = 24
@@ -94,57 +94,93 @@ const calculateLines = (data, wordWidth,wordHeight, depthWidth, totalDepth, posi
 
 
 export default function Home() {
-
+  const router = useRouter();
+  console.log(data["words"]);
   const [selectedCluster, setSelectedCluster] = useState(0);
-  const [filteredData, setFilteredData] = useState([data.filter((x) => x.cluster === 0)]);
-  const [maxDepthData, setMaxDepthData] = useState([data.filter((x) => x.cluster === 0)].map(x => Math.max(...x.map(y => y.depth))))
+  const [filteredData, setFilteredData] = useState([data["words"]])//useState([data.filter((x) => x.cluster === 0)]);
+  const [maxDepthData, setMaxDepthData] =  useState([data["words"]].map(x => Math.max(...x.map(y => y.depth)))) //useState([data.filter((x) => x.cluster === 0)].map(x => Math.max(...x.map(y => y.depth))))
   const [posDict, setPosDict] = useState({})
   const [lines, setLines] = useState([])
   const [languageList, setLanguageList] = useState([])
 
+  const [popupOpen, setPopupOpen] = useState(false)
+  const [selectedWord, setSelectedWord] = useState(data["words"][0])
 
-  const handleClusterFilter = (e) => {
+  const handleClusterFilter = async (e) => {
     const cluster = parseInt(e.target.value);
     setSelectedCluster(cluster);
+    let newfilteredData;
+    let newMaxDepthData;
 
-    const newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
-    const newMaxDepthData = newfilteredData.map(x => Math.max(...x.map(y => y.depth))) // again multiple clusters
-    setFilteredData(newfilteredData);
-    setMaxDepthData(newMaxDepthData)
+    try {
+      const response = await fetch('/api/fetch-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
 
-    const topWrapper = document.getElementsByClassName(`word-card-individual`)[0].getBoundingClientRect();
-    const depthContainer = document.getElementsByClassName(`depth-container`)[0].getBoundingClientRect();
-    console.log(topWrapper);
-    console.log(depthContainer);
-    const newPosDict = calculatePositions(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData)
-    setPosDict(newPosDict)
-    
-    // console.log(calculateLines(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData,newPosDict))
-    setLines(calculateLines(newfilteredData[0], topWrapper["width"],topWrapper["height"], depthContainer["width"], newMaxDepthData, newPosDict))
+        },
+        body: JSON.stringify({ cid: cluster })
+      });
 
-    const newLanguageList = newfilteredData[0].map(x => x.lang)
-    setLanguageList([... new Set(newLanguageList)])
+      if (!response.ok) {
+        const message = await response.text();
+        console.log(message);
+      }else{
+        const responseResolved = await response;
+        const data = await responseResolved.json();
+        const message = data.message;
+
+        newfilteredData = [data.responseData.clusterData[0].words]
+        console.log(["HEY"  ,newfilteredData]);
+
+        // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
+        newMaxDepthData = newfilteredData.map(x => Math.max(...x.map(y => y.depth))) // again multiple clusters
+        setFilteredData(newfilteredData);
+        setMaxDepthData(newMaxDepthData)
+      }
+
+    } catch (error) {
+      // Handle any errors that occur during the request
+      console.error(error);
+    }
+
+  
+
+   
   };
   console.log(filteredData);
   console.log(maxDepthData);
   console.log(lines); 
   console.log(languageList);
-   
-  //const dataVisual = data.filter(x => x.cluster === cluster)
-  /*const dataVisualDict = filteredData.reduce((acc, cur) => {
-    acc[cur.cluster] = acc[cur.cluster] || [];
-    acc[cur.cluster].push(cur);
-    return acc;
-  }, {})
-  const dataVisual = Object.values(dataVisualDict)
+  console.log(selectedWord)
+  
+  useEffect( () => {
 
-  console.log(dataVisual);
-  console.log(dataVisualDict);
-  */
+
+
+    const topWrapper = document.getElementsByClassName(`word-card-individual`)[0].getBoundingClientRect();
+    const depthContainer = document.getElementsByClassName(`depth-container`)[0].getBoundingClientRect();
+    
+    const newPosDict = calculatePositions(filteredData[0], topWrapper["width"], depthContainer["width"], maxDepthData)
+    setPosDict(newPosDict)
+    
+    // console.log(calculateLines(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData,newPosDict))
+    setLines(calculateLines(filteredData[0], topWrapper["width"],topWrapper["height"], depthContainer["width"], maxDepthData, newPosDict))
+
+    const newLanguageList = filteredData[0].map(x => x.lang)
+    setLanguageList([... new Set(newLanguageList)])
+  },[filteredData])
+  
+
+
+
 
   return (
-    <main className="flex min-h-screen flex-col items-center place-content-start p-24">
+    <main className={`flex min-h-screen flex-col items-center place-content-start p-24 ${popupOpen && "blur-xs"}`}>
       <Legend languages= {languageList}></Legend>
+      { popupOpen && <div className="fixed left-0 top-0 w-full h-full  z-30 ">
+
+        </div>}
       <div className="z-10 mb-12 max-w-5xl w-full items-center justify-center   font-mono text-sm lg:flex">
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
 
@@ -152,11 +188,11 @@ export default function Home() {
         </p>
 
         <select
-          className="bg-gray-200 rounded-md p-2 max-w-md"
+          className="bg-gray-200 rounded-md p-2 max-w-md m-4 "
           onChange={handleClusterFilter}
         >
 
-          {[0, 3].map((prov) => (
+          {[0, 1].map((prov) => (
             <option key={prov} value={prov}>
               {prov}
             </option>
@@ -172,8 +208,8 @@ export default function Home() {
             <div className="  mb-32  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex}>
               {
                 Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
-                  <div className={`depth-container flex relative min-h-24 ${marginClass} w-full`} key={rowInd}>{ // each depth here
-                    dataCluster.filter(a => a.depth === x).map((x, i) => <WordCard x={x} key={i} pos={posDict}></WordCard>)
+                  <div className={`depth-container flex relative min-h-24  w-full`} style={{margin: depthMarginPx}} key={rowInd}>{ // each depth here
+                    dataCluster.filter(a => a.depth === x).map((x, i) => <WordCard x={x} key={i} pos={posDict} setSelectedWord={setSelectedWord} setPopupOpen={setPopupOpen}></WordCard>)
                   }
                   {
                     lines[rowInd]?.map( (line,lineIndex) =>

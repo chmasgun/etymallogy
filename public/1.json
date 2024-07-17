@@ -1,0 +1,56 @@
+{"cid":1,
+	"words": [
+		 {
+        "key": "wine",
+        "lang": "EN",
+        "id": 11,
+        "rel": {
+            "derives": {},
+            "loans": {
+                "from": 14
+            },
+            "homonym": {}
+        },
+        "cluster": 3,
+        "depth": 1
+    },
+    {
+        "key": "(le) vin",
+        "lang": "FR",
+        "id": 12,
+        "rel": {
+            "derives": {},
+            "loans": {
+                "from": 14
+            },
+            "homonym": {}
+        },
+        "cluster": 3,
+        "depth": 1
+    },
+     
+    {
+        "key": "vinum",
+        "lang": "LA",
+        "id": 14,
+        "rel": {
+            "derives": {},
+            "loans": {
+                "to": [
+                    11,
+                    12
+                ]
+            },
+            "homonym": {}
+        },
+        "cluster": 3,
+        "depth": 0
+    }
+	],
+	"relations": [
+			 {
+				"id":14,
+				"loans": {"to": [11,12]}
+			} 
+	]
+}

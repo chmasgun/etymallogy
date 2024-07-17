@@ -17,3 +17,11 @@
 - depth'leri aşağı gidecek şekilde ayarladım.
 - calculatePositions fonksiyonu ile parent ve çocukların konumlarını ayarladım. 
 - multiple parent, multiple root, ve overlap olabilecek boxlar için kodlar yazmalıyım.
+
+2024-07-16
+- kelime ilişkileri arasında çizgi çizen basit logic geliştirdim
+- basit bir legend ekledim
+
+2024-07-17
+- clusterları ayrı jsonlar olarak ayırdım
+- DB bağlantısı ekledim ve data çekmeyi ayarladım
