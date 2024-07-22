@@ -133,9 +133,26 @@ async function getClusterData(cluster) {
 }
 
 
+async function saveClusterData(cid, clusterData){
+  const client = await MongoClient.connect('mongodb+srv://' + process.env.MONGODB_USER + ':' + process.env.MONGODB_PW + process.env.MONGODB_CONN_STR
+    , {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+  const db = client.db('etymallogy_clusters');
+  const collection = db.collection('cluster_data');
+
+  const result=  await collection.updateOne({"cid" : cid}, {$set: {"words": clusterData}})
+  if(result.modifiedCount > 0 ){
+    return { status: 2, message: "SUCCESS" };
+  }
+  else{
+    return { status: -3, message:"error"};
+  }
+}
 
 
 
 
-
-export {  getClusterData }
+export {  getClusterData, saveClusterData}

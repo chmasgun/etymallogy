@@ -3,7 +3,7 @@ import { langColors } from "@/functions/functions";
 import { useEffect } from "react";
 
 
-export default function CreateWordDiv({ newWordData, setNewWordData, relation, wordPrev, newId, allWords, setAddingData, setFilteredData}) {  // Manual inversion of FROM and TO. Careful!
+export default function CreateWordDiv({ newWordData, setNewWordData, relation, wordPrev, newId, allWords, setAddingData, setFilteredData,unsavedWordCount,setUnsavedWordCount}) {  // Manual inversion of FROM and TO. Careful!
     const reqFields = [["key", ""], ["lang", ""],["original",""]]
     const auxiliaryField = [["desc", ""], ["type", ""]]
     const autoReqFields = [["id", newId], ["depth", 0], ["rel", {
@@ -14,10 +14,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
 
     let fields = reqFields.concat(auxiliaryField, autoReqFields)
 
-    if (newWordData === null) { // initialize an empty word data
-
-       
-    }
+    
     useEffect( () => {
         let WordDefault = {}
         for (const field of fields) {
@@ -35,9 +32,9 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         const relName = relation[0]
         WordDefault["rel"][relName][oppositeRelation] = [wordPrev["id"]]
 
-        console.log(WordDefault);
-        console.log(relation)
-        console.log(wordPrev);
+        //console.log(WordDefault);
+        //console.log(relation)
+        //console.log(wordPrev);
         setNewWordData(WordDefault)
     },[])
 
@@ -70,6 +67,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         console.log(newAllWords);
         setAddingData(false)
         setFilteredData([newAllWords])
+        setUnsavedWordCount(unsavedWordCount + 1 )
     }
 
 
