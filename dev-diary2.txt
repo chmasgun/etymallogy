@@ -25,3 +25,7 @@
 2024-07-17
 - clusterları ayrı jsonlar olarak ayırdım
 - DB bağlantısı ekledim ve data çekmeyi ayarladım
+- kelimelere tıklayınca açılan popup'ın ilk halini yaptım
+
+2024-07-17
+- createWordDiv diye bir div açarak yeni eklenecek kelimelerin logic'ini ayırdım
