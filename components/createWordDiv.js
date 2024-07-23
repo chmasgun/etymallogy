@@ -4,11 +4,12 @@ import { useEffect } from "react";
 
 const reqFields = [["key", ""], ["lang", ""],["original",""]]
 const auxiliaryField = [["desc", ""], ["type", ""]]
-const autoReqFields = [["id", 0], ["depth", 0], ["rel", {
+const autoReqFields = [["id", 0], ["depth", 0] ]
+/*, ["rel", {
     "derives": {},
     "loans": {},
     "homonym": {}
-}]]
+}]]*/
 
 let fields = reqFields.concat(auxiliaryField, autoReqFields)
 
@@ -20,7 +21,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         for (const field of fields) {
             WordDefault[field[0]] = field[1]
         }
-
+        WordDefault["rel"] = {"derives": {},"loans": {},"homonym": {}}
         // FIND ID
         WordDefault["id"] = newId
 
@@ -30,16 +31,17 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         const parentWordDepth = wordPrev["depth"]
         WordDefault["depth"] = parentWordDepth + depthIncrement
 
+        console.log(WordDefault);
         // FIND RELATION
         const oppositeRelation = relationTypeUpDown === "to" ? "from" : "to"
         const relName = relation[0]
         WordDefault["rel"][relName][oppositeRelation] = [wordPrev["id"]]
 
-        //console.log(WordDefault);
+        console.log(WordDefault);
         //console.log(relation)
         //console.log(wordPrev);
         setNewWordData(WordDefault)
-    },[])
+    },[newId])
 
 
     const handleInputChange = (key, e) => {
@@ -55,7 +57,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
 
     const saveWordData = () => {
 
-
+        console.log(newWordData);
         const newAllWords = [...allWords]
         newAllWords.push(newWordData)
 
@@ -72,6 +74,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         setAddingData(false)
         setFilteredData([newAllWords])
         setUnsavedWordCount(unsavedWordCount + 1 )
+        setNewWordData(null)
     }
 
 
