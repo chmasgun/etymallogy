@@ -19,19 +19,30 @@ const langColors = {
 const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair }) => {
 
     const [lineColor, setLineColor] = useState("#111")
+    const [lineWidth, setLineWidth] = useState(1)
 
     const setHoverColor = () => {
         setLineColor("#f77")
+        setLineWidth(3)
         setHoveredPair(pair)
         console.log(pair);
     }
     const revertHoverColor = () => {
         setLineColor("#111")
+        setLineWidth(1)
         setHoveredPair([-1, -1])
     }
 
-    return <svg className="absolute overflow-visible z-0">
+    return <svg className="absolute overflow-visible z-0 w-1 h-1">
         <line
+
+            x1={x1}
+            y1={heightOffset}
+            x2={x2}
+            y2={heightOffset + y * 2}
+            stroke={lineColor}
+            strokeWidth={lineWidth}></line>
+        <line className="z-10"
             onMouseEnter={() => setHoverColor()}
             onMouseLeave={() => revertHoverColor()}
             x1={x1}
@@ -40,15 +51,8 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
             y2={heightOffset + y * 2}
             stroke={"transparent"}
             strokeWidth={20}></line>
-        <line
- 
-            x1={x1}
-            y1={heightOffset}
-            x2={x2}
-            y2={heightOffset + y * 2}
-            stroke={lineColor}
-            strokeWidth={1}></line>
-        </svg>
+
+    </svg>
 
 }
 

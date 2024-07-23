@@ -48,7 +48,7 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
     for (var idNow = 0; idNow < itemTogetherCount; idNow++) {  // Treat the similar siblings together (e.g derived from same root)
       returnDict[idsToProcess[idNow]] = parentPos + (idNow - (itemTogetherCount / 2) + 0.5) * wordWidth * 1.5   // assign their left values
       let nodeData = data.filter(x => x.id === idsToProcess[idNow])
-      console.log([idsToProcess[idNow], nodeData]);
+      //console.log([idsToProcess[idNow], nodeData]);
       let derivesTo = nodeData[0]["rel"]["derives"]["to"] || []
       let loansTo = nodeData[0]["rel"]["loans"]["to"] || []
       let homonymTo = nodeData[0]["rel"]["homonym"]["to"] || []
@@ -90,7 +90,7 @@ const calculateLines = (data, wordWidth, wordHeight, depthWidth, totalDepth, pos
         nodesForDepth.push([elt["id"], rel])
       }
 
-      console.log(newGoToItems);
+      //console.log(newGoToItems);
     }
     outLinesList.push(linesForDepth)
     outLineNodes.push(nodesForDepth)
@@ -226,12 +226,13 @@ export default function Home() {
 
         {
           filteredData.map((dataCluster, clusterIndex) =>
-            <div className="  mb-32  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex}>
+            <div className="  mb-32  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex+"_"+selectedCluster}>
               {
                 Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
-                  <div className={`depth-container flex relative min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd}>{ // each depth here
+                  <div className={`depth-container flex relative min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd+"_"+selectedCluster}>{ // each depth here
                     dataCluster.filter(a => a.depth === x).map((x, i) =>
-                      <WordCard x={x} key={i} pos={posDict}
+                      <WordCard x={x} key={rowInd+"_"+selectedCluster+"_"+ i}   
+                        pos={posDict}
                         setSelectedWord={setSelectedWord}
                         setPopupOpen={setPopupOpen}
                         hoveredPair={hoveredPair}></WordCard>)
