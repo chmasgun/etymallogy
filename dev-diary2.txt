@@ -27,5 +27,10 @@
 - DB bağlantısı ekledim ve data çekmeyi ayarladım
 - kelimelere tıklayınca açılan popup'ın ilk halini yaptım
 
-2024-07-17
+2024-07-22
 - createWordDiv diye bir div açarak yeni eklenecek kelimelerin logic'ini ayırdım
+- yeni kelime ekleme, ilişkili kelimeyi modifiye etmeyi hallettim
+- eklenen kelime ile cluster datasını DB'ye save eden API route'u kodladım
+
+2024-07-23
+- hover edilen relation'ları capture edip, word box'lara efekt verebiliyorum

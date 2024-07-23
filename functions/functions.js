@@ -1,3 +1,4 @@
+import { useState } from "react"
 
 
 
@@ -15,14 +16,29 @@ const langColors = {
 }
 
 
-const DrawRelation = ({x1, x2, heightOffset, y, depthDiff}) => {
+const DrawRelation = ({x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair}) => {
 
-    return <svg className="absolute overflow-visible z-0"><line 
+    const [lineColor, setLineColor] = useState("#111")
+
+    const setHoverColor = () =>{
+        setLineColor("#f77")
+        setHoveredPair(pair)
+        console.log(pair);
+    } 
+    const revertHoverColor = () =>{
+        setLineColor("#111")
+        setHoveredPair([-1,-1])
+    }
+
+    return <svg className="absolute overflow-visible z-0"><line  
+        onMouseEnter={()=> setHoverColor()} 
+        onMouseLeave={() => revertHoverColor()}
         x1={x1}
         y1={heightOffset}
         x2={x2}
         y2={heightOffset + y *2 }
-        stroke={"#111"}></line></svg>
+        stroke={lineColor}
+        strokeWidth={5}></line></svg>
 
 }
 

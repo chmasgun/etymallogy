@@ -2,17 +2,17 @@
 import { langColors } from "@/functions/functions";
 import { useEffect } from "react";
 
+const reqFields = [["key", ""], ["lang", ""],["original",""]]
+const auxiliaryField = [["desc", ""], ["type", ""]]
+const autoReqFields = [["id", 0], ["depth", 0], ["rel", {
+    "derives": {},
+    "loans": {},
+    "homonym": {}
+}]]
+
+let fields = reqFields.concat(auxiliaryField, autoReqFields)
 
 export default function CreateWordDiv({ newWordData, setNewWordData, relation, wordPrev, newId, allWords, setAddingData, setFilteredData,unsavedWordCount,setUnsavedWordCount}) {  // Manual inversion of FROM and TO. Careful!
-    const reqFields = [["key", ""], ["lang", ""],["original",""]]
-    const auxiliaryField = [["desc", ""], ["type", ""]]
-    const autoReqFields = [["id", newId], ["depth", 0], ["rel", {
-        "derives": {},
-        "loans": {},
-        "homonym": {}
-    }]]
-
-    let fields = reqFields.concat(auxiliaryField, autoReqFields)
 
     
     useEffect( () => {
@@ -20,6 +20,9 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         for (const field of fields) {
             WordDefault[field[0]] = field[1]
         }
+
+        // FIND ID
+        WordDefault["id"] = newId
 
         // FIND DEPTH
         const relationTypeUpDown =  relation[1]
@@ -54,6 +57,8 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
 
 
         const newAllWords = [...allWords]
+        newAllWords.push(newWordData)
+
         const existingRelation = newAllWords[wordPrev["id"]]["rel"][relation[0]][relation[1]]  //for the existing word, get if the relation is already defined. We will either initialize or extend the list
         const isRelationDefinedBefore = (existingRelation || []).length > 0 
         console.log(   [existingRelation,  isRelationDefinedBefore])
@@ -63,8 +68,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
             newAllWords[wordPrev["id"]]["rel"][relation[0]][relation[1]] = [newId]
         }
         console.log(newAllWords);
-        newAllWords.push(newWordData)
-        console.log(newAllWords);
+
         setAddingData(false)
         setFilteredData([newAllWords])
         setUnsavedWordCount(unsavedWordCount + 1 )

@@ -74,9 +74,11 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
 // TO DO for each depth, go over all nodes, extract from-to relations, and calculate xs and ys
 const calculateLines = (data, wordWidth, wordHeight, depthWidth, totalDepth, positionDict) => {
   let outLinesList = []
+  let outLineNodes = []
   for (var depthNow = 0; depthNow <= totalDepth; depthNow++) {  // iterating each depth
     let root = data.filter(x => x.depth === depthNow)
     let linesForDepth = []
+    let nodesForDepth = []
     for (var elt of root) { // iterating each element/word
       let derivesTo = elt["rel"]["derives"]["to"] || []
       let loansTo = elt["rel"]["loans"]["to"] || []
@@ -85,13 +87,15 @@ const calculateLines = (data, wordWidth, wordHeight, depthWidth, totalDepth, pos
 
       for (var rel of newGoToItems) { // iterating every relation to gather lines
         linesForDepth.push([positionDict[elt["id"]] + wordWidth / 2, positionDict[rel] + wordWidth / 2, wordHeight])
+        nodesForDepth.push([elt["id"], rel])
       }
 
       console.log(newGoToItems);
     }
     outLinesList.push(linesForDepth)
+    outLineNodes.push(nodesForDepth)
   }
-  return outLinesList
+  return [outLinesList, outLineNodes]
 }
 
 
@@ -104,9 +108,10 @@ export default function Home() {
   const [filteredData, setFilteredData] = useState([data["words"]])//useState([data.filter((x) => x.cluster === 0)]);
   const [maxDepthData, setMaxDepthData] = useState([data["words"]].map(x => Math.max(...x.map(y => y.depth)))) //useState([data.filter((x) => x.cluster === 0)].map(x => Math.max(...x.map(y => y.depth))))
   const [posDict, setPosDict] = useState({})
-  const [lines, setLines] = useState([])
+  const [lines, setLines] = useState([[], []])
   const [languageList, setLanguageList] = useState([])
   const [unsavedWordCount, setUnsavedWordCount] = useState(0)
+  const [hoveredPair, setHoveredPair] = useState([-1, -1])
 
   const popupRef = useRef();
   const [popupOpen, setPopupOpen] = useState(false)
@@ -116,7 +121,7 @@ export default function Home() {
     const cluster = parseInt(e.target.value);
     setSelectedCluster(cluster);
     let newfilteredData;
- 
+
     try {
       const response = await fetch('/api/fetch-data', {
         method: 'POST',
@@ -140,6 +145,7 @@ export default function Home() {
 
         // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
         setFilteredData(newfilteredData);
+        setUnsavedWordCount(0)
       }
 
     } catch (error) {
@@ -170,7 +176,7 @@ export default function Home() {
 
     // console.log(calculateLines(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData,newPosDict))
     setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], depthContainer["width"], newMaxDepthData, newPosDict))
-  
+
     const newLanguageList = filteredData[0].map(x => x.lang)
     setLanguageList([... new Set(newLanguageList)])
 
@@ -191,10 +197,10 @@ export default function Home() {
           allWords={filteredData[0]}
           setFilteredData={setFilteredData}
           unsavedWordCount={unsavedWordCount}
-          setUnsavedWordCount ={setUnsavedWordCount} ></Popup>}
+          setUnsavedWordCount={setUnsavedWordCount} ></Popup>}
       <Legend languages={languageList}></Legend>
       <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
-     
+
 
       <div className="z-10 mb-12 max-w-5xl w-full items-center justify-center   font-mono text-sm lg:flex">
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
@@ -224,11 +230,20 @@ export default function Home() {
               {
                 Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
                   <div className={`depth-container flex relative min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd}>{ // each depth here
-                    dataCluster.filter(a => a.depth === x).map((x, i) => <WordCard x={x} key={i} pos={posDict} setSelectedWord={setSelectedWord} setPopupOpen={setPopupOpen}></WordCard>)
+                    dataCluster.filter(a => a.depth === x).map((x, i) =>
+                      <WordCard x={x} key={i} pos={posDict}
+                        setSelectedWord={setSelectedWord}
+                        setPopupOpen={setPopupOpen}
+                        hoveredPair={hoveredPair}></WordCard>)
                   }
                     {
-                      lines[rowInd]?.map((line, lineIndex) =>
-                        <DrawRelation key={rowInd + "-" + lineIndex} x1={line[0]} x2={line[1]} heightOffset={line[2]} y={depthMarginPx}></DrawRelation>
+                      lines[0][rowInd]?.map((line, lineIndex) =>
+                        <DrawRelation key={rowInd + "-" + lineIndex}
+                          x1={line[0]} x2={line[1]}
+                          heightOffset={line[2]}
+                          y={depthMarginPx}
+                          pair={lines[1][rowInd][lineIndex]}
+                          setHoveredPair={setHoveredPair}></DrawRelation>
                       )
                     }
                   </div>)
