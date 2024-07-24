@@ -16,9 +16,9 @@ const langColors = {
     "LA": ["bg-red-600", "Latin"],
     "IT": ["bg-green-400", "Italian"],
     "GR": ["bg-sky-500", "Greek"],
-    "DE": ["bg-orange-500", "German"],
+    "DE": ["bg-orange-400", "German"],
     "FA": ["bg-yellow-500", "Persian"]
-
+    ,"DU": ["bg-orange-600", "Dutch"],
 }
 
 

@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 //console.log(data[1]);
 
 const depthMarginPx = 24
+const leftPixelLimit = 0
 const marginClass = `m-[${depthMarginPx}px]`;
 
 
@@ -72,8 +73,7 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
     safety = safety + 1
     if (safety > 50) { break }
 
-    //console.log(goToItems);
-    //console.log(data);
+    
     let idsToProcess = goToItems[0]
     let parentPos = parentPositions[0]
     let parentWidth = parentWidths[0]
@@ -82,7 +82,6 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
     for (var idNow = 0; idNow < itemTogetherCount; idNow++) {  // Treat the similar siblings together (e.g derived from same root)
       const widthForThisSibling = widthBelowDict[idsToProcess[idNow]] || 1
 
- 
       returnDict[idsToProcess[idNow]] = parentPos + (   extraSpaceNeeded + ( widthForThisSibling - parentWidth)/2 + idNow) * wordWidth * 1.2  // assign their left values
       
       extraSpaceNeeded += (widthForThisSibling - 1)
@@ -106,8 +105,14 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
     parentPositions.shift()     // remove the first element
     parentWidths.shift()
   }
+  const leftOverflow = leftPixelLimit - Math.min(...Object.keys(returnDict).map(x => returnDict[x]))
+  if(leftOverflow > 0){
 
-  
+    for(const node of Object.keys(returnDict)){
+      console.log([node, returnDict]);
+      returnDict[node] = returnDict[node] + leftOverflow
+    }
+  }
   return returnDict
 }
 
@@ -209,6 +214,7 @@ export default function Home() {
   console.log(languageList);
   console.log(selectedWord)
   console.log(selectedCluster);
+  console.log(posDict);
 
   useEffect(() => {
     // update max depth info

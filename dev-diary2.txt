@@ -42,3 +42,4 @@
 
 2024-07-24
 - insertion div tamam. Sonrasında depth yeniden hesaplayan fonksiyonu da yazdım
+- node'ların sola overflow etmemesi için düzenleme yaptım
