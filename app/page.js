@@ -4,7 +4,7 @@ import * as data from '../public/0.json'
 import { useEffect, useState, useRef } from "react";
 import WordCard from "@/components/wordCard";
 import SaveToServerButton from "@/components/saveToServerButton";
-import { DrawRelation, langColors } from "@/functions/functions";
+import { DrawRelation, langColors, RecalculateDepthAfter } from "@/functions/functions";
 import Legend from "@/components/legend";
 import Popup from "@/components/popup";
 import { useRouter } from 'next/navigation';
@@ -14,8 +14,43 @@ const depthMarginPx = 24
 const marginClass = `m-[${depthMarginPx}px]`;
 
 
-const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
+const calculateWidthBelowNode = (data, nodeList) => {
 
+  if(nodeList.length ===0){
+    return 1
+  }
+  else{
+
+    let result = 0
+    for(const node of nodeList){
+      let derivesTo = data[node]["rel"]["derives"]["to"] || []
+      let loansTo = data[node]["rel"]["loans"]["to"] || []
+      let homonymTo = data[node]["rel"]["homonym"]["to"] || []
+    
+      let goToItems = derivesTo.concat(loansTo, homonymTo)
+      result += calculateWidthBelowNode(data, goToItems)
+    }
+    return result
+  }
+}
+
+const prepareWidthBelowNode = (data) => {
+    const widthBelowDict ={}
+    for(const node in data){
+      widthBelowDict[node] = calculateWidthBelowNode(data, [node])
+    }
+    console.log(widthBelowDict);
+    return widthBelowDict
+}
+const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
+  
+  
+  // Part 1 Recursively calculate width needed for each node
+  const widthBelowDict = prepareWidthBelowNode(data)
+  console.log(widthBelowDict);
+
+
+  // Part 2 Pick the root and the children
   let returnDict = {}
   let root = data.filter(x => x.depth === 0)
   let depthItems = root.length
@@ -29,12 +64,9 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
 
   let goToItems = [derivesTo.concat(loansTo, homonymTo)]
   let parentPositions = [depthWidth / 2 - wordWidth / 2]
+  let parentWidths = [ widthBelowDict[idnow]]
 
-
-  //for (var depthNow = 1; depthNow <= totalDepth ; depthNow++){
-  //  root = data.filter(x => x.depth === depthNow)
-  //  depthItems = root.length
-  //}
+  // Part 3 Iterate over the children
   let safety = 0
   while (goToItems.length > 0) {
     safety = safety + 1
@@ -44,9 +76,16 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
     //console.log(data);
     let idsToProcess = goToItems[0]
     let parentPos = parentPositions[0]
+    let parentWidth = parentWidths[0]
     let itemTogetherCount = idsToProcess.length
+    let extraSpaceNeeded = 0
     for (var idNow = 0; idNow < itemTogetherCount; idNow++) {  // Treat the similar siblings together (e.g derived from same root)
-      returnDict[idsToProcess[idNow]] = parentPos + (idNow - (itemTogetherCount / 2) + 0.5) * wordWidth * 1.5   // assign their left values
+      const widthForThisSibling = widthBelowDict[idsToProcess[idNow]] || 1
+
+ 
+      returnDict[idsToProcess[idNow]] = parentPos + (   extraSpaceNeeded + ( widthForThisSibling - parentWidth)/2 + idNow) * wordWidth * 1.2  // assign their left values
+      
+      extraSpaceNeeded += (widthForThisSibling - 1)
       let nodeData = data.filter(x => x.id === idsToProcess[idNow])
       //console.log([idsToProcess[idNow], nodeData]);
       let derivesTo = nodeData[0]["rel"]["derives"]["to"] || []
@@ -59,15 +98,16 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
 
         goToItems.push(newGoToItems)
         parentPositions.push(returnDict[idsToProcess[idNow]])
+        parentWidths.push(widthBelowDict[idsToProcess[idNow]])
       }
 
     }
     goToItems.shift()           // remove the first element
     parentPositions.shift()     // remove the first element
-    //console.log(goToItems);
-    //console.log(parentPositions);
-
+    parentWidths.shift()
   }
+
+  
   return returnDict
 }
 
@@ -112,6 +152,8 @@ export default function Home() {
   const [languageList, setLanguageList] = useState([])
   const [unsavedWordCount, setUnsavedWordCount] = useState(0)
   const [hoveredPair, setHoveredPair] = useState([-1, -1])
+  const [isInsertMode, setIsInsertMode] = useState(false)
+  const [mustDepthRecalculate, setMustDepthRecalculate] = useState(-1)
 
   const popupRef = useRef();
   const [popupOpen, setPopupOpen] = useState(false)
@@ -119,7 +161,7 @@ export default function Home() {
 
   const handleClusterFilter = async (e) => {
     const cluster = parseInt(e.target.value);
-    setSelectedCluster(cluster);
+    
     let newfilteredData;
 
     try {
@@ -145,7 +187,11 @@ export default function Home() {
 
         // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
         setFilteredData(newfilteredData);
+        setSelectedCluster(cluster);
         setUnsavedWordCount(0)
+        setPosDict({})
+        let newMaxDepthData = newfilteredData.map(x => Math.max(...x.map(y => y.depth))) // again multiple clusters
+        setMaxDepthData(newMaxDepthData)
       }
 
     } catch (error) {
@@ -162,6 +208,7 @@ export default function Home() {
   console.log(lines);
   console.log(languageList);
   console.log(selectedWord)
+  console.log(selectedCluster);
 
   useEffect(() => {
     // update max depth info
@@ -180,12 +227,18 @@ export default function Home() {
     const newLanguageList = filteredData[0].map(x => x.lang)
     setLanguageList([... new Set(newLanguageList)])
 
-
+    setSelectedWord(filteredData[0][0])
 
   }, [filteredData])
 
-
-
+  useEffect(() => { setPopupOpen(isInsertMode)}, [isInsertMode]) // is insertion mode is activated, trigger popup
+  useEffect(() => {
+      if(mustDepthRecalculate > -1){
+        console.log("CALCULATING DEPTH");
+        RecalculateDepthAfter(filteredData[0], mustDepthRecalculate, setFilteredData)
+        setMustDepthRecalculate(-1)
+      }
+  }, [mustDepthRecalculate])
 
 
   return (
@@ -197,7 +250,11 @@ export default function Home() {
           allWords={filteredData[0]}
           setFilteredData={setFilteredData}
           unsavedWordCount={unsavedWordCount}
-          setUnsavedWordCount={setUnsavedWordCount} ></Popup>}
+          setUnsavedWordCount={setUnsavedWordCount}
+          isInsertMode={isInsertMode}
+          setIsInsertMode={setIsInsertMode}
+          setMustDepthRecalculate = {setMustDepthRecalculate}
+          hoveredPair={hoveredPair} ></Popup>}
       <Legend languages={languageList}></Legend>
       <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
 
@@ -222,7 +279,7 @@ export default function Home() {
       </div>
 
 
-      <div className={`min-w-full flex self-start ${popupOpen && "blur-xs"}`}>
+      <div className={`min-w-full flex self-start ${popupOpen && "blur-xs"}`} key={selectedCluster}>
 
         {
           filteredData.map((dataCluster, clusterIndex) =>
@@ -233,6 +290,7 @@ export default function Home() {
                     dataCluster.filter(a => a.depth === x).map((x, i) =>
                       <WordCard x={x} key={rowInd+"_"+selectedCluster+"_"+ i}   
                         pos={posDict}
+                        selectedCluster={selectedCluster}
                         setSelectedWord={setSelectedWord}
                         setPopupOpen={setPopupOpen}
                         hoveredPair={hoveredPair}></WordCard>)
@@ -244,7 +302,8 @@ export default function Home() {
                           heightOffset={line[2]}
                           y={depthMarginPx}
                           pair={lines[1][rowInd][lineIndex]}
-                          setHoveredPair={setHoveredPair}></DrawRelation>
+                          setHoveredPair={setHoveredPair}
+                          setIsInsertMode={setIsInsertMode}></DrawRelation>
                       )
                     }
                   </div>)

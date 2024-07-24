@@ -4,11 +4,13 @@ import CreateWordDiv from "./createWordDiv";
 
 const relationContainerClassName = "relative flex-1 flex flex-col justify-center items-center border border-slate-300 shadow-md m-2 rounded"
 
-export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, allWords, setFilteredData, unsavedWordCount, setUnsavedWordCount }) {
+export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, allWords, setFilteredData,
+    unsavedWordCount, setUnsavedWordCount, isInsertMode, setIsInsertMode, setMustDepthRecalculate, hoveredPair }) {
 
     const [addingData, setAddingData] = useState(false)
+    //const [insertingData, setInsertingData] = useState(false)
     const [modifiedRelation, setModifiedRelation] = useState(["", ""])
-    const popupStates = [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation]
+    const popupStates = [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation,setMustDepthRecalculate]
 
 
     useEffect(() => {
@@ -16,6 +18,7 @@ export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, a
             if (popupRef.current && !popupRef.current.contains(event.target)) {
                 console.log("close popup");
                 setPopupOpen(false)
+                setIsInsertMode(false)
             }
         }
 
@@ -33,7 +36,11 @@ export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, a
             {addingData ?
                 <AddDataPopup popupStates={popupStates} modifiedRelation={modifiedRelation} setFilteredData={setFilteredData}
                     unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} ></AddDataPopup> :
-                <DefaultPopup word={word} popupStates={popupStates}></DefaultPopup>
+                isInsertMode ?
+                    <InsertDataPopup popupStates={popupStates} modifiedRelation={modifiedRelation} setFilteredData={setFilteredData}
+                        unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount}
+                        hoveredPair={hoveredPair} setIsInsertMode={setIsInsertMode} ></InsertDataPopup> :
+                    <DefaultPopup word={word} popupStates={popupStates}></DefaultPopup>
 
             }
         </div>
@@ -72,7 +79,7 @@ const DefaultPopup = ({ word, popupStates }) => {
 
 
 const AddDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsavedWordCount, setUnsavedWordCount }) => {
-    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation] = popupStates
+    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation,setMustDepthRecalculate] = popupStates
 
     const [newWordData, setNewWordData] = useState(null)
     const newId = allWords.length
@@ -85,16 +92,61 @@ const AddDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsavedW
             <span className="text-2xl">{word.original}</span>
         </div>
 
-        <div>{modifiedRelation[0]} {modifiedRelation[1]}</div>
+        <div className="flex flex-1 justify-center">{modifiedRelation[0]} {modifiedRelation[1]}</div>
         <CreateWordDiv newWordData={newWordData} setNewWordData={setNewWordData}
             relation={modifiedRelation} wordPrev={word}
             newId={newId} allWords={allWords}
             setAddingData={setAddingData}
             setFilteredData={setFilteredData}
+            setMustDepthRecalculate={setMustDepthRecalculate}
             unsavedWordCount={unsavedWordCount}
             setUnsavedWordCount={setUnsavedWordCount} ></CreateWordDiv>
     </>
 
+
+}
+
+const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsavedWordCount, setUnsavedWordCount, hoveredPair, setIsInsertMode }) => {
+    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation,setMustDepthRecalculate] = popupStates
+
+    const [newWordData, setNewWordData] = useState(null)
+    const newId = allWords.length
+    console.log(hoveredPair);
+    const wordUp = allWords[hoveredPair[0]]
+    const wordDown = allWords[hoveredPair[1]]
+
+    const [firstRelation, setFirstRelation] = useState(0)
+    const [secondRelation, setSecondRelation] = useState(0)
+    const relationsAll = ["derives", "loans", "homonym"]
+    return <>
+        <div className="flex flex-col justify-center items-center flex-1">
+            <span className={`p-1 m-1 rounded-xl ${langColors[wordUp.lang][0]}`} > {langColors[wordUp.lang][1]} word</span>
+            <span>{wordUp.key}</span>
+            <span className="text-2xl">{wordUp.original}</span>
+            <div className="mt-10">{relationsAll.map((rel, rel_id) => <div className={`m-2 p-2 text-center rounded-xl ${rel_id === firstRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} onClick={() => setFirstRelation(rel_id)}> {rel} to</div>)}</div>
+        </div>
+
+        <CreateWordDiv newWordData={newWordData} setNewWordData={setNewWordData}
+            relation={modifiedRelation} wordPrev={word}
+            newId={newId} allWords={allWords}
+            isInsertMode={true}
+            setIsInsertMode={setIsInsertMode}
+            insertionRelations={[firstRelation, secondRelation, relationsAll]}
+            setMustDepthRecalculate={setMustDepthRecalculate}
+            hoveredPair={hoveredPair}
+            setAddingData={setAddingData}
+            setFilteredData={setFilteredData}
+            unsavedWordCount={unsavedWordCount}
+            setUnsavedWordCount={setUnsavedWordCount} ></CreateWordDiv>
+
+        <div className="flex flex-col justify-center items-center flex-1">
+            <span className={`p-1 m-1 rounded-xl ${langColors[wordDown.lang][0]}`} > {langColors[wordDown.lang][1]} word</span>
+            <span>{wordDown.key}</span>
+            <span className="text-2xl">{wordDown.original}</span>
+            <div className="mt-10">{relationsAll.map((rel, rel_id) => <div className={`m-2 p-2 text-center rounded-xl ${rel_id === secondRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} onClick={() => setSecondRelation(rel_id)}> {rel} from</div>)}</div>
+
+        </div>
+    </>
 
 }
 
