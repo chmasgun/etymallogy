@@ -16,10 +16,11 @@ const langColors = {
 }
 
 
-const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair }) => {
+const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair, setIsInsertMode }) => {
 
     const [lineColor, setLineColor] = useState("#111")
     const [lineWidth, setLineWidth] = useState(1)
+    const [clicked, setClicked] = useState(false)
 
     const setHoverColor = () => {
         setLineColor("#f77")
@@ -27,10 +28,18 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
         setHoveredPair(pair)
         console.log(pair);
     }
-    const revertHoverColor = () => {
+    const revertHoverColor = (e) => {
+        console.log(e)
+        console.log([e.relatedTarget, e.toElement]);
+
         setLineColor("#111")
         setLineWidth(1)
-        setHoveredPair([-1, -1])
+        console.log("LEFTTTTTTTTTTTTTT");
+        if(!clicked){
+
+            setHoveredPair([-1, -1])
+        }
+         
     }
 
     return <svg className="absolute overflow-visible z-0 w-1 h-1">
@@ -44,7 +53,8 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
             strokeWidth={lineWidth}></line>
         <line className="z-10"
             onMouseEnter={() => setHoverColor()}
-            onMouseLeave={() => revertHoverColor()}
+            onMouseOut={(e) => revertHoverColor(e)}
+            onClick={(e) => { setClicked(true);setIsInsertMode(true);setTimeout(() => setClicked(false),20)}}
             x1={x1}
             y1={heightOffset}
             x2={x2}
