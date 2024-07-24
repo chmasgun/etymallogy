@@ -36,3 +36,9 @@
 - hover edilen relation'ları capture edip, word box'lara efekt verebiliyorum
 - mouse cursor speed 15 to 9
 - relation çizgilerine transparent ve daha kalın bir çizgi daha ekledim, bu sayede hover range'i daha geniş oldu.
+- yeni kelime initialize ederken dict nedeniyle bug vardı, sanırım çözdüm
+- insert popup'ına başladım
+- onClick sonrası onMouseLeave'in tetiklenmesiyle hoveredPair'de bug oluyordu, flag ekleyerek çözdüm
+
+2024-07-24
+- insertion div tamam. Sonrasında depth yeniden hesaplayan fonksiyonu da yazdım
