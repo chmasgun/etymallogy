@@ -158,10 +158,13 @@ export default function Tree() {
   const router = useRouter();
   //const searchParams =  useSearchParams()
 
-  let searchParams = new URLSearchParams(document.location.search);
-  console.log(searchParams.get("cluster"));
+  let cluster = 0
+  if(typeof document !== 'undefined'){
+    let searchParams = new URLSearchParams(document.location.search);
+ 
+    cluster = searchParams.get("cluster");
+  }
 
-  const cluster = searchParams.get("cluster");
   
   useEffect(() => {
     const initFetchData = async () => {
