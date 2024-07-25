@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import WordCard from "@/components/wordCard";
 import SaveToServerButton from "@/components/saveToServerButton";
 import { DrawRelation, langColors, RecalculateDepthAfter } from "@/functions/functions";
@@ -246,6 +246,9 @@ export default function Tree() {
 
 
   return (
+    <Suspense>
+
+    
     <main className={`flex min-h-screen flex-col items-center place-content-start p-16 `}>
       {popupOpen &&
         <Popup word={selectedWord} popupRef={popupRef}
@@ -312,6 +315,7 @@ export default function Tree() {
 
       </div>
     </main>
+    </Suspense>
   );
 }
 async function fetchData(cluster) {
