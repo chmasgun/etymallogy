@@ -12,8 +12,8 @@ export default function Etymoball({ words }) {
     const radius = 150
     const sy = Math.sin(0.0 * Math.PI / 180); //fy
     const cy = Math.cos(0.0 * Math.PI / 180); //fy
-    const sx = Math.sin(0.4 * Math.PI / 180); //fx
-    const cx = Math.cos(0.4 * Math.PI / 180); //fx
+    const sx = Math.sin(10 * Math.PI / 180); //fx
+    const cx = Math.cos(10 * Math.PI / 180); //fx
     useState(() => {
 
 
@@ -87,7 +87,7 @@ export default function Etymoball({ words }) {
                 }
     
                 setCoordinates([...coordinates])
-            }, 30)
+            }, 1000)
         
             // Cleanup: Clear the interval when the component unmounts
             return () => {
@@ -99,7 +99,9 @@ export default function Etymoball({ words }) {
 
 
         {words.map((x, i) =>
-            <div key={i}className="m-2 absolute " style={{
+            <div key={i}className="m-2 absolute transition-all" style={{
+                transitionTimingFunction: "linear",
+                transitionDuration: "1000ms", 
                 left: coordinates[i]?.x,
                 top: radius + coordinates[i]?.y,
                 opacity: coordinates[i]?.alpha,
