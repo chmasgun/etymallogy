@@ -99,7 +99,7 @@ export default function Etymoball({ words }) {
 
 
         {words.map((x, i) =>
-            <div className="m-2 absolute " style={{
+            <div key={i}className="m-2 absolute " style={{
                 left: coordinates[i]?.x,
                 top: radius + coordinates[i]?.y,
                 opacity: coordinates[i]?.per / 2,

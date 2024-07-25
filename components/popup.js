@@ -123,7 +123,7 @@ const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsav
             <span className={`p-1 m-1 rounded-xl ${langColors[wordUp.lang][0]}`} > {langColors[wordUp.lang][1]} word</span>
             <span>{wordUp.key}</span>
             <span className="text-2xl">{wordUp.original}</span>
-            <div className="mt-10">{relationsAll.map((rel, rel_id) => <div className={`m-2 p-2 text-center rounded-xl ${rel_id === firstRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} onClick={() => setFirstRelation(rel_id)}> {rel} to</div>)}</div>
+            <div className="mt-10">{relationsAll.map((rel, rel_id) => <div key={rel_id} className={`m-2 p-2 text-center rounded-xl ${rel_id === firstRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} onClick={() => setFirstRelation(rel_id)}> {rel} to</div>)}</div>
         </div>
 
         <CreateWordDiv newWordData={newWordData} setNewWordData={setNewWordData}
@@ -143,7 +143,7 @@ const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsav
             <span className={`p-1 m-1 rounded-xl ${langColors[wordDown.lang][0]}`} > {langColors[wordDown.lang][1]} word</span>
             <span>{wordDown.key}</span>
             <span className="text-2xl">{wordDown.original}</span>
-            <div className="mt-10">{relationsAll.map((rel, rel_id) => <div className={`m-2 p-2 text-center rounded-xl ${rel_id === secondRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} onClick={() => setSecondRelation(rel_id)}> {rel} from</div>)}</div>
+            <div className="mt-10">{relationsAll.map((rel, rel_id) => <div key={rel_id} className={`m-2 p-2 text-center rounded-xl ${rel_id === secondRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} onClick={() => setSecondRelation(rel_id)}> {rel} from</div>)}</div>
 
         </div>
     </>
