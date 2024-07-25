@@ -156,7 +156,9 @@ const calculateLines = (data, wordWidth, wordHeight, depthWidth, totalDepth, pos
 export default function Tree() {
 
   const router = useRouter();
-  const searchParams =  useSearchParams()
+  //const searchParams =  useSearchParams()
+
+  let searchParams = new URLSearchParams(document.location.search);
   console.log(searchParams.get("cluster"));
 
   const cluster = searchParams.get("cluster");
@@ -246,8 +248,7 @@ export default function Tree() {
 
 
   return (
-    <Suspense>
-
+    
     
     <main className={`flex min-h-screen flex-col items-center place-content-start p-16 `}>
       {popupOpen &&
@@ -315,7 +316,7 @@ export default function Tree() {
 
       </div>
     </main>
-    </Suspense>
+    
   );
 }
 async function fetchData(cluster) {
