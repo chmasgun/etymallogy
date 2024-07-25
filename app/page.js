@@ -13,7 +13,13 @@ import Etymoball from "@/components/etymoball";
 
 export default function Home() {
 
- 
+  const [query, setQuery] = useState("")
+
+  function search(e) {
+    e.preventDefault()
+    setQuery(e.target.value)
+
+  }
   return (
     <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className}`}>
 
@@ -34,7 +40,13 @@ export default function Home() {
             <div className=" text-xl self-center m-4 ">1000+ Turkish words</div>
             <div className=" text-xl self-center m-4 ">1000+ English words</div>
             <div className=" text-xl self-center m-4 ">1000+ Arabic words</div>
-            
+            <input
+              type="text"
+              className="self-center m-16 w-60 lg:w-1/3 placeholder-gray-400 text-gray-900 p-4"
+              placeholder="Search"
+              onChange={search}
+              value={query}
+            />
           </div>
           <Etymoball words={["şerbet", "şarap", "meclis", "wine", "şurup", "語", "kitap", "lycée", "bilim", "science",
             "لغة", "vin", "sorbetto", "λόγος", "lisan", "ستاره", "stella", "ἀστήρ"]}></Etymoball>
