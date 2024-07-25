@@ -44,7 +44,8 @@ const prepareWidthBelowNode = (data) => {
 }
 const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
 
-
+  // Part 0 Define parent offset dictionary. This is used in aligning children properly, in the case of adjusted parent (after unbalanced children offset)
+  const parentOffset = {}
   // Part 1 Recursively calculate width needed for each node
   const widthBelowDict = prepareWidthBelowNode(data)
   console.log(widthBelowDict);
@@ -65,7 +66,7 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
   let goToItems = [derivesTo.concat(loansTo, homonymTo)]
   let parentPositions = [depthWidth / 2 - wordWidth / 2]
   let parentWidths = [widthBelowDict[idnow]]
-
+  let removedParentOffsets = [0]
   // Part 3 Iterate over the children
   let safety = 0
   while (goToItems.length > 0) {
@@ -77,32 +78,41 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
     let parentPos = parentPositions[0]
     let parentWidth = parentWidths[0]
     let itemTogetherCount = idsToProcess.length
+    let removedParentOffset = removedParentOffsets[0]
     let extraSpaceNeeded = 0
     for (var idNow = 0; idNow < itemTogetherCount; idNow++) {  // Treat the similar siblings together (e.g derived from same root)
       const widthForThisSibling = widthBelowDict[idsToProcess[idNow]] || 1
 
-      returnDict[idsToProcess[idNow]] = parentPos + (extraSpaceNeeded + (widthForThisSibling - parentWidth) / 2 + idNow) * wordWidth * 1.2  // assign their left values
-
-      extraSpaceNeeded += (widthForThisSibling - 1)
       let nodeData = data[idsToProcess[idNow]]//data.filter(x => x.id === idsToProcess[idNow])
-      //console.log([idsToProcess[idNow], nodeData]);
       let derivesTo = nodeData["rel"]["derives"]["to"] || []
       let loansTo = nodeData["rel"]["loans"]["to"] || []
       let homonymTo = nodeData["rel"]["homonym"]["to"] || []
-
+      
       let newGoToItems = derivesTo.concat(loansTo, homonymTo)
-      //console.log([idsToProcess[idNow], newGoToItems]);
+      // small fix on parent, based on different width children
+      const firstAndLastChildren = [ newGoToItems[0], newGoToItems[newGoToItems.length-1]]
+      console.log([idsToProcess[idNow], firstAndLastChildren]);
+      let additionalChildrenOffset = widthBelowDict[firstAndLastChildren[0]] - widthBelowDict[firstAndLastChildren[1]] || 0 
+      parentOffset[idsToProcess[idNow]] = additionalChildrenOffset
+      
+      let finalOffsetForWidthImbalance = (additionalChildrenOffset - removedParentOffset) / 2  // remove parent's offset
+      returnDict[idsToProcess[idNow]] = parentPos + (extraSpaceNeeded + (finalOffsetForWidthImbalance  + widthForThisSibling - parentWidth) / 2 + idNow) * wordWidth * 1.2  // assign their left values
+
+      extraSpaceNeeded += (widthForThisSibling - 1)
+      
       if (newGoToItems.length > 0) {
 
         goToItems.push(newGoToItems)
         parentPositions.push(returnDict[idsToProcess[idNow]])
         parentWidths.push(widthBelowDict[idsToProcess[idNow]])
+        removedParentOffsets.push(parentOffset[idsToProcess[idNow]])
       }
 
     }
     goToItems.shift()           // remove the first element
     parentPositions.shift()     // remove the first element
     parentWidths.shift()
+    removedParentOffsets.shift()
   }
   const leftOverflow = leftPixelLimit - Math.min(...Object.keys(returnDict).map(x => returnDict[x]))
   if (leftOverflow > 0) {
@@ -236,7 +246,7 @@ export default function Tree() {
 
 
   return (
-    <main className={`flex min-h-screen flex-col items-center place-content-start p-24 `}>
+    <main className={`flex min-h-screen flex-col items-center place-content-start p-16 `}>
       {popupOpen &&
         <Popup word={selectedWord} popupRef={popupRef}
           setPopupOpen={setPopupOpen}
