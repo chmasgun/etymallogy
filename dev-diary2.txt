@@ -47,3 +47,4 @@
 2024-07-25
 - tree sayfasını ayrı bir yere aldım. "cluster" adında query parameter vererek sayfayı load ediyorum.
 - word relation'lar için stepped line tanımladım. Ucuna arrowhead ekledim
+- kelimelerin döndüğü bir etymoball yaptım

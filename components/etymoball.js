@@ -9,9 +9,9 @@ export default function Etymoball({ words }) {
     const [wordsList, setWordsList] = useState(words)
     const [coordinates, setCoordinates] = useState([])
     const wordCount = words.length
-    const radius = 200
-    const sy = Math.sin(0.5 * Math.PI / 180); //fy
-    const cy = Math.cos(0.5 * Math.PI / 180); //fy
+    const radius = 150
+    const sy = Math.sin(0.0 * Math.PI / 180); //fy
+    const cy = Math.cos(0.0 * Math.PI / 180); //fy
     const sx = Math.sin(0.4 * Math.PI / 180); //fx
     const cx = Math.cos(0.4 * Math.PI / 180); //fx
     useState(() => {
@@ -28,7 +28,7 @@ export default function Etymoball({ words }) {
             phi = Math.acos(-1 + (2 * parseInt(i)) / max);
             theta = Math.sqrt(max * Math.PI) * phi;
 
-            console.log([i, -1 + (2 * parseInt(i)) / max, max, phi, theta, words]);
+            //console.log([i, -1 + (2 * parseInt(i)) / max, max, phi, theta, words]);
             newWordDict.cx = radius * Math.cos(theta) * Math.sin(phi);
             newWordDict.cy = radius * Math.sin(theta) * Math.sin(phi);
             newWordDict.cz = radius * Math.cos(phi);
@@ -102,8 +102,8 @@ export default function Etymoball({ words }) {
             <div key={i}className="m-2 absolute " style={{
                 left: coordinates[i]?.x,
                 top: radius + coordinates[i]?.y,
-                opacity: coordinates[i]?.per / 2,
-                fontSize: `${coordinates[i]?.per * 4 + 10}px`
+                opacity: coordinates[i]?.alpha,
+                fontSize: `${coordinates[i]?.per * 6 + 8}px`
             }}> {x} </div>
         )}
 
