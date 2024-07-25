@@ -49,7 +49,7 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
     }
 
     return <svg className="absolute overflow-visible z-0 w-1 h-1">
-        <SteppedLine x= {[x1,x2]} heightOffset={heightOffset} y={y} lineColor={lineColor} lineWidth={lineWidth}
+        <SteppedLine x={[x1, x2]} heightOffset={heightOffset} y={y} lineColor={lineColor} lineWidth={lineWidth}
             setClicked={setClicked} setHoverColor={setHoverColor} revertHoverColor={revertHoverColor} setIsInsertMode={setIsInsertMode}></SteppedLine>
 
     </svg>
@@ -57,17 +57,32 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
 }
 
 
-const DirectLine = ({ x,heightOffset, y, lineColor, lineWidth,  setClicked,  setHoverColor,revertHoverColor, setIsInsertMode}) => {
-    const [x1,x2] = x
+const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
+    const [x1, x2] = x
     return <>
-        <line
+     <defs>
+            <marker
+                id="arrow"
+                viewBox="0 0 10 10"
+                refX="0"
+                refY="5"
+                markerWidth="6"
+                markerHeight="6"
+                markerUnits={"userSpaceOnUse"}
+                orient="auto-start-reverse"
+            >
 
+                <path d="M 0 0 L 10 5 L 0 10 z" />
+            </marker>
+        </defs>
+        <line
             x1={x1}
             y1={heightOffset}
             x2={x2}
-            y2={heightOffset + y * 2}
+            y2={heightOffset + y * 2 - 8 }
             stroke={lineColor}
-            strokeWidth={lineWidth}></line>
+            strokeWidth={lineWidth}
+            markerEnd="url(#arrow)"></line>
         <line className="z-10"
             onMouseEnter={() => setHoverColor()}
             onMouseOut={(e) => revertHoverColor(e)}
@@ -75,48 +90,77 @@ const DirectLine = ({ x,heightOffset, y, lineColor, lineWidth,  setClicked,  set
             x1={x1}
             y1={heightOffset}
             x2={x2}
-            y2={heightOffset + y * 2}
+            y2={heightOffset + y * 2  - 8 }
             stroke={"transparent"}
             strokeWidth={20}></line>
-            </>
+    </>
 }
-const SteppedLine = ({ x,heightOffset, y, lineColor, lineWidth,  setClicked,  setHoverColor,revertHoverColor, setIsInsertMode}) => {
+const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
     const [x1, x2] = x
     return <>
+        <defs>
+            <marker
+                id="arrow"
+                viewBox="0 0 10 10"
+                refX="0"
+                refY="5"
+                markerWidth="6"
+                markerHeight="6"
+                markerUnits={"userSpaceOnUse"}
+                orient="auto-start-reverse"
+            >
+
+                <path d="M 0 0 L 10 5 L 0 10 z" />
+            </marker>
+        </defs>
         <line
 
             x1={x1}
             y1={heightOffset}
             x2={x1}
-            y2={heightOffset + y }
+            y2={heightOffset + y}
             stroke={lineColor}
             strokeWidth={lineWidth}></line>
         <line
 
             x1={x1}
-            y1={heightOffset+ y }
+            y1={heightOffset + y}
             x2={x2}
-            y2={heightOffset + y }
+            y2={heightOffset + y}
             stroke={lineColor}
             strokeWidth={lineWidth}></line>
         <line
 
             x1={x2}
-            y1={heightOffset + y }
+            y1={heightOffset + y}
             x2={x2}
-            y2={heightOffset + y * 2}
+            y2={heightOffset + y * 2 - 8}
             stroke={lineColor}
-            strokeWidth={lineWidth}></line>
+            strokeWidth={lineWidth}
+            markerEnd="url(#arrow)"
+        ></line>
         <line className="z-10"
             onMouseEnter={() => setHoverColor()}
             onMouseOut={(e) => revertHoverColor(e)}
             onClick={(e) => { setClicked(true); setIsInsertMode(true); setTimeout(() => setClicked(false), 20) }}
             x1={x1}
-            y1={heightOffset}
+            y1={heightOffset + y}
             x2={x2}
-            y2={heightOffset + y * 2}
+            y2={heightOffset + y}
             stroke={"transparent"}
             strokeWidth={20}></line>
+        <line className="z-10"
+            onMouseEnter={() => setHoverColor()}
+            onMouseOut={(e) => revertHoverColor(e)}
+            onClick={(e) => { setClicked(true); setIsInsertMode(true); setTimeout(() => setClicked(false), 20) }}
+            x1={x2}
+            y1={heightOffset + y}
+            x2={x2}
+            y2={heightOffset + y * 2 - 8}
+            stroke={"transparent"}
+            strokeWidth={20}>
+        </line>
+            
     </>
 }
 

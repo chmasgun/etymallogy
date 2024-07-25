@@ -43,3 +43,7 @@
 2024-07-24
 - insertion div tamam. Sonrasında depth yeniden hesaplayan fonksiyonu da yazdım
 - node'ların sola overflow etmemesi için düzenleme yaptım
+
+2024-07-25
+- tree sayfasını ayrı bir yere aldım. "cluster" adında query parameter vererek sayfayı load ediyorum.
+- word relation'lar için stepped line tanımladım. Ucuna arrowhead ekledim
