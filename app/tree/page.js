@@ -159,12 +159,12 @@ export default function Tree() {
   //const searchParams =  useSearchParams()
 
   let cluster = 0
-  if(typeof document !== 'undefined'){
+  //if(typeof document !== 'undefined'){
     //let searchParams = new URLSearchParams(document.location.search);
     let searchParams =  useSearchParams()
     console.log(searchParams);
     cluster = searchParams.get("cluster");
-  }
+  //}
 
   
   useEffect(() => {
