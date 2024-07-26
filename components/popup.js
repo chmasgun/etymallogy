@@ -59,7 +59,7 @@ const DefaultPopup = ({ word, popupStates }) => {
     return <>
         {/* LEFT PART OF THE POPUP */}
         <div className="flex flex-col justify-center items-center flex-1">
-            <span className={`p-1 m-1 rounded-xl ${langColors[word.lang][0]}`} > {langColors[word.lang][1]} word</span>
+            <span className={`p-1 m-4 rounded-xl ${langColors[word.lang][0]}`} > {langColors[word.lang][1]} word</span>
             <span>{word.key}</span>
             <span className="text-2xl">{word.original}</span>
         </div>

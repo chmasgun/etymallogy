@@ -245,6 +245,7 @@ async function FetchSearchWords(textkey) {
       if (!response.ok) {
         const message = await response.text();
         console.log(message);
+        
       } else {
         const responseResolved = await response;
         const data = await responseResolved.json();

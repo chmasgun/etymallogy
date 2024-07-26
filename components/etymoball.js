@@ -28,7 +28,6 @@ export default function Etymoball({ words }) {
             phi = Math.acos(-1 + (2 * parseInt(i)) / max);
             theta = Math.sqrt(max * Math.PI) * phi;
 
-            //console.log([i, -1 + (2 * parseInt(i)) / max, max, phi, theta, words]);
             newWordDict.cx = radius * Math.cos(theta) * Math.sin(phi);
             newWordDict.cy = radius * Math.sin(theta) * Math.sin(phi);
             newWordDict.cz = radius * Math.cos(phi);
