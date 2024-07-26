@@ -45,7 +45,7 @@ export default function SaveToServerButton({ unsavedWordCount, setUnsavedWordCou
   const dataToSave = filteredData[0]
   return unsavedWordCount > 0 && <div className="bg-lime-300   rounded-xl relative  "
     onClick={() => saveClusterToDB({ cid, dataToSave, setUnsavedWordCount })}>
-      <span class="animate-ping absolute inline-flex inset-[16%] w-2/3 h-2/3 w-full rounded-xl bg-lime-400 opacity-75"></span>
+      <span class="animate-ping absolute inline-flex inset-[16%] w-2/3 h-2/3 rounded-xl bg-lime-400 opacity-75"></span>
   
     
     <span className="p-2 inline-block">SAVE {unsavedWordCount} Words</span>
