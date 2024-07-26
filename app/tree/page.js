@@ -252,6 +252,8 @@ export default function Tree() {
 
 
   return (
+    <Suspense>
+
     
     
     <main className={`flex min-h-screen flex-col items-center place-content-start p-16 `}>
@@ -316,7 +318,7 @@ export default function Tree() {
 
       </div>
     </main>
-    
+    </Suspense>
   );
 }
 async function fetchData(cluster) {
