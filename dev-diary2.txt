@@ -52,3 +52,5 @@
 - bu key baz alınarak datanın mongodb'den çekilmesi için api ve fonksiyonu yazdım
 - input ve dropdown'ını frontend'de yaptım. Client side logic de tamam
 - aptal next router saatlerce uğraştırdı.
+- routing'i tamamladım
+- anasayfada etymoball'u üst kısma aldım
