@@ -5,20 +5,20 @@ import { useState } from "react"
 
 
 const langColors = {
-    "PIE": ["bg-gradient-to-bl from-indigo-300", "Proto-Indo-European"],
-    "PGER": ["bg-gradient-to-bl from-orange-300", "Proto-Germanic"],
+    "PIE": ["bg-gradient-to-bl from-indigo-300", "Proto-Indo-European", "text-gradient-to-bl from-indigo-300"],
+    "PGER": ["bg-gradient-to-bl from-orange-300", "Proto-Germanic", "text-gradient-to-bl from-orange-300"],
 
 
-    "AR": ["bg-lime-500", "Arabic"],
-    "TR": ["bg-red-300", "Turkish"],
-    "EN": ["bg-sky-300", "English"],
-    "FR": ["bg-indigo-300", "French"],
-    "LA": ["bg-red-600", "Latin"],
-    "IT": ["bg-green-400", "Italian"],
-    "GR": ["bg-sky-500", "Greek"],
-    "DE": ["bg-orange-400", "German"],
-    "FA": ["bg-yellow-500", "Persian"]
-    , "DU": ["bg-orange-600", "Dutch"],
+    "AR": ["bg-lime-500", "Arabic","text-lime-500"],
+    "TR": ["bg-red-300", "Turkish","text-red-300"],
+    "EN": ["bg-sky-300", "English","text-sky-300"],
+    "FR": ["bg-indigo-300", "French","text-indigo-300"],
+    "LA": ["bg-red-600", "Latin","text-red-600"],
+    "IT": ["bg-green-400", "Italian","text-green-400"],
+    "GR": ["bg-sky-500", "Greek","text-sky-500"],
+    "DE": ["bg-orange-400", "German","text-orange-400"],
+    "FA": ["bg-yellow-500", "Persian","text-yellow-500"]
+    , "DU": ["bg-orange-600", "Dutch","text-orange-600"],
 }
 
 

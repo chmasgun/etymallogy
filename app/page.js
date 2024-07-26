@@ -2,8 +2,10 @@
 
 
 import { Cairo } from "next/font/google";
+import { langColors } from "@/functions/functions";
 import { useEffect, useState } from "react";
 import { FetchSearchWords } from "@/functions/functions";
+import { useRouter } from "next/navigation";
 export const cairo = Cairo({
   variable: '--font-cairo',
   subsets: ["latin"],
@@ -12,7 +14,10 @@ export const cairo = Cairo({
 
 import Etymoball from "@/components/etymoball";
 
+const maxSearchResults = 8
+
 export default function Home() {
+  const router = useRouter();
 
   const [searchText, setSearchText] = useState("")
   const [searchTextKey, setSearchTextKey] = useState("")
@@ -20,6 +25,7 @@ export default function Home() {
   const [searchCandidatesAfterFilter, setSearchCandidatesAfterFilter] = useState([])
   const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false)
   const [noDataFound, setNoDataFound] = useState(false)
+  //const [dropdownWordSelected, setDropdownWordSelected] = useState(-1)
 
   function resetSearch() {
     setIsSearchDropdownOpen(false)
@@ -50,6 +56,13 @@ export default function Home() {
     setSearchText(e.target.value)
   }
 
+
+  function dropdownItemClickHandle(index){
+     const wordSelected = searchCandidatesAfterFilter[index]
+     //router.push({path:  `/tree?${wordSelected[2]}`})
+     router.push(`/tree?cluster=${wordSelected[2]}`);
+     console.log(wordSelected);
+  }
 
   useEffect(() => {
     const initFetchData = async () => {
@@ -105,7 +118,9 @@ export default function Home() {
                           isSearchDropdownOpen={isSearchDropdownOpen}
                           resetSearch={resetSearch}
                           searchCandidatesAfterFilter={searchCandidatesAfterFilter}
-                          noDataFound={noDataFound} ></SearchBar>
+                          noDataFound={noDataFound}
+                          maxSearchResults={maxSearchResults}
+                          dropdownItemClickHandle={dropdownItemClickHandle} ></SearchBar>
             <p className=" text-xl self-center m-24 ">An online collection of etymological knowledge</p>
 
 
@@ -129,22 +144,26 @@ export default function Home() {
 }
 
 
-const SearchBar = ({searchHandle, searchText, isSearchDropdownOpen, resetSearch,searchCandidatesAfterFilter, noDataFound }) => {
+const SearchBar = ({searchHandle, searchText, isSearchDropdownOpen, resetSearch,searchCandidatesAfterFilter, noDataFound, maxSearchResults, dropdownItemClickHandle }) => {
 
-  return <div className="flex flex-col justify-center self-center  w-[32rem] m-16 relative ">
+  return <div className="flex flex-col justify-center self-center w-80 lg:w-[32rem] m-16 relative ">
     <form>
       <input
         type="text"
-        className="self-center w-full placeholder-gray-400 text-gray-900 p-4 rounded-t-xl"
+        className="self-center w-full placeholder-gray-400 text-gray-900 p-4 rounded-t-xl outline-0"
         placeholder="Search for a word"
         onChange={searchHandle}
         value={searchText}
 
       />
-      {isSearchDropdownOpen ? <div className="absolute right-0 mr-4 w-6 h-6 bg-red-300 top-1/3 rounded text-center text-lg" onClick={() => resetSearch()}> X </div> : <></>}
+      {isSearchDropdownOpen ? <div className="flex justify-center absolute right-0 mr-4 w-6 h-6 bg-red-300 top-1/3 rounded items-center text-2xl" 
+                                    onClick={() => resetSearch()}><span> &#215; </span></div> : <></>}
       {isSearchDropdownOpen ? <div className="flex absolute flex-col w-full justify-center text-lg bg-gray-200 rounded-b-xl overflow-auto">
-        {searchCandidatesAfterFilter.map(x =>
-          <span className="p-2 pl-6 hover:bg-gray-300 ">{x[0]}</span>
+        {searchCandidatesAfterFilter.slice(0,maxSearchResults).map((x,i) =>
+          <span key={i} className="p-2 lg:pl-6 hover:bg-gray-300 flex  justify-between" onClick={() => dropdownItemClickHandle(i)}>
+            <span>{x[0]}</span>
+            <span className={`right italic mr-2 lg:mr-4 ${langColors[x[1]][2]}`}>{langColors[x[1]][1]}</span>
+            </span>
         )}
         {noDataFound ? <div className="p-2 pl-6 italic text-sm  "> No matching result</div> : <></>}
 

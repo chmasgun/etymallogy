@@ -48,3 +48,7 @@
 - tree sayfasını ayrı bir yere aldım. "cluster" adında query parameter vererek sayfayı load ediyorum.
 - word relation'lar için stepped line tanımladım. Ucuna arrowhead ekledim
 - kelimelerin döndüğü bir etymoball yaptım
+- kelimelerin ilk üç harfini key yaparak search etmek için python kodu yazdım
+- bu key baz alınarak datanın mongodb'den çekilmesi için api ve fonksiyonu yazdım
+- input ve dropdown'ını frontend'de yaptım. Client side logic de tamam
+- aptal next router saatlerce uğraştırdı.

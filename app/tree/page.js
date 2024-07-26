@@ -160,8 +160,9 @@ export default function Tree() {
 
   let cluster = 0
   if(typeof document !== 'undefined'){
-    let searchParams = new URLSearchParams(document.location.search);
- 
+    //let searchParams = new URLSearchParams(document.location.search);
+    let searchParams =  useSearchParams()
+    console.log(searchParams);
     cluster = searchParams.get("cluster");
   }
 
@@ -327,7 +328,7 @@ async function fetchData(cluster) {
         'Content-Type': 'application/json'
 
       },
-      body: JSON.stringify({ cid: cluster })
+      body: JSON.stringify({ cid: parseInt(cluster) })
     });
 
     if (!response.ok) {
