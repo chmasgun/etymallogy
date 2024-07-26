@@ -230,5 +230,38 @@ function RecalculateDepthAfter(allWords, nodeId, setFilteredData) {
 }
 
 
+async function FetchSearchWords(textkey) {
+    let wordsData = []
+    try {
+      const response = await fetch('/api/search-word-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+  
+        },
+        body: JSON.stringify({ key: textkey })
+      });
+  
+      if (!response.ok) {
+        const message = await response.text();
+        console.log(message);
+      } else {
+        const responseResolved = await response;
+        const data = await responseResolved.json();
+        const message = data.message;
+        console.log(["HEY2", data.responseData]);
+        wordsData = data.responseData.searchData[0].data
+        console.log(["HEY", wordsData]);
+  
+        // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
+      }
+  
+    } catch (error) {
+      // Handle any errors that occur during the request
+      console.error(error);
+    }
+    // Pass data to the page via props
+    return wordsData
+  }
 
-export { DrawRelation, langColors, RecalculateDepthAfter }
+export { DrawRelation, langColors, RecalculateDepthAfter,FetchSearchWords }

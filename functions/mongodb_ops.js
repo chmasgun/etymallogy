@@ -154,5 +154,33 @@ async function saveClusterData(cid, clusterData){
 
 
 
+async function getSearchWordsData(cluster) {
+  //console.log(["HEYYY user",user])
+  const client = await MongoClient.connect('mongodb+srv://' + process.env.MONGODB_USER + ':' + process.env.MONGODB_PW + process.env.MONGODB_CONN_STR
+    , {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
-export {  getClusterData, saveClusterData}
+  const db = client.db('etymallogy_clusters');
+  const collection = db.collection('word_data');
+
+
+
+  console.log(["HEY", cluster]);
+  const searchWords = await collection.find({ "key": cluster.key }).toArray();
+  console.log(searchWords);
+
+  client.close();
+  if (searchWords.length > 0) { // clusters found
+    return { status: 2, searchData: searchWords };
+    // return { status: -3, data: {} };
+  }else{
+    return { status: -3, searchData: {} };
+  }
+ 
+ 
+}
+
+
+export {  getClusterData, saveClusterData, getSearchWordsData}

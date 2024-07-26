@@ -2,7 +2,8 @@
 
 
 import { Cairo } from "next/font/google";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FetchSearchWords } from "@/functions/functions";
 export const cairo = Cairo({
   variable: '--font-cairo',
   subsets: ["latin"],
@@ -13,13 +14,44 @@ import Etymoball from "@/components/etymoball";
 
 export default function Home() {
 
-  const [query, setQuery] = useState("")
+  const [searchText, setSearchText] = useState("")
+  const [searchTextKey, setSearchTextKey] = useState("")
+  const [searchCandidates, setSearchCandidates] = useState([])
 
-  function search(e) {
+  function searchHandle(e) {
     e.preventDefault()
-    setQuery(e.target.value)
+    setSearchText(e.target.value)
+    setSearchTextKey(e.target.value.slice(0, 3))
 
   }
+
+  useEffect(() => {
+    const initFetchData = async () => {
+      try {
+
+        const newfilteredData = await FetchSearchWords(searchTextKey)
+
+        setSearchCandidates(newfilteredData)
+
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+
+    if (searchTextKey.length === 3) {
+
+      initFetchData();
+    }
+
+
+
+
+  }, [searchTextKey])
+
+
+  console.log(searchCandidates);
   return (
     <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className}`}>
 
@@ -40,13 +72,16 @@ export default function Home() {
             <div className=" text-xl self-center m-4 ">1000+ Turkish words</div>
             <div className=" text-xl self-center m-4 ">1000+ English words</div>
             <div className=" text-xl self-center m-4 ">1000+ Arabic words</div>
-            <input
-              type="text"
-              className="self-center m-16 w-60 lg:w-1/3 placeholder-gray-400 text-gray-900 p-4"
-              placeholder="Search"
-              onChange={search}
-              value={query}
-            />
+            <div className="flex flex-col justify-center">
+              <input
+                type="text"
+                className="self-center m-16 w-60 lg:w-1/3 placeholder-gray-400 text-gray-900 p-4"
+                placeholder="Search"
+                onChange={searchHandle}
+                value={searchText}
+              />
+
+            </div>
           </div>
           <Etymoball words={["şerbet", "şarap", "meclis", "wine", "şurup", "語", "kitap", "lycée", "bilim", "science",
             "لغة", "vin", "sorbetto", "λόγος", "lisan", "ستاره", "stella", "ἀστήρ"]}></Etymoball>
@@ -62,3 +97,5 @@ export default function Home() {
     </main>
   );
 }
+
+ 
