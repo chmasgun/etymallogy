@@ -3,7 +3,7 @@ import { langColors } from "@/functions/functions";
 import { useEffect } from "react";
 
 const reqFields = [["key", ""], ["lang", ""], ["original", ""]]
-const auxiliaryField = [["desc", ""], ["type", ""]]
+const auxiliaryField = [["gender",""],["desc", ""], ["type", ""]]
 const autoReqFields = [["id", 0], ["depth", 0]]
 /*, ["rel", {
     "derives": {},
@@ -146,15 +146,15 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         console.log(newAllWords);
     }
 
-    return <div className="flex flex-col m-4 p-2 border border-slate-300 shadow-md">
+    return <div className="flex flex-col m-4 p-2 border-2 border-slate-300 shadow-xl rounded-xl">
         {reqFields.concat(auxiliaryField).map((x, key_ind) =>
             <div className="flex m-1" key={key_ind}>
                 <span className="flex-1 m-1">{x[0]} </span>
                 <input className="flex-1 rounded" onChange={(e) => handleInputChange(x[0], e)}></input>
             </div>)
         }
-        {isInsertMode ? <div className="m-4 p-2 border bg-lime-500 text-center rounded cursor-pointer " onClick={() => insertWordData()}>INSERT WORD</div> :
-            <div className="m-4 p-2 border bg-lime-500 text-center rounded cursor-pointer " onClick={() => saveWordData()}>SAVE WORD</div>}
+        {isInsertMode ? <div className="m-4 p-2 border bg-lime-500 text-center rounded-lg cursor-pointer " onClick={() => insertWordData()}>INSERT WORD</div> :
+            <div className="m-4 p-2 border bg-lime-500 text-center rounded-lg cursor-pointer " onClick={() => saveWordData()}>SAVE WORD</div>}
     </div>
 
 }
