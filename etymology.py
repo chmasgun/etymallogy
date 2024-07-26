@@ -37,6 +37,19 @@ uri = "mongodb+srv://"+keys["mongodb_user"]+":"+keys["mongodb_pw"]+"@mongodblang
 client = pymongo.MongoClient(uri)
 db = client["etymallogy_clusters"]
 clusters = db["cluster_data"]
+word_data_collection = db["word_data"]
 cluster_data = list(clusters.find())
 
-[ [y["key"],y["lang"],x["cid"]]   for x in cluster_data for y in x["words"]]
+word_data = [ [y["key"],y["lang"],x["cid"]]   for x in cluster_data for y in x["words"]]
+word_dict = {}
+for word in word_data:
+    key= word[0][0:3].lower()
+    if key in word_dict.keys():
+        word_dict[key].extend([word])
+    else:
+        word_dict[key] = [word]
+        
+        
+word_data_push = [{"key": x, "data" : word_dict[x]} for x in  word_dict.keys()]
+for i in word_data_push :
+    word_data_collection.replace_one({"key": i["key"]}, i, upsert = True)

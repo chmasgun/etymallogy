@@ -17,22 +17,56 @@ export default function Home() {
   const [searchText, setSearchText] = useState("")
   const [searchTextKey, setSearchTextKey] = useState("")
   const [searchCandidates, setSearchCandidates] = useState([])
+  const [searchCandidatesAfterFilter, setSearchCandidatesAfterFilter] = useState([])
+  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false)
+  const [noDataFound, setNoDataFound] = useState(false)
+
+  function resetSearch() {
+    setIsSearchDropdownOpen(false)
+    setSearchCandidates([])
+    setSearchCandidatesAfterFilter([])
+    setSearchTextKey("")
+    setSearchText("")
+    setNoDataFound(false)
+  }
 
   function searchHandle(e) {
     e.preventDefault()
-    setSearchText(e.target.value)
-    setSearchTextKey(e.target.value.slice(0, 3))
 
+    if (e.target.value.length < 3) {
+      resetSearch()
+
+    } else {
+      console.log(searchCandidates);
+      const newText = e.target.value.toLocaleLowerCase()
+      const newTextKey = newText.slice(0, 3)
+      const newMatchingWords = searchCandidates.filter(x => x[0].toLocaleLowerCase().slice(0, newText.length) === newText)
+
+      setSearchCandidatesAfterFilter(newMatchingWords)
+      setSearchTextKey(newTextKey)
+      setIsSearchDropdownOpen(true)
+      setNoDataFound(newMatchingWords.length === 0 && searchCandidates.length > 0)
+    }
+    setSearchText(e.target.value)
   }
+
 
   useEffect(() => {
     const initFetchData = async () => {
       try {
 
         const newfilteredData = await FetchSearchWords(searchTextKey)
+        if (newfilteredData.length > 0) {
 
-        setSearchCandidates(newfilteredData)
+          setSearchCandidates(newfilteredData)
+          setSearchCandidatesAfterFilter(newfilteredData)
+          setIsSearchDropdownOpen(true)
+          setNoDataFound(false)
+        } else {
+          setNoDataFound(true)
 
+          console.log("NO DATA FOUND");
+        }
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -50,7 +84,7 @@ export default function Home() {
 
   }, [searchTextKey])
 
-
+  console.log(isSearchDropdownOpen);
   console.log(searchCandidates);
   return (
     <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className}`}>
@@ -66,22 +100,18 @@ export default function Home() {
 
         <div className="bg-slate-300 left-0 right-0 w-full flex flex-col h-[150svh]">
           <div className="bg-gradient-to-b from-gray-200 h-1/3 flex flex-col justify-center">
+              <SearchBar searchHandle={searchHandle} 
+                          searchText={searchText}
+                          isSearchDropdownOpen={isSearchDropdownOpen}
+                          resetSearch={resetSearch}
+                          searchCandidatesAfterFilter={searchCandidatesAfterFilter}
+                          noDataFound={noDataFound} ></SearchBar>
             <p className=" text-xl self-center m-24 ">An online collection of etymological knowledge</p>
 
 
             <div className=" text-xl self-center m-4 ">1000+ Turkish words</div>
             <div className=" text-xl self-center m-4 ">1000+ English words</div>
             <div className=" text-xl self-center m-4 ">1000+ Arabic words</div>
-            <div className="flex flex-col justify-center">
-              <input
-                type="text"
-                className="self-center m-16 w-60 lg:w-1/3 placeholder-gray-400 text-gray-900 p-4"
-                placeholder="Search"
-                onChange={searchHandle}
-                value={searchText}
-              />
-
-            </div>
           </div>
           <Etymoball words={["şerbet", "şarap", "meclis", "wine", "şurup", "語", "kitap", "lycée", "bilim", "science",
             "لغة", "vin", "sorbetto", "λόγος", "lisan", "ستاره", "stella", "ἀστήρ"]}></Etymoball>
@@ -98,4 +128,28 @@ export default function Home() {
   );
 }
 
- 
+
+const SearchBar = ({searchHandle, searchText, isSearchDropdownOpen, resetSearch,searchCandidatesAfterFilter, noDataFound }) => {
+
+  return <div className="flex flex-col justify-center self-center  w-[32rem] m-16 relative ">
+    <form>
+      <input
+        type="text"
+        className="self-center w-full placeholder-gray-400 text-gray-900 p-4 rounded-t-xl"
+        placeholder="Search for a word"
+        onChange={searchHandle}
+        value={searchText}
+
+      />
+      {isSearchDropdownOpen ? <div className="absolute right-0 mr-4 w-6 h-6 bg-red-300 top-1/3 rounded text-center text-lg" onClick={() => resetSearch()}> X </div> : <></>}
+      {isSearchDropdownOpen ? <div className="flex absolute flex-col w-full justify-center text-lg bg-gray-200 rounded-b-xl overflow-auto">
+        {searchCandidatesAfterFilter.map(x =>
+          <span className="p-2 pl-6 hover:bg-gray-300 ">{x[0]}</span>
+        )}
+        {noDataFound ? <div className="p-2 pl-6 italic text-sm  "> No matching result</div> : <></>}
+
+      </div> : <></>}
+
+    </form>
+  </div>
+}
