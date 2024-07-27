@@ -146,7 +146,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         console.log(newAllWords);
     }
 
-    return <div className="flex flex-col m-4 p-2 border-2 border-slate-300 shadow-xl rounded-xl">
+    return <div className="flex flex-col m-4 p-2 border-2 border-slate-400 shadow-xl rounded-xl">
         {reqFields.concat(auxiliaryField).map((x, key_ind) =>
             <div className="flex m-1" key={key_ind}>
                 <span className="flex-1 m-1">{x[0]} </span>

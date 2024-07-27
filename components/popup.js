@@ -30,8 +30,8 @@ export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, a
         };
     }, [popupRef]);
 
-    return <div className="fixed left-0 top-0 w-dvw h-dvh  z-30 flex justify-center items-center">
-        <div className={`lg:w-[800px] lg:max-w-[800px] lg:flex-row flex-col lg:h-[60vh] mt-20 p-1 bg-slate-200 shadow-lg border-black rounded-lg flex items-center `} ref={popupRef}>
+    return <div className="fixed left-0 top-0 w-dvw h-dvh  z-50 flex justify-center items-center">
+        <div className={`w-[90vw] lg:w-[800px] lg:max-w-[800px] lg:flex-row flex-col lg:h-[60vh] lg:mt-20 p-1 bg-slate-100 shadow-lg border-black rounded-lg flex items-center `} ref={popupRef}>
 
             {addingData ?
                 <AddDataPopup popupStates={popupStates} modifiedRelation={modifiedRelation} setFilteredData={setFilteredData}
@@ -64,7 +64,7 @@ const DefaultPopup = ({ word, popupStates }) => {
             <span className="text-2xl">{word.original}</span>
         </div>
         {/* RIGHT PART OF THE POPUP */}
-        <div className="flex flex-col   h-full  flex-1">
+        <div className="flex flex-col   w-full h-full  flex-1">
             {/* FIRST LINE (DERIVES) OF RIGHT PART */}
             <RelationshipContainer relation={"derives"} popupStates={popupStates}></RelationshipContainer>
 
@@ -119,14 +119,14 @@ const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsav
     const [secondRelation, setSecondRelation] = useState(0)
     const relationsAll = ["derives", "loans", "homonym"]
     return <>
-        <div className="flex lg:flex-col justify-center items-center flex-1 flex-row">
+        <div className="flex lg:flex-col justify-center items-center text-center flex-1 flex-row">
             <div className="WORD flex flex-col items-center flex-1 m-2">
                 <span className={`p-1 m-1 rounded-xl ${langColors[wordUp.lang][0]}`} > {langColors[wordUp.lang][1]} word</span>
                 <span>{wordUp.key}</span>
                 <span className="text-2xl">{wordUp.original}</span>
             </div>
 
-            <div className="mt-10">{relationsAll.map((rel, rel_id) =>
+            <div className="mt-4 lg:mt-10">{relationsAll.map((rel, rel_id) =>
                 <div key={rel_id}
                     className={`m-2 p-2 text-center rounded-xl ${rel_id === firstRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`}
                     onClick={() => setFirstRelation(rel_id)}> {rel} to</div>)}</div>
@@ -145,13 +145,13 @@ const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsav
             unsavedWordCount={unsavedWordCount}
             setUnsavedWordCount={setUnsavedWordCount} ></CreateWordDiv>
 
-        <div className="flex lg:flex-col justify-center items-center flex-1 flex-row">
+        <div className="flex lg:flex-col justify-center items-center text-center flex-1 flex-row">
         <div className="WORD flex flex-col items-center flex-1 m-2">
             <span className={`p-1 m-1 rounded-xl ${langColors[wordDown.lang][0]}`} > {langColors[wordDown.lang][1]} word</span>
             <span>{wordDown.key}</span>
             <span className="text-2xl">{wordDown.original}</span>
             </div>
-            <div className="mt-10">{relationsAll.map((rel, rel_id) => 
+            <div className="mt-4 lg:mt-10">{relationsAll.map((rel, rel_id) => 
                 <div key={rel_id} 
                 className={`m-2 p-2 text-center rounded-xl ${rel_id === secondRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} 
                 onClick={() => setSecondRelation(rel_id)}> {rel} from</div>)}</div>
@@ -170,7 +170,7 @@ const RelationshipContainer = ({ relation, popupStates }) => {
     const relatedWordSpanStyle = "p-1 m-1 rounded cursor-pointer hover:shadow-md text-center"
 
     return (
-        <div className="flex flex-row justify-around   flex-1  h-full">
+        <div className="flex flex-row justify-around   flex-1   h-full">
             <div key={"rel1"} className={relationContainerClassName}>
                 {relation} from
                 <div className="flex-1 flex flex-col justify-center">{

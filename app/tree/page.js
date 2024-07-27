@@ -6,7 +6,7 @@ import SaveToServerButton from "@/components/saveToServerButton";
 import { DrawRelation, langColors, RecalculateDepthAfter } from "@/functions/functions";
 import Legend from "@/components/legend";
 import Popup from "@/components/popup";
-import { useParams, useRouter , useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 //console.log(data[1]);
 
 const depthMarginPx = 24
@@ -87,19 +87,19 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
       let derivesTo = nodeData["rel"]["derives"]["to"] || []
       let loansTo = nodeData["rel"]["loans"]["to"] || []
       let homonymTo = nodeData["rel"]["homonym"]["to"] || []
-      
+
       let newGoToItems = derivesTo.concat(loansTo, homonymTo)
       // small fix on parent, based on different width children
-      const firstAndLastChildren = [ newGoToItems[0], newGoToItems[newGoToItems.length-1]]
+      const firstAndLastChildren = [newGoToItems[0], newGoToItems[newGoToItems.length - 1]]
       console.log([idsToProcess[idNow], firstAndLastChildren]);
-      let additionalChildrenOffset = widthBelowDict[firstAndLastChildren[0]] - widthBelowDict[firstAndLastChildren[1]] || 0 
+      let additionalChildrenOffset = widthBelowDict[firstAndLastChildren[0]] - widthBelowDict[firstAndLastChildren[1]] || 0
       parentOffset[idsToProcess[idNow]] = additionalChildrenOffset
-      
+
       let finalOffsetForWidthImbalance = (additionalChildrenOffset - removedParentOffset) / 2  // remove parent's offset
-      returnDict[idsToProcess[idNow]] = parentPos + (extraSpaceNeeded + (finalOffsetForWidthImbalance  + widthForThisSibling - parentWidth) / 2 + idNow) * wordWidth * 1.2  // assign their left values
+      returnDict[idsToProcess[idNow]] = parentPos + (extraSpaceNeeded + (finalOffsetForWidthImbalance + widthForThisSibling - parentWidth) / 2 + idNow) * wordWidth * 1.2  // assign their left values
 
       extraSpaceNeeded += (widthForThisSibling - 1)
-      
+
       if (newGoToItems.length > 0) {
 
         goToItems.push(newGoToItems)
@@ -160,13 +160,13 @@ export default function Tree() {
 
   let cluster = 0
   //if(typeof document !== 'undefined'){
-    //let searchParams = new URLSearchParams(document.location.search);
-    let searchParams =  useSearchParams()
-    console.log(searchParams);
-    cluster = searchParams.get("cluster");
+  //let searchParams = new URLSearchParams(document.location.search);
+  let searchParams = useSearchParams()
+  console.log(searchParams);
+  cluster = searchParams.get("cluster");
   //}
 
-  
+
   useEffect(() => {
     const initFetchData = async () => {
       try {
@@ -177,7 +177,7 @@ export default function Tree() {
         setSelectedCluster(cluster);
         setUnsavedWordCount(0);
         setPosDict({});
-        
+
         let newMaxDepthData = newfilteredData.map(x => Math.max(...x.map(y => y.depth)));
         setMaxDepthData(newMaxDepthData);
 
@@ -206,7 +206,7 @@ export default function Tree() {
   const popupRef = useRef();
   const [popupOpen, setPopupOpen] = useState(false)
   const [selectedWord, setSelectedWord] = useState("")
- 
+
 
 
   console.log(filteredData);
@@ -218,31 +218,41 @@ export default function Tree() {
   console.log(posDict);
 
   useEffect(() => {
-    if(dataFetchComplete){
+    if (dataFetchComplete) {
 
       // update max depth info
       let newMaxDepthData = filteredData.map(x => Math.max(...x.map(y => y.depth))) // again multiple clusters
       setMaxDepthData(newMaxDepthData)
-      
-      const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0 ;
-      const depthContainer = document.getElementsByClassName(`depth-container`)[0]?.getBoundingClientRect() || 0 ;
-      
+
+      const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
+      const depthContainer = document.getElementsByClassName(`depth-container`)[0]?.getBoundingClientRect() || 0;
+
       const newPosDict = calculatePositions(filteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData)
       setPosDict(newPosDict)
-      
+
       // console.log(calculateLines(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData,newPosDict))
       setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], depthContainer["width"], newMaxDepthData, newPosDict))
-      
+
       const newLanguageList = filteredData[0].map(x => x.lang)
       setLanguageList([... new Set(newLanguageList)])
-      
+
       setSelectedWord(filteredData[0][0])
-      
+
+
+
+      if (typeof document !== 'undefined') {
+
+        const divToFocus = document.querySelectorAll(".word-card-individual")[0]
+        //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        console.log("FOCUSING", divToFocus);
+        divToFocus.scrollLeft += 1000
+      }
+
     }
   }, [filteredData])
 
   useEffect(() => { setPopupOpen(isInsertMode) }, [isInsertMode]) // is insertion mode is activated, trigger popup
-  useEffect(() => { if(!popupOpen){setHoveredPair([-1,-1])} }, [popupOpen]) // is insertion mode is activated, trigger popup
+  useEffect(() => { if (!popupOpen) { setHoveredPair([-1, -1]) } }, [popupOpen]) // when closing the popup, reset hovered pair
   useEffect(() => {
     if (mustDepthRecalculate > -1) {
       console.log("CALCULATING DEPTH");
@@ -252,74 +262,80 @@ export default function Tree() {
   }, [mustDepthRecalculate])
 
 
+
+
   return (
     <Suspense>
 
-    
-    
-    <main className={`flex min-h-screen flex-col items-center place-content-start p-16 overflow-auto `}>
-      {popupOpen &&
-        <Popup word={selectedWord} popupRef={popupRef}
-          setPopupOpen={setPopupOpen}
-          setSelectedWord={setSelectedWord}
-          allWords={filteredData[0]}
-          setFilteredData={setFilteredData}
-          unsavedWordCount={unsavedWordCount}
-          setUnsavedWordCount={setUnsavedWordCount}
-          isInsertMode={isInsertMode}
-          setIsInsertMode={setIsInsertMode}
-          setMustDepthRecalculate={setMustDepthRecalculate}
-          hoveredPair={hoveredPair} ></Popup>}
-      <Legend languages={languageList}></Legend>
-      <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
 
 
-      <div className="z-10 mb-12 max-w-5xl w-full items-center justify-center   font-mono text-sm lg:flex">
-        
-      
-      </div>
+      <main className={`flex min-h-screen flex-col items-center place-content-start p-16 overflow-auto `}>
+        {popupOpen &&
+          <Popup word={selectedWord} popupRef={popupRef}
+            setPopupOpen={setPopupOpen}
+            setSelectedWord={setSelectedWord}
+            allWords={filteredData[0]}
+            setFilteredData={setFilteredData}
+            unsavedWordCount={unsavedWordCount}
+            setUnsavedWordCount={setUnsavedWordCount}
+            isInsertMode={isInsertMode}
+            setIsInsertMode={setIsInsertMode}
+            setMustDepthRecalculate={setMustDepthRecalculate}
+            hoveredPair={hoveredPair} ></Popup>}
+
+        <div className="fixed z-50 max-w-[98vw] right-0 top-0 flex flex-row">
+          <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
+          <Legend languages={languageList}></Legend>
+        </div>
 
 
-      <div className={`min-w-full flex self-start ${popupOpen && "blur-xs"}`} key={selectedCluster}>
 
-        {
-          filteredData.map((dataCluster, clusterIndex) =>
-            <div className="  mb-32  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
-              {
-                Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
-                  <div className={`depth-container flex relative min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd + "_" + selectedCluster}>{ // each depth here
-                    dataCluster.filter(a => a.depth === x).map((x, i) =>
-                      <WordCard x={x} key={rowInd + "_" + selectedCluster + "_" + i}
-                        pos={posDict}
-                        selectedCluster={selectedCluster}
-                        setSelectedWord={setSelectedWord}
-                        setPopupOpen={setPopupOpen}
-                        hoveredPair={hoveredPair}></WordCard>)
-                  }
-                    {
-                      lines[0][rowInd]?.map((line, lineIndex) =>
-                        <DrawRelation key={rowInd + "-" + lineIndex}
-                          x1={line[0]} x2={line[1]}
-                          heightOffset={line[2]}
-                          y={depthMarginPx}
-                          pair={lines[1][rowInd][lineIndex]}
-                          setHoveredPair={setHoveredPair}
-                          isInsertMode={isInsertMode}
-                          setIsInsertMode={setIsInsertMode}></DrawRelation>
-                      )
+        <div className="z-10 mb-40 max-w-5xl w-full items-center justify-center   font-mono text-sm lg:flex">
+
+
+        </div>
+
+
+        <div className={`min-w-full flex self-start ${popupOpen && "blur-xs"}`} key={selectedCluster}>
+
+          {
+            filteredData.map((dataCluster, clusterIndex) =>
+              <div className="  mb-32  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
+                {
+                  Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
+                    <div className={`depth-container flex relative min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd + "_" + selectedCluster}>{ // each depth here
+                      dataCluster.filter(a => a.depth === x).map((x, i) =>
+                        <WordCard x={x} key={rowInd + "_" + selectedCluster + "_" + i}
+                          pos={posDict}
+                          selectedCluster={selectedCluster}
+                          setSelectedWord={setSelectedWord}
+                          setPopupOpen={setPopupOpen}
+                          hoveredPair={hoveredPair}></WordCard>)
                     }
-                  </div>)
-              }
+                      {
+                        lines[0][rowInd]?.map((line, lineIndex) =>
+                          <DrawRelation key={rowInd + "-" + lineIndex}
+                            x1={line[0]} x2={line[1]}
+                            heightOffset={line[2]}
+                            y={depthMarginPx}
+                            pair={lines[1][rowInd][lineIndex]}
+                            setHoveredPair={setHoveredPair}
+                            isInsertMode={isInsertMode}
+                            setIsInsertMode={setIsInsertMode}></DrawRelation>
+                        )
+                      }
+                    </div>)
+                }
 
 
 
-            </div>
-          )
-        }
+              </div>
+            )
+          }
 
 
-      </div>
-    </main>
+        </div>
+      </main>
     </Suspense>
   );
 }
