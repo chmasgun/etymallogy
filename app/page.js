@@ -102,10 +102,10 @@ export default function Home() {
   return (
     <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className}`}>
 
-      <div className="bg-gray-200 z-10  w-full  items-center justify-center    text-sm lg:flex flex-col">   {/* max-w-5xl*/}
-        <div className="flex flex-col items-center lg:flex-row left-0 top-0 flex w-full justify-center border-b
-         pb-6 pt-8 mt-32 mb-96 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  
-        lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30"> {/* fixed bg-gradient-to-b   border-gray-300 
+      <div className="bg-gray-200 z-10  w-full  items-center justify-center  dark:bg-zinc-800  text-sm lg:flex flex-col">   {/* max-w-5xl*/}
+        <div className="flex flex-col items-center lg:flex-row left-0 top-0 flex w-full justify-center  
+         pb-6 pt-8 mt-24 mb-96 backdrop-blur-2xl  dark:bg-zinc-800 dark:from-inherit lg:static lg:w-auto  
+        lg:rounded-xl   lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800"> {/* fixed bg-gradient-to-b   border-gray-300 
           from-zinc-200 */}
 
           <span className="lg:mr-32  font-bold text-4xl">Etymallogy</span>
@@ -113,8 +113,8 @@ export default function Home() {
             "لغة", "vin", "sorbetto", "λόγος", "lisan", "ستاره", "stella", "ἀστήρ"]}></Etymoball>
             </div>
 
-        <div className="bg-slate-300 left-0 right-0 w-full flex flex-col h-[100svh]">
-          <div className="bg-gradient-to-b from-gray-200 h-1/3 flex flex-col justify-center">
+        <div className="bg-slate-300 dark:bg-zinc-800 left-0 right-0 w-full flex flex-col h-[100svh]">
+          <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center">
               <SearchBar searchHandle={searchHandle} 
                           searchText={searchText}
                           isSearchDropdownOpen={isSearchDropdownOpen}
@@ -161,7 +161,7 @@ const SearchBar = ({searchHandle, searchText, isSearchDropdownOpen, resetSearch,
                                     onClick={() => resetSearch()}><span> &#215; </span></div> : <></>}
       {isSearchDropdownOpen ? <div className="flex absolute flex-col w-full justify-center text-lg bg-gray-200 rounded-b-xl overflow-auto">
         {searchCandidatesAfterFilter.slice(0,maxSearchResults).map((x,i) =>
-          <span key={i} className="p-2 lg:pl-6 hover:bg-gray-300 flex  justify-between" onClick={() => dropdownItemClickHandle(i)}>
+          <span key={i} className="p-2 lg:pl-6 dark:bg-gray-500 dark:hover:bg-gray-400  hover:bg-gray-300 flex  justify-between" onClick={() => dropdownItemClickHandle(i)}>
             <span>{x[0]}</span>
             <span className={`right italic mr-2 lg:mr-4 ${langColors[x[1]][2]}`}>{langColors[x[1]][1]}</span>
             </span>
