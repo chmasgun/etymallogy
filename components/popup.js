@@ -10,7 +10,7 @@ export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, a
     const [addingData, setAddingData] = useState(false)
     //const [insertingData, setInsertingData] = useState(false)
     const [modifiedRelation, setModifiedRelation] = useState(["", ""])
-    const popupStates = [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation,setMustDepthRecalculate]
+    const popupStates = [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate]
 
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, a
     }, [popupRef]);
 
     return <div className="fixed left-0 top-0 w-dvw h-dvh  z-30 flex justify-center items-center">
-        <div className={`w-[800px] max-w-[800px] h-[60vh] mt-20 p-1 bg-slate-200 shadow-lg border-black rounded-lg flex items-center `} ref={popupRef}>
+        <div className={`lg:w-[800px] lg:max-w-[800px] lg:flex-row flex-col lg:h-[60vh] mt-20 p-1 bg-slate-200 shadow-lg border-black rounded-lg flex items-center `} ref={popupRef}>
 
             {addingData ?
                 <AddDataPopup popupStates={popupStates} modifiedRelation={modifiedRelation} setFilteredData={setFilteredData}
@@ -79,7 +79,7 @@ const DefaultPopup = ({ word, popupStates }) => {
 
 
 const AddDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsavedWordCount, setUnsavedWordCount }) => {
-    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation,setMustDepthRecalculate] = popupStates
+    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate] = popupStates
 
     const [newWordData, setNewWordData] = useState(null)
     const newId = allWords.length
@@ -107,7 +107,7 @@ const AddDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsavedW
 }
 
 const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsavedWordCount, setUnsavedWordCount, hoveredPair, setIsInsertMode }) => {
-    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation,setMustDepthRecalculate] = popupStates
+    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate] = popupStates
 
     const [newWordData, setNewWordData] = useState(null)
     const newId = allWords.length
@@ -119,11 +119,17 @@ const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsav
     const [secondRelation, setSecondRelation] = useState(0)
     const relationsAll = ["derives", "loans", "homonym"]
     return <>
-        <div className="flex flex-col justify-center items-center flex-1">
-            <span className={`p-1 m-1 rounded-xl ${langColors[wordUp.lang][0]}`} > {langColors[wordUp.lang][1]} word</span>
-            <span>{wordUp.key}</span>
-            <span className="text-2xl">{wordUp.original}</span>
-            <div className="mt-10">{relationsAll.map((rel, rel_id) => <div key={rel_id} className={`m-2 p-2 text-center rounded-xl ${rel_id === firstRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} onClick={() => setFirstRelation(rel_id)}> {rel} to</div>)}</div>
+        <div className="flex lg:flex-col justify-center items-center flex-1 flex-row">
+            <div className="WORD flex flex-col items-center flex-1 m-2">
+                <span className={`p-1 m-1 rounded-xl ${langColors[wordUp.lang][0]}`} > {langColors[wordUp.lang][1]} word</span>
+                <span>{wordUp.key}</span>
+                <span className="text-2xl">{wordUp.original}</span>
+            </div>
+
+            <div className="mt-10">{relationsAll.map((rel, rel_id) =>
+                <div key={rel_id}
+                    className={`m-2 p-2 text-center rounded-xl ${rel_id === firstRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`}
+                    onClick={() => setFirstRelation(rel_id)}> {rel} to</div>)}</div>
         </div>
 
         <CreateWordDiv newWordData={newWordData} setNewWordData={setNewWordData}
@@ -139,11 +145,16 @@ const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, unsav
             unsavedWordCount={unsavedWordCount}
             setUnsavedWordCount={setUnsavedWordCount} ></CreateWordDiv>
 
-        <div className="flex flex-col justify-center items-center flex-1">
+        <div className="flex lg:flex-col justify-center items-center flex-1 flex-row">
+        <div className="WORD flex flex-col items-center flex-1 m-2">
             <span className={`p-1 m-1 rounded-xl ${langColors[wordDown.lang][0]}`} > {langColors[wordDown.lang][1]} word</span>
             <span>{wordDown.key}</span>
             <span className="text-2xl">{wordDown.original}</span>
-            <div className="mt-10">{relationsAll.map((rel, rel_id) => <div key={rel_id} className={`m-2 p-2 text-center rounded-xl ${rel_id === secondRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} onClick={() => setSecondRelation(rel_id)}> {rel} from</div>)}</div>
+            </div>
+            <div className="mt-10">{relationsAll.map((rel, rel_id) => 
+                <div key={rel_id} 
+                className={`m-2 p-2 text-center rounded-xl ${rel_id === secondRelation ? "bg-orange-200 border-black border animate-bounce" : ""}`} 
+                onClick={() => setSecondRelation(rel_id)}> {rel} from</div>)}</div>
 
         </div>
     </>

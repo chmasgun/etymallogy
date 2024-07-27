@@ -242,6 +242,7 @@ export default function Tree() {
   }, [filteredData])
 
   useEffect(() => { setPopupOpen(isInsertMode) }, [isInsertMode]) // is insertion mode is activated, trigger popup
+  useEffect(() => { if(!popupOpen){setHoveredPair([-1,-1])} }, [popupOpen]) // is insertion mode is activated, trigger popup
   useEffect(() => {
     if (mustDepthRecalculate > -1) {
       console.log("CALCULATING DEPTH");
@@ -256,7 +257,7 @@ export default function Tree() {
 
     
     
-    <main className={`flex min-h-screen flex-col items-center place-content-start p-16 `}>
+    <main className={`flex min-h-screen flex-col items-center place-content-start p-16 overflow-auto `}>
       {popupOpen &&
         <Popup word={selectedWord} popupRef={popupRef}
           setPopupOpen={setPopupOpen}

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 
 
@@ -50,7 +50,11 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
         }
 
     }
-    console.log(clicked, pair);
+    useEffect(() => {
+        setLineColor("#111")
+        setLineWidth(1)
+    }, [isInsertMode])
+    
     return <svg className="absolute overflow-visible z-0 w-1 h-1">
         <SteppedLine x={[x1, x2]} heightOffset={heightOffset} y={y} lineColor={lineColor} lineWidth={lineWidth}
             setClicked={setClicked} setHoverColor={setHoverColor} revertHoverColor={revertHoverColor} setIsInsertMode={setIsInsertMode}></SteppedLine>
