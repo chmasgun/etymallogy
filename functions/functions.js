@@ -9,24 +9,25 @@ const langColors = {
     "PGER": ["bg-gradient-to-bl from-orange-300", "Proto-Germanic", "text-gradient-to-bl from-orange-300"],
 
 
-    "AR": ["bg-lime-500", "Arabic","text-lime-500"],
-    "TR": ["bg-red-300", "Turkish","text-red-300"],
-    "EN": ["bg-sky-300", "English","text-sky-300"],
-    "FR": ["bg-indigo-300", "French","text-indigo-300"],
-    "LA": ["bg-red-600", "Latin","text-red-600"],
-    "IT": ["bg-green-400", "Italian","text-green-400"],
-    "GR": ["bg-sky-500", "Greek","text-sky-500"],
-    "DE": ["bg-orange-400", "German","text-orange-400"],
-    "FA": ["bg-yellow-500", "Persian","text-yellow-500"]
-    , "DU": ["bg-orange-600", "Dutch","text-orange-600"],
+    "AR": ["bg-lime-500", "Arabic", "text-lime-500"],
+    "TR": ["bg-red-300", "Turkish", "text-red-300"],
+    "EN": ["bg-sky-300", "English", "text-sky-300"],
+    "FR": ["bg-indigo-300", "French", "text-indigo-300"],
+    "LA": ["bg-red-600", "Latin", "text-red-600"],
+    "IT": ["bg-green-400", "Italian", "text-green-400"],
+    "GR": ["bg-sky-500", "Greek", "text-sky-500"],
+    "DE": ["bg-orange-400", "German", "text-orange-400"],
+    "FA": ["bg-yellow-500", "Persian", "text-yellow-500"]
+    , "DU": ["bg-orange-600", "Dutch", "text-orange-600"],
 }
 
 
-const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair, isInsertMode, setIsInsertMode }) => {
+const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair, isInsertMode, setIsInsertMode, highlightedWords  }) => {
 
     const [lineColor, setLineColor] = useState("#111")
     const [lineWidth, setLineWidth] = useState(1)
     const [clicked, setClicked] = useState(false)
+    const [lineOpacity, setLineOpacity] = useState( highlightedWords.includes(pair[0]) & highlightedWords.includes(pair[1]) ? 1 : 0.1)
 
     const setHoverColor = () => {
         setLineColor("#f77")
@@ -35,16 +36,16 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
         console.log(pair);
     }
     const revertHoverColor = (e) => {
-        if(!isInsertMode){
+        if (!isInsertMode) {
 
             console.log(e)
             console.log([e.relatedTarget, e.toElement]);
-            
+
             setLineColor("#111")
             setLineWidth(1)
-            console.log("LEFTTTTTTTTTTTTTT",clicked, pair);
+            console.log("LEFTTTTTTTTTTTTTT", clicked, pair);
             if (!clicked) {
-                
+
                 setHoveredPair([-1, -1])
             }
         }
@@ -54,9 +55,9 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
         setLineColor("#111")
         setLineWidth(1)
     }, [isInsertMode])
-    
+
     return <svg className="absolute overflow-visible z-0 w-1 h-1">
-        <SteppedLine x={[x1, x2]} heightOffset={heightOffset} y={y} lineColor={lineColor} lineWidth={lineWidth}
+        <SteppedLine x={[x1, x2]} heightOffset={heightOffset} y={y} lineColor={lineColor} lineWidth={lineWidth} lineOpacity={lineOpacity}
             setClicked={setClicked} setHoverColor={setHoverColor} revertHoverColor={revertHoverColor} setIsInsertMode={setIsInsertMode}></SteppedLine>
 
     </svg>
@@ -64,45 +65,7 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
 }
 
 
-const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
-    const [x1, x2] = x
-    return <>
-     <defs>
-            <marker
-                id="arrow"
-                viewBox="0 0 10 10"
-                refX="0"
-                refY="5"
-                markerWidth="6"
-                markerHeight="6"
-                markerUnits={"userSpaceOnUse"}
-                orient="auto-start-reverse"
-            >
-
-                <path d="M 0 0 L 10 5 L 0 10 z" />
-            </marker>
-        </defs>
-        <line
-            x1={x1}
-            y1={heightOffset}
-            x2={x2}
-            y2={heightOffset + y * 2 - 8 }
-            stroke={lineColor}
-            strokeWidth={lineWidth}
-            markerEnd="url(#arrow)"></line>
-        <line className="z-10"
-            onMouseEnter={() => setHoverColor()}
-            onMouseLeave={(e) => revertHoverColor(e)}
-            onClick={(e) => { setClicked(true); setIsInsertMode(true); setTimeout(() => setClicked(false), 20) }}
-            x1={x1}
-            y1={heightOffset}
-            x2={x2}
-            y2={heightOffset + y * 2  - 8 }
-            stroke={"transparent"}
-            strokeWidth={20}></line>
-    </>
-}
-const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
+const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
     const [x1, x2] = x
     return <>
         <defs>
@@ -115,6 +78,46 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, set
                 markerHeight="6"
                 markerUnits={"userSpaceOnUse"}
                 orient="auto-start-reverse"
+                opacity={lineOpacity}
+            >
+
+                <path d="M 0 0 L 10 5 L 0 10 z" />
+            </marker>
+        </defs>
+        <line
+            x1={x1}
+            y1={heightOffset}
+            x2={x2}
+            y2={heightOffset + y * 2 - 8}
+            stroke={lineColor}
+            strokeWidth={lineWidth}
+            opacity={lineOpacity}
+            markerEnd="url(#arrow)"></line>
+        <line className="z-10"
+            onMouseEnter={() => setHoverColor()}
+            onMouseLeave={(e) => revertHoverColor(e)}
+            onClick={(e) => { setClicked(true); setIsInsertMode(true); setTimeout(() => setClicked(false), 20) }}
+            x1={x1}
+            y1={heightOffset}
+            x2={x2}
+            y2={heightOffset + y * 2 - 8}
+            stroke={"transparent"}
+            strokeWidth={20}></line>
+    </>
+}
+const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
+    const [x1, x2] = x
+    return <>
+        <defs>
+            <marker
+                id="arrow"
+                viewBox="0 0 10 10"
+                refX="0"
+                refY="5"
+                markerWidth="6"
+                markerHeight="6"
+                markerUnits={"userSpaceOnUse"}
+                orient="auto-start-reverse" 
             >
 
                 <path d="M 0 0 L 10 5 L 0 10 z" />
@@ -127,7 +130,8 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, set
             x2={x1}
             y2={heightOffset + y}
             stroke={lineColor}
-            strokeWidth={lineWidth}></line>
+            strokeWidth={lineWidth}
+            opacity={lineOpacity}></line>
         <line
 
             x1={x1}
@@ -135,7 +139,8 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, set
             x2={x2}
             y2={heightOffset + y}
             stroke={lineColor}
-            strokeWidth={lineWidth}></line>
+            strokeWidth={lineWidth}
+            opacity={lineOpacity}></line>
         <line
 
             x1={x2}
@@ -144,6 +149,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, set
             y2={heightOffset + y * 2 - 8}
             stroke={lineColor}
             strokeWidth={lineWidth}
+            opacity={lineOpacity}
             markerEnd="url(#arrow)"
         ></line>
         <line className="z-10"
@@ -167,7 +173,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, set
             stroke={"transparent"}
             strokeWidth={20}>
         </line>
-            
+
     </>
 }
 
@@ -240,36 +246,36 @@ function RecalculateDepthAfter(allWords, nodeId, setFilteredData) {
 async function FetchSearchWords(textkey) {
     let wordsData = []
     try {
-      const response = await fetch('/api/search-word-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-  
-        },
-        body: JSON.stringify({ key: textkey })
-      });
-  
-      if (!response.ok) {
-        const message = await response.text();
-        console.log(message);
-        
-      } else {
-        const responseResolved = await response;
-        const data = await responseResolved.json();
-        const message = data.message;
-        console.log(["HEY2", data.responseData]);
-        wordsData = data.responseData.searchData[0].data
-        console.log(["HEY", wordsData]);
-  
-        // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
-      }
-  
+        const response = await fetch('/api/search-word-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+
+            },
+            body: JSON.stringify({ key: textkey })
+        });
+
+        if (!response.ok) {
+            const message = await response.text();
+            console.log(message);
+
+        } else {
+            const responseResolved = await response;
+            const data = await responseResolved.json();
+            const message = data.message;
+            console.log(["HEY2", data.responseData]);
+            wordsData = data.responseData.searchData[0].data
+            console.log(["HEY", wordsData]);
+
+            // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
+        }
+
     } catch (error) {
-      // Handle any errors that occur during the request
-      console.error(error);
+        // Handle any errors that occur during the request
+        console.error(error);
     }
     // Pass data to the page via props
     return wordsData
-  }
+}
 
-export { DrawRelation, langColors, RecalculateDepthAfter,FetchSearchWords }
+export { DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords }

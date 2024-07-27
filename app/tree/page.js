@@ -206,7 +206,7 @@ export default function Tree() {
   const popupRef = useRef();
   const [popupOpen, setPopupOpen] = useState(false)
   const [selectedWord, setSelectedWord] = useState("")
-
+  const [highlightedWords, setHighlightedWords] = useState([13,5,4,10])
 
 
   console.log(filteredData);
@@ -310,7 +310,8 @@ export default function Tree() {
                           selectedCluster={selectedCluster}
                           setSelectedWord={setSelectedWord}
                           setPopupOpen={setPopupOpen}
-                          hoveredPair={hoveredPair}></WordCard>)
+                          hoveredPair={hoveredPair}
+                          highlightedWords={highlightedWords}></WordCard>)
                     }
                       {
                         lines[0][rowInd]?.map((line, lineIndex) =>
@@ -321,7 +322,8 @@ export default function Tree() {
                             pair={lines[1][rowInd][lineIndex]}
                             setHoveredPair={setHoveredPair}
                             isInsertMode={isInsertMode}
-                            setIsInsertMode={setIsInsertMode}></DrawRelation>
+                            setIsInsertMode={setIsInsertMode}
+                            highlightedWords={highlightedWords}></DrawRelation>
                         )
                       }
                     </div>)

@@ -54,3 +54,9 @@
 - aptal next router saatlerce uğraştırdı.
 - routing'i tamamladım
 - anasayfada etymoball'u üst kısma aldım
+
+2024-07-27
+- mobile'de insert ekranında bir yere tıklayınca, garip bir şekilde onMouseLeave tetikleniyordu. Ona geçici bir flag çözümü ekledim 
+- popup'da responsiveness çalıştım
+- save buttonunu legend ile sibling yapıp fixed yaptım, ufak bir backdrop filter blur ekledim
+- highlight için FE kısmına başladım
