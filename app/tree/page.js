@@ -303,6 +303,7 @@ export default function Tree() {
                           y={depthMarginPx}
                           pair={lines[1][rowInd][lineIndex]}
                           setHoveredPair={setHoveredPair}
+                          isInsertMode={isInsertMode}
                           setIsInsertMode={setIsInsertMode}></DrawRelation>
                       )
                     }

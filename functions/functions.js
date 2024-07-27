@@ -22,7 +22,7 @@ const langColors = {
 }
 
 
-const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair, setIsInsertMode }) => {
+const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair, isInsertMode, setIsInsertMode }) => {
 
     const [lineColor, setLineColor] = useState("#111")
     const [lineWidth, setLineWidth] = useState(1)
@@ -35,19 +35,22 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
         console.log(pair);
     }
     const revertHoverColor = (e) => {
-        console.log(e)
-        console.log([e.relatedTarget, e.toElement]);
+        if(!isInsertMode){
 
-        setLineColor("#111")
-        setLineWidth(1)
-        console.log("LEFTTTTTTTTTTTTTT");
-        if (!clicked) {
-
-            setHoveredPair([-1, -1])
+            console.log(e)
+            console.log([e.relatedTarget, e.toElement]);
+            
+            setLineColor("#111")
+            setLineWidth(1)
+            console.log("LEFTTTTTTTTTTTTTT",clicked, pair);
+            if (!clicked) {
+                
+                setHoveredPair([-1, -1])
+            }
         }
 
     }
-
+    console.log(clicked, pair);
     return <svg className="absolute overflow-visible z-0 w-1 h-1">
         <SteppedLine x={[x1, x2]} heightOffset={heightOffset} y={y} lineColor={lineColor} lineWidth={lineWidth}
             setClicked={setClicked} setHoverColor={setHoverColor} revertHoverColor={revertHoverColor} setIsInsertMode={setIsInsertMode}></SteppedLine>
@@ -85,7 +88,7 @@ const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, setH
             markerEnd="url(#arrow)"></line>
         <line className="z-10"
             onMouseEnter={() => setHoverColor()}
-            onMouseOut={(e) => revertHoverColor(e)}
+            onMouseLeave={(e) => revertHoverColor(e)}
             onClick={(e) => { setClicked(true); setIsInsertMode(true); setTimeout(() => setClicked(false), 20) }}
             x1={x1}
             y1={heightOffset}
@@ -141,7 +144,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, set
         ></line>
         <line className="z-10"
             onMouseEnter={() => setHoverColor()}
-            onMouseOut={(e) => revertHoverColor(e)}
+            onMouseLeave={(e) => revertHoverColor(e)}
             onClick={(e) => { setClicked(true); setIsInsertMode(true); setTimeout(() => setClicked(false), 20) }}
             x1={x1}
             y1={heightOffset + y}
@@ -151,7 +154,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, setClicked, set
             strokeWidth={20}></line>
         <line className="z-10"
             onMouseEnter={() => setHoverColor()}
-            onMouseOut={(e) => revertHoverColor(e)}
+            onMouseLeave={(e) => revertHoverColor(e)}
             onClick={(e) => { setClicked(true); setIsInsertMode(true); setTimeout(() => setClicked(false), 20) }}
             x1={x2}
             y1={heightOffset + y}
