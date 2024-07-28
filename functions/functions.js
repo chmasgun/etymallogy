@@ -24,7 +24,7 @@ const langColors = {
 
 const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair, isInsertMode, setIsInsertMode, highlightedWords  }) => {
 
-    const [lineColor, setLineColor] = useState("#111")
+    const [lineColor, setLineColor] = useState("#777")
     const [lineWidth, setLineWidth] = useState(1)
     const [clicked, setClicked] = useState(false)
     const [lineOpacity, setLineOpacity] = useState( highlightedWords.includes(pair[0]) & highlightedWords.includes(pair[1]) ? 1 : 0.1)
@@ -41,7 +41,7 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
             console.log(e)
             console.log([e.relatedTarget, e.toElement]);
 
-            setLineColor("#111")
+            setLineColor("#777")
             setLineWidth(1)
             console.log("LEFTTTTTTTTTTTTTT", clicked, pair);
             if (!clicked) {
@@ -52,9 +52,13 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
 
     }
     useEffect(() => {
-        setLineColor("#111")
+        setLineColor("#777")
         setLineWidth(1)
     }, [isInsertMode])
+
+    useEffect(() => {
+        setLineOpacity(highlightedWords.includes(pair[0]) & highlightedWords.includes(pair[1]) ? 1 : 0.1)
+    }, [highlightedWords])
 
     return <svg className="absolute overflow-visible z-0 w-1 h-1">
         <SteppedLine x={[x1, x2]} heightOffset={heightOffset} y={y} lineColor={lineColor} lineWidth={lineWidth} lineOpacity={lineOpacity}
@@ -78,7 +82,9 @@ const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, set
                 markerHeight="6"
                 markerUnits={"userSpaceOnUse"}
                 orient="auto-start-reverse"
-                opacity={lineOpacity}
+                
+                stroke={lineColor}
+                fill={lineColor}
             >
 
                 <path d="M 0 0 L 10 5 L 0 10 z" />
@@ -91,6 +97,7 @@ const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, set
             y2={heightOffset + y * 2 - 8}
             stroke={lineColor}
             strokeWidth={lineWidth}
+            fill={lineColor}
             opacity={lineOpacity}
             markerEnd="url(#arrow)"></line>
         <line className="z-10"
@@ -118,6 +125,9 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, se
                 markerHeight="6"
                 markerUnits={"userSpaceOnUse"}
                 orient="auto-start-reverse" 
+                stroke={lineColor}
+                fill={lineColor}
+                
             >
 
                 <path d="M 0 0 L 10 5 L 0 10 z" />

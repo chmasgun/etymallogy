@@ -2,7 +2,7 @@ import { langColors } from "@/functions/functions";
 import { useEffect, useState } from "react";
 import CreateWordDiv from "./createWordDiv";
 
-const relationContainerClassName = "relative flex-1 flex flex-col justify-center items-center border border-slate-300 shadow-md m-2 rounded"
+const relationContainerClassName = "relative flex-1 flex flex-col justify-center items-center border border-slate-300 shadow-md m-2 rounded dark:!border-slate-500"
 
 export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, allWords, setFilteredData,
     unsavedWordCount, setUnsavedWordCount, isInsertMode, setIsInsertMode, setMustDepthRecalculate, hoveredPair }) {
@@ -30,8 +30,8 @@ export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, a
         };
     }, [popupRef]);
 
-    return <div className="fixed left-0 top-0 w-dvw h-dvh  z-50 flex justify-center items-center">
-        <div className={`w-[90vw] lg:w-[800px] lg:max-w-[800px] lg:flex-row flex-col lg:h-[60vh] lg:mt-20 p-1 bg-slate-100 shadow-lg border-black rounded-lg flex items-center `} ref={popupRef}>
+    return <div className="fixed left-0 top-0 w-dvw h-dvh  z-50 flex justify-center items-center ">
+        <div className={`w-[90vw] lg:w-[800px] lg:max-w-[800px] lg:flex-row flex-col lg:h-[60vh] lg:mt-20 p-1 bg-slate-100 shadow-lg border-black rounded-lg flex items-center dark:!bg-slate-600`} ref={popupRef}>
 
             {addingData ?
                 <AddDataPopup popupStates={popupStates} modifiedRelation={modifiedRelation} setFilteredData={setFilteredData}

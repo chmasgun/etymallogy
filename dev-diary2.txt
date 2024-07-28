@@ -60,3 +60,9 @@
 - popup'da responsiveness çalıştım
 - save buttonunu legend ile sibling yapıp fixed yaptım, ufak bir backdrop filter blur ekledim
 - highlight için FE kısmına başladım
+- anasayfada dark mode çalıştım
+
+2024-07-28
+- view ve edit mode ayırdım. Toggle ekledim
+- view modda tıklanan kelimenin parenları highlight ediliyor.
+- tree için dark mod çalıştım

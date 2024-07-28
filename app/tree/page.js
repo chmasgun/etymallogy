@@ -6,6 +6,7 @@ import SaveToServerButton from "@/components/saveToServerButton";
 import { DrawRelation, langColors, RecalculateDepthAfter } from "@/functions/functions";
 import Legend from "@/components/legend";
 import Popup from "@/components/popup";
+import ModeToggle from "@/components/modeToggle";
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 //console.log(data[1]);
 
@@ -154,6 +155,33 @@ const calculateLines = (data, wordWidth, wordHeight, depthWidth, totalDepth, pos
 
 
 export default function Tree() {
+  const findHighlightedWords = (wordData) => {
+  
+    let newHighlightedWords = [wordData.id]
+  
+    let derivesFrom = wordData["rel"]["derives"]["from"] || []
+    let loansFrom = wordData["rel"]["loans"]["from"] || []
+    let homonymFrom = wordData["rel"]["homonym"]["from"] || []
+  
+    let goToItems = derivesFrom.concat(loansFrom, homonymFrom)
+    while (goToItems.length > 0) {
+      let nodeData = filteredData[0][goToItems[0]]//data.filter(x => x.id === idsToProcess[idNow])
+      console.log(filteredData, goToItems, nodeData);
+      derivesFrom = nodeData["rel"]["derives"]["from"] || []
+      loansFrom = nodeData["rel"]["loans"]["from"] || []
+      homonymFrom = nodeData["rel"]["homonym"]["from"] || []
+      
+      let newGoToItems = derivesFrom.concat(loansFrom, homonymFrom)
+      newHighlightedWords.push(goToItems[0])
+      goToItems.push(...newGoToItems)
+  
+      goToItems.shift()
+    }
+  
+    setHighlightedWords([...newHighlightedWords])
+  
+  
+  }
 
   const router = useRouter();
   //const searchParams =  useSearchParams()
@@ -206,7 +234,8 @@ export default function Tree() {
   const popupRef = useRef();
   const [popupOpen, setPopupOpen] = useState(false)
   const [selectedWord, setSelectedWord] = useState("")
-  const [highlightedWords, setHighlightedWords] = useState([13,5,4,10])
+  const [highlightedWords, setHighlightedWords] = useState([])
+  const [editModeToggle, setEditModeToggle] = useState(0)
 
 
   console.log(filteredData);
@@ -216,6 +245,7 @@ export default function Tree() {
   console.log(selectedWord)
   console.log(selectedCluster);
   console.log(posDict);
+  console.log(highlightedWords);
 
   useEffect(() => {
     if (dataFetchComplete) {
@@ -242,10 +272,10 @@ export default function Tree() {
 
       if (typeof document !== 'undefined') {
 
-        const divToFocus = document.querySelectorAll(".word-card-individual")[0]
+        const divToFocus = document.querySelectorAll(".the-container")[0]
         //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        console.log("FOCUSING", divToFocus);
-        divToFocus.scrollLeft += 1000
+        console.log("FOCUSING", divToFocus.getBoundingClientRect());
+        divToFocus.scrollLeft  = 500
       }
 
     }
@@ -269,7 +299,7 @@ export default function Tree() {
 
 
 
-      <main className={`flex min-h-screen flex-col items-center place-content-start p-16 overflow-auto `}>
+      <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 overflow-auto dark:bg-gray-900 `}>
         {popupOpen &&
           <Popup word={selectedWord} popupRef={popupRef}
             setPopupOpen={setPopupOpen}
@@ -283,8 +313,13 @@ export default function Tree() {
             setMustDepthRecalculate={setMustDepthRecalculate}
             hoveredPair={hoveredPair} ></Popup>}
 
-        <div className="fixed z-50 max-w-[98vw] right-0 top-0 flex flex-row">
-          <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
+        <div className="fixed z-50 max-w-[98vw] right-0 top-0 flex flex-row justify-center">
+          <div className="flex flex-col items-center">
+
+
+            <ModeToggle editModeToggle={editModeToggle} setEditModeToggle={setEditModeToggle} ></ModeToggle>
+            <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
+          </div>
           <Legend languages={languageList}></Legend>
         </div>
 
@@ -296,11 +331,11 @@ export default function Tree() {
         </div>
 
 
-        <div className={`min-w-full flex self-start ${popupOpen && "blur-xs"}`} key={selectedCluster}>
+        <div className={`outer-container min-w-full flex self-start ${popupOpen && "blur-xs"}`} key={selectedCluster}>
 
           {
             filteredData.map((dataCluster, clusterIndex) =>
-              <div className="  mb-32  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
+              <div className=" tree-container mb-32  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
                 {
                   Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
                     <div className={`depth-container flex relative min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd + "_" + selectedCluster}>{ // each depth here
@@ -311,7 +346,9 @@ export default function Tree() {
                           setSelectedWord={setSelectedWord}
                           setPopupOpen={setPopupOpen}
                           hoveredPair={hoveredPair}
-                          highlightedWords={highlightedWords}></WordCard>)
+                          highlightedWords={highlightedWords}
+                          editModeToggle={editModeToggle}
+                          findHighlightedWords={findHighlightedWords} ></WordCard>)
                     }
                       {
                         lines[0][rowInd]?.map((line, lineIndex) =>
