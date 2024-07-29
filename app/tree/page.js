@@ -56,7 +56,7 @@ export default function Tree() {
         setSelectedCluster(cluster);
         setUnsavedWordCount(0);
         setWordToHighlight(highlightWord)
-        setShouldFocusInitially(true)
+        //setShouldFocusInitially(true)
 
         let newMaxDepthData = newfilteredData.map(x => Math.max(...x.map(y => y.depth)));
         setMaxDepthData(newMaxDepthData);
@@ -150,9 +150,10 @@ export default function Tree() {
   }, [filteredData])
 
   useEffect(() => {
+    //console.log("CHECK", shouldFocusInitially, posDictReadyForInitialFocus, posDict);
     if (shouldFocusInitially && posDictReadyForInitialFocus && Object.keys(posDict).length > 0) {
 
-      console.log("EFFECT", shouldFocusInitially, posDict);
+      //console.log("EFFECT", shouldFocusInitially, posDict);
       const divToFocus = document.querySelectorAll(".word-card-" + wordToHighlight)[0];
       const mainDiv = document.querySelector(".the-container")
       const bodyDiv = document.body.getBoundingClientRect()
@@ -166,13 +167,14 @@ export default function Tree() {
       const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
 
       //setTimeout(() => {
-      //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      console.log(divToFocus.getBoundingClientRect(), divToFocus.getBoundingClientRect().top);
       mainDiv.scrollLeft = newLeftValue
-      window.scrollTo(newLeftValue, divToFocus.getBoundingClientRect().top - window.innerHeight / 2)
-      console.log("SET SCROLL after wait VAL", [mainDiv.scrollLeft, divToFocus.getBoundingClientRect().top]);
+      divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      console.log(divToFocus.getBoundingClientRect(), divToFocus.getBoundingClientRect().top);
+      window.scrollTo( { left: newLeftValue, top:divToFocus.getBoundingClientRect().top - window.innerHeight / 2, behavior: 'smooth' })
+      //console.log("SET SCROLL after wait VAL", [newLeftValue, divToFocus.getBoundingClientRect().top]);
 
       setShouldFocusInitially(false)
+      //console.log("SETTING SHOULD FOCUS FALSE");
       //}, 50)
     }
   }, [shouldFocusInitially, posDictReadyForInitialFocus])
@@ -189,7 +191,7 @@ export default function Tree() {
 
   
   useEffect(() => {
-    console.log("INSIDE WORDTOHIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus);
+    console.log("INSIDE WORDTOHIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus, shouldFocusInitially);
     if (wordToHighlight > -1) {
       const newHiglightedWords = findHighlightedWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
       setHighlightToggleFlag(false)
@@ -198,22 +200,23 @@ export default function Tree() {
 
         const newPosDict = calculateHighlightPositions(posDict, setPosDict, newHiglightedWords)
         const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
-        console.log(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict));
+        //console.log(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict));
         setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict))
+        setShouldFocusInitially(true)
       }
     }else{
       // refresh the tree
       if (posDictReadyForInitialFocus) {
-        console.log("SET FILTERED DATA HERE");
+        //console.log("SET FILTERED DATA HERE");
         setFilteredData([...filteredData])
       }
     }
   }, [wordToHighlight,posDictReadyForInitialFocus])
  
-  console.log(lines);
+  //console.log("SHOULD FOCUS",shouldFocusInitially);
 
   function showAllTree() {
-    console.log("SHOWING TREE", filteredData[0].length);
+    //console.log("SHOWING TREE", filteredData[0].length);
     setHighlightToggleFlag(true);
     setHighlightedWords(filteredData[0].map((x, i) => i));
     setWordToHighlight(-1)
@@ -224,7 +227,7 @@ export default function Tree() {
 
 
 
-      <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 overflow-auto dark:bg-gray-900 `} >
+      <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 lg:overflow-visible overflow-auto dark:bg-gray-900 `} >
         {popupOpen &&
           <Popup word={selectedWord} popupRef={popupRef}
             setPopupOpen={setPopupOpen}
@@ -270,9 +273,10 @@ export default function Tree() {
 
           {
             filteredData.map((dataCluster, clusterIndex) =>
-              <div className=" tree-container mb-[2000px]  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
+              <div className=" tree-container mb-80  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
                 {
                   Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
+                    <div className={`depth-container flex relative min-h-16 lg:min-h-20  w-full`} style={{ margin: depthMarginPx }} key={rowInd + "_" + selectedCluster}>{ // each depth here
                       dataCluster.filter(a => a.depth === x).map((x, i) =>
                         <WordCard x={x} key={rowInd + "_" + selectedCluster + "_" + i}
                           pos={posDict}
