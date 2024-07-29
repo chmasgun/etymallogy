@@ -46,7 +46,7 @@ const prepareWidthBelowNode = (data) => {
   console.log(widthBelowDict);
   return widthBelowDict
 }
-const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
+const calculatePositions = (data, wordWidth,  totalDepth) => {
 
   // Part 0 Define parent offset dictionary. This is used in aligning children properly, in the case of adjusted parent (after unbalanced children offset)
   const parentOffset = {}
@@ -62,22 +62,19 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
   //console.log(["SELECTED ", data]);
   //console.log(root[0]["rel"]["derives"]["to"])
   let idnow = root[0]["id"]
-  returnDict[idnow] = depthWidth / 2 - wordWidth / 2                  // ASSIGN ROOT TO CENTER. TO DO HANDLE MULTIPLE ROOTS
+  returnDict[idnow] = 0 / 2 - wordWidth / 2                  // ASSIGN ROOT TO CENTER. TO DO HANDLE MULTIPLE ROOTS
   let derivesTo = root[0]["rel"]["derives"]["to"] || []
   let loansTo = root[0]["rel"]["loans"]["to"] || []
   let homonymTo = root[0]["rel"]["homonym"]["to"] || []
 
   let goToItems = [derivesTo.concat(loansTo, homonymTo)]
-  let parentPositions = [depthWidth / 2 - wordWidth / 2]
+  let parentPositions = [0 / 2 - wordWidth / 2]
   let parentWidths = [widthBelowDict[idnow]]
   let removedParentOffsets = [0]
   // Part 3 Iterate over the children
   let safety = 0
   while (goToItems.length > 0) {
-    safety = safety + 1
-    if (safety > 50) { break }
-
-
+  
     let idsToProcess = goToItems[0]
     let parentPos = parentPositions[0]
     let parentWidth = parentWidths[0]
@@ -95,7 +92,7 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
       let newGoToItems = derivesTo.concat(loansTo, homonymTo)
       // small fix on parent, based on different width children
       const firstAndLastChildren = [newGoToItems[0], newGoToItems[newGoToItems.length - 1]]
-      console.log([idsToProcess[idNow], firstAndLastChildren]);
+      //console.log([idsToProcess[idNow], firstAndLastChildren]);
       let additionalChildrenOffset = widthBelowDict[firstAndLastChildren[0]] - widthBelowDict[firstAndLastChildren[1]] || 0
       parentOffset[idsToProcess[idNow]] = additionalChildrenOffset
 
@@ -217,6 +214,7 @@ export default function Tree() {
         setUnsavedWordCount(0);
         setPosDict({});
         setWordToHighlight(highlightWord)
+        setShouldFocusInitially(true)
 
         let newMaxDepthData = newfilteredData.map(x => Math.max(...x.map(y => y.depth)));
         setMaxDepthData(newMaxDepthData);
@@ -243,6 +241,8 @@ export default function Tree() {
   const [isInsertMode, setIsInsertMode] = useState(false)
   const [mustDepthRecalculate, setMustDepthRecalculate] = useState(-1)
   const [dataFetchComplete, setDataFetchComplete] = useState(false)
+  const [shouldFocusInitially, setShouldFocusInitially] = useState(false)
+  const [posDictReadyForInitialFocus, setPosDictReadyForInitialFocus] = useState(false)
 
   const popupRef = useRef();
   const [popupOpen, setPopupOpen] = useState(false)
@@ -252,7 +252,7 @@ export default function Tree() {
   const [editModeToggle, setEditModeToggle] = useState(0)
   const [highlightToggleFlag, setHighlightToggleFlag] = useState(0)
 
-
+  /*
   console.log(filteredData);
   console.log(maxDepthData);
   console.log(lines);
@@ -261,7 +261,7 @@ export default function Tree() {
   console.log(selectedCluster);
   console.log(posDict);
   console.log(highlightedWords);
-
+*/
   useEffect(() => {
     if (dataFetchComplete) {
 
@@ -272,8 +272,10 @@ export default function Tree() {
       const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
       const depthContainer = document.getElementsByClassName(`depth-container`)[0]?.getBoundingClientRect() || 0;
 
-      const [newPosDict, maxLeftValue] = calculatePositions(filteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData)
+      console.log(filteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData);
+      const [newPosDict, maxLeftValue] = calculatePositions(filteredData[0], topWrapper["width"], newMaxDepthData)
       setPosDict(newPosDict)
+      setPosDictReadyForInitialFocus(true)
       setAdditionalRightMargin(maxLeftValue)
 
       // console.log(calculateLines(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData,newPosDict))
@@ -286,39 +288,42 @@ export default function Tree() {
 
 
 
-    //  if (typeof document !== 'undefined' & wordToHighlight > -1) {
 
-        const divToFocus = document.querySelectorAll(".word-card-individual")[wordToHighlight];
-        const mainDiv = document.querySelector(".the-container")
-        const bodyDiv = document.body.getBoundingClientRect()
-        //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        console.log("FOCUSING", divToFocus.getBoundingClientRect());
-        console.log("FOCUSING", mainDiv.getBoundingClientRect());
-        //console.log("FOCUSING", bodyDiv);
-        console.log(newPosDict, wordToHighlight, newPosDict[wordToHighlight] - bodyDiv.width / 2);
 
-        const newLeftValue = newPosDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
-        console.log(newLeftValue);
-       // window.scrollTo( 0, divToFocus.getBoundingClientRect().top)
-        setTimeout(() => {
-          divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-          mainDiv.scrollLeft = newLeftValue
-          console.log("SET SCROLL after wait VAL", mainDiv.scrollLeft);
-        },200)
-        mainDiv.scrollLeft = newLeftValue
-        console.log("SET SCROLL VAL", mainDiv.scrollLeft);
 
-       /*setTimeout(() => {
-          divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        },500)
-        */
-     // }
 
     }
   }, [filteredData])
 
+  useEffect(() => {
+    if (shouldFocusInitially && Object.keys(posDict).length > 0) {
+
+      console.log("EFFECT", shouldFocusInitially, posDict);
+      const divToFocus = document.querySelectorAll(".word-card-"+wordToHighlight)[0];
+      const mainDiv = document.querySelector(".the-container")
+      const bodyDiv = document.body.getBoundingClientRect()
+      //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      //console.log("FOCUSING", divToFocus.getBoundingClientRect());
+      //console.log("FOCUSING", mainDiv.getBoundingClientRect());
+      console.log("FOCUSING", divToFocus.getBoundingClientRect());
+      console.log("FOCUSING BODY", bodyDiv);
+      console.log(posDict, wordToHighlight, posDict[wordToHighlight] - bodyDiv.width / 2, divToFocus?.getBoundingClientRect());
+
+      const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
+
+      //setTimeout(() => {
+      //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      console.log(divToFocus.getBoundingClientRect(), divToFocus.getBoundingClientRect().top);
+      mainDiv.scrollLeft = newLeftValue
+      window.scrollTo(newLeftValue, divToFocus.getBoundingClientRect().top - window.innerHeight/2  )
+      console.log("SET SCROLL after wait VAL", [mainDiv.scrollLeft, divToFocus.getBoundingClientRect().top]);
+
+      setShouldFocusInitially(false)
+      //}, 50)
+    }
+  }, [shouldFocusInitially, posDictReadyForInitialFocus])
+  
   useEffect(() => { setPopupOpen(isInsertMode) }, [isInsertMode]) // is insertion mode is activated, trigger popup
   useEffect(() => { if (!popupOpen) { setHoveredPair([-1, -1]) } }, [popupOpen]) // when closing the popup, reset hovered pair
   useEffect(() => {
@@ -363,9 +368,10 @@ export default function Tree() {
             <HighlightToggleDiv
               highlightToggleFlag={highlightToggleFlag} //toggle is unclickable in "All". User must click on a word to switch to focus mode
               highlightToggleHandler={() => {
-                !highlightToggleFlag && 
+                !highlightToggleFlag &&
                   setHighlightToggleFlag(true);
-                setHighlightedWords(filteredData[0].map((x, i) => i))
+                setHighlightedWords(filteredData[0].map((x, i) => i));
+                setWordToHighlight(-1)
               }}></HighlightToggleDiv>
             {isDev && <>
               <ModeToggleDiv editModeToggle={editModeToggle} setEditModeToggle={setEditModeToggle} ></ModeToggleDiv>
@@ -391,7 +397,7 @@ export default function Tree() {
 
           {
             filteredData.map((dataCluster, clusterIndex) =>
-              <div className=" tree-container mb-32  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
+              <div className=" tree-container mb-[2000px]  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
                 {
                   Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
                     <div className={`depth-container flex relative min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd + "_" + selectedCluster}>{ // each depth here

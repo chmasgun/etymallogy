@@ -67,5 +67,8 @@
 - view modda tıklanan kelimenin parenları highlight ediliyor.
 - tree için dark mod çalıştım
 - word isminde param ile, page load edildiğinde highlighted şekilde render edebiliyorum
-- leftScroll ile ortalama da tamam (NEDENSE PRODDA ÇALIŞMIYOR !!!!)
+- leftScroll ile ortalama da tamam (NEDENSE PRODDA ÇALIŞMIYOR !!!!) (timeout ile tekrar çağırınca çalıştı...)
 - prod check için environment variable'ı ekledim
+
+2024-07-29
+- initial focus için useEffect oluşturdum. Position dictionary hazır olduğunda hesaplamalar yapılıyor. 
