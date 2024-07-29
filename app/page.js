@@ -25,6 +25,7 @@ export default function Home() {
   const [searchCandidatesAfterFilter, setSearchCandidatesAfterFilter] = useState([])
   const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false)
   const [noDataFound, setNoDataFound] = useState(false)
+  const [searchLoading, setSearchLoading] = useState(false)
   //const [dropdownWordSelected, setDropdownWordSelected] = useState(-1)
 
   function resetSearch() {
@@ -57,11 +58,11 @@ export default function Home() {
   }
 
 
-  function dropdownItemClickHandle(index){
-     const wordSelected = searchCandidatesAfterFilter[index]
-     //router.push({path:  `/tree?${wordSelected[2]}`})
-     router.push(`/tree?cluster=${wordSelected[2]}`);
-     console.log(wordSelected);
+  function dropdownItemClickHandle(index) {
+    const wordSelected = searchCandidatesAfterFilter[index]
+    //router.push({path:  `/tree?${wordSelected[2]}`})
+    router.push(`/tree?cluster=${wordSelected[2]}&word=${wordSelected[0]+wordSelected[1]}`);
+    console.log(wordSelected);
   }
 
   useEffect(() => {
@@ -80,15 +81,17 @@ export default function Home() {
 
           console.log("NO DATA FOUND");
         }
-
+        setSearchLoading(false)
       } catch (error) {
         console.error('Error fetching data:', error);
+        setSearchLoading(false)
+
       }
     };
 
 
     if (searchTextKey.length === 3) {
-
+      setSearchLoading(true)
       initFetchData();
     }
 
@@ -111,18 +114,19 @@ export default function Home() {
           <span className="lg:mr-32  font-bold text-4xl">Etymallogy</span>
           <Etymoball words={["şerbet", "şarap", "meclis", "wine", "şurup", "語", "kitap", "lycée", "bilim", "science",
             "لغة", "vin", "sorbetto", "λόγος", "lisan", "ستاره", "stella", "ἀστήρ"]}></Etymoball>
-            </div>
+        </div>
 
         <div className="bg-slate-300 dark:bg-zinc-800 left-0 right-0 w-full flex flex-col h-[100svh]">
           <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center">
-              <SearchBar searchHandle={searchHandle} 
-                          searchText={searchText}
-                          isSearchDropdownOpen={isSearchDropdownOpen}
-                          resetSearch={resetSearch}
-                          searchCandidatesAfterFilter={searchCandidatesAfterFilter}
-                          noDataFound={noDataFound}
-                          maxSearchResults={maxSearchResults}
-                          dropdownItemClickHandle={dropdownItemClickHandle} ></SearchBar>
+            <SearchBar searchHandle={searchHandle}
+              searchText={searchText}
+              isSearchDropdownOpen={isSearchDropdownOpen}
+              resetSearch={resetSearch}
+              searchCandidatesAfterFilter={searchCandidatesAfterFilter}
+              noDataFound={noDataFound}
+              maxSearchResults={maxSearchResults}
+              dropdownItemClickHandle={dropdownItemClickHandle}
+              searchLoading={searchLoading} ></SearchBar>
             <p className=" text-xl self-center m-8 lg:m-24 text-center ">An online collection of etymological knowledge</p>
 
 
@@ -130,7 +134,7 @@ export default function Home() {
             <div className=" text-xl self-center m-4 ">1000+ English words</div>
             <div className=" text-xl self-center m-4 ">1000+ Arabic words</div>
           </div>
-          
+
         </div>
 
 
@@ -145,10 +149,10 @@ export default function Home() {
 }
 
 
-const SearchBar = ({searchHandle, searchText, isSearchDropdownOpen, resetSearch,searchCandidatesAfterFilter, noDataFound, maxSearchResults, dropdownItemClickHandle }) => {
+const SearchBar = ({ searchHandle, searchText, isSearchDropdownOpen, resetSearch, searchCandidatesAfterFilter, noDataFound, maxSearchResults, dropdownItemClickHandle, searchLoading }) => {
 
   return <div className="flex flex-col justify-center self-center w-80 lg:w-[32rem] m-16 relative ">
-    <form>
+    <div>
       <input
         type="text"
         className="self-center w-full placeholder-gray-400 text-gray-900 p-4 rounded-t-xl outline-0 text-lg"
@@ -157,19 +161,29 @@ const SearchBar = ({searchHandle, searchText, isSearchDropdownOpen, resetSearch,
         value={searchText}
 
       />
-      {isSearchDropdownOpen ? <div className="flex justify-center absolute right-0 mr-4 w-6 h-6 bg-red-300 top-1/3 rounded items-center text-2xl" 
-                                    onClick={() => resetSearch()}><span> &#215; </span></div> : <></>}
+      
+      { // search close button
+       isSearchDropdownOpen ? <div className="flex justify-center absolute right-0 mr-4 p-1 w-8 h-8 bg-red-300 top-1/4 rounded items-center text-4xl"
+        onClick={() => resetSearch()}>
+        {searchLoading ? // if the search is loading, add a spinning svg
+         <svg className="animate-spin  text-white" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg> 
+        : 
+        <span className="relative block" style={{ top: "-3px" }}> &#215; </span>}
+      </div> : <></>}
       {isSearchDropdownOpen ? <div className="flex absolute flex-col w-full justify-center text-lg bg-gray-200 rounded-b-xl overflow-auto">
-        {searchCandidatesAfterFilter.slice(0,maxSearchResults).map((x,i) =>
+        {searchCandidatesAfterFilter.slice(0, maxSearchResults).map((x, i) =>
           <span key={i} className="p-2 lg:pl-6 dark:bg-gray-500 dark:hover:bg-gray-400  hover:bg-gray-300 flex  justify-between" onClick={() => dropdownItemClickHandle(i)}>
             <span>{x[0]}</span>
             <span className={`right italic mr-2 lg:mr-4 ${langColors[x[1]][2]}`}>{langColors[x[1]][1]}</span>
-            </span>
+          </span>
         )}
-        {noDataFound ? <div className="p-2 pl-6 italic text-sm  "> No matching result</div> : <></>}
+        {noDataFound ? <div className="p-2 pl-6 italic text-sm  dark:bg-gray-500"> No matching result</div> : <></>}
 
       </div> : <></>}
 
-    </form>
+    </div>
   </div>
 }

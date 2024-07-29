@@ -6,13 +6,16 @@ import SaveToServerButton from "@/components/saveToServerButton";
 import { DrawRelation, langColors, RecalculateDepthAfter } from "@/functions/functions";
 import Legend from "@/components/legend";
 import Popup from "@/components/popup";
-import ModeToggle from "@/components/modeToggle";
+import { ModeToggleDiv, HighlightToggleDiv } from "@/components/modeToggle";
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 //console.log(data[1]);
 
 const depthMarginPx = 24
 const leftPixelLimit = 400
 const marginClass = `m-[${depthMarginPx}px]`;
+
+const isProd = process.env.NEXT_PUBLIC_IS_PROD === "1";
+const isDev = process.env.NEXT_PUBLIC_IS_PROD === "0";
 
 
 const calculateWidthBelowNode = (data, nodeList) => {
@@ -203,10 +206,12 @@ export default function Tree() {
         console.log(cluster, initWord);
         const newfilteredData = await fetchData(parseInt(cluster));
         console.log(newfilteredData);
-        const highlightWord = newfilteredData[0].findIndex(word => word.key === initWord)
+        const highlightWord = newfilteredData[0].findIndex(word => word.key + word.lang === initWord)
 
         console.log(highlightWord, newfilteredData[0]);
-        findHighlightedWords(newfilteredData[0][highlightWord], newfilteredData[0], setHighlightedWords)
+        if (highlightWord > -1) {
+          findHighlightedWords(newfilteredData[0][highlightWord], newfilteredData[0], setHighlightedWords)
+        }
         setFilteredData(newfilteredData);
         setSelectedCluster(cluster);
         setUnsavedWordCount(0);
@@ -245,6 +250,7 @@ export default function Tree() {
   const [wordToHighlight, setWordToHighlight] = useState(-1) // similar to mustDepthRecalculate
   const [highlightedWords, setHighlightedWords] = useState([])
   const [editModeToggle, setEditModeToggle] = useState(0)
+  const [highlightToggleFlag, setHighlightToggleFlag] = useState(0)
 
 
   console.log(filteredData);
@@ -280,16 +286,19 @@ export default function Tree() {
 
 
 
-      if (typeof document !== 'undefined') {
+      if (typeof document !== 'undefined' & wordToHighlight > -1) {
 
-        const divToFocus = document.querySelectorAll(".word-card-individual")[wordToHighlight]?.getBoundingClientRect();
+        const divToFocus = document.querySelectorAll(".word-card-individual")[wordToHighlight];
         const mainDiv = document.querySelectorAll(".the-container")[0]
         const bodyDiv = document.body.getBoundingClientRect()
         //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        console.log("FOCUSING", divToFocus );
-        console.log("FOCUSING", bodyDiv);
-        console.log(newPosDict, wordToHighlight,newPosDict[wordToHighlight] - bodyDiv.width / 2);
-        mainDiv.scrollLeft = newPosDict[wordToHighlight] - bodyDiv.width / 2  + divToFocus.width   || 0
+        console.log("FOCUSING", divToFocus.getBoundingClientRect());
+        //console.log("FOCUSING", bodyDiv);
+        console.log(newPosDict, wordToHighlight, newPosDict[wordToHighlight] - bodyDiv.width / 2);
+
+        window.scrollTo(newPosDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0, divToFocus.getBoundingClientRect().top)
+        mainDiv.scrollLeft = newPosDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
+
       }
 
     }
@@ -308,7 +317,7 @@ export default function Tree() {
     if (wordToHighlight > -1) {
       console.log("CALCULATING HIGHLIGHT");
       findHighlightedWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
-
+      setHighlightToggleFlag(false)
     }
   }, [wordToHighlight])
 
@@ -336,10 +345,19 @@ export default function Tree() {
 
         <div className="fixed z-50 max-w-[98vw] right-0 top-0 flex flex-row justify-center">
           <div className="flex flex-col items-center">
+            <HighlightToggleDiv
+              highlightToggleFlag={highlightToggleFlag} //toggle is unclickable in "All". User must click on a word to switch to focus mode
+              highlightToggleHandler={() => {
+                !highlightToggleFlag && 
+                  setHighlightToggleFlag(true);
+                setHighlightedWords(filteredData[0].map((x, i) => i))
+              }}></HighlightToggleDiv>
+            {isDev && <>
+              <ModeToggleDiv editModeToggle={editModeToggle} setEditModeToggle={setEditModeToggle} ></ModeToggleDiv>
+              <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
+            </>
+            }
 
-
-            <ModeToggle editModeToggle={editModeToggle} setEditModeToggle={setEditModeToggle} ></ModeToggle>
-            <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
           </div>
           <Legend languages={languageList}></Legend>
         </div>

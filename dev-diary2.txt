@@ -68,3 +68,4 @@
 - tree için dark mod çalıştım
 - word isminde param ile, page load edildiğinde highlighted şekilde render edebiliyorum
 - leftScroll ile ortalama da tamam
+- prod check için environment variable'ı ekledim
