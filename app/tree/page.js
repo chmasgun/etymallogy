@@ -166,16 +166,17 @@ export default function Tree() {
 
       const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
 
-      //setTimeout(() => {
-      mainDiv.scrollLeft = newLeftValue
+      //FOR MOBILE
+      mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2|| 0
       divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       console.log(divToFocus.getBoundingClientRect(), divToFocus.getBoundingClientRect().top);
-      window.scrollTo( { left: newLeftValue, top:divToFocus.getBoundingClientRect().top - window.innerHeight / 2, behavior: 'smooth' })
+      // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
+      window.scrollTo( { left: newLeftValue  + bodyDiv.width * 0.3, top:divToFocus.getBoundingClientRect().top - bodyDiv.top- window.innerHeight * 0.75, behavior: 'smooth' })
       //console.log("SET SCROLL after wait VAL", [newLeftValue, divToFocus.getBoundingClientRect().top]);
 
       setShouldFocusInitially(false)
       //console.log("SETTING SHOULD FOCUS FALSE");
-      //}, 50)
+       
     }
   }, [shouldFocusInitially, posDictReadyForInitialFocus])
 
@@ -261,7 +262,7 @@ export default function Tree() {
 
 
 
-        <div className="z-10 mb-40 max-w-5xl w-full items-center justify-center   font-mono text-sm lg:flex">
+        <div className="z-10 mb-60 max-w-5xl w-full items-center justify-center   font-mono text-sm lg:flex">
 
 
         </div>
