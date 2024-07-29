@@ -72,3 +72,8 @@
 
 2024-07-29
 - initial focus için useEffect oluşturdum. Position dictionary hazır olduğunda hesaplamalar yapılıyor. 
+- highlight edilen nodeların tüm parentlarını aynı hizaya getirdim
+- edit yapılabilmesi için tüm node'ları focuslattım. Yani edit mode'a geçince highlight toggle da "All" a geçiyor. Bu sanırım bazı bugları önledi
+- showAllTree diye bir fonksiyon yaptım
+- filteredData'nın useEffect'ine baya condition koydum. Bu sayede highlight edildiği zaman verileri overwrite etmiyor
+- bu useEffect, highlight toggle'ı "All" yaparsak, bütün positionları tekrardan hesaplayarak tree'yi sıfırlıyor.

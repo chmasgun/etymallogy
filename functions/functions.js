@@ -316,7 +316,7 @@ const prepareWidthBelowNode = (data) => {
     console.log(widthBelowDict);
     return widthBelowDict
 }
-const calculatePositions = (data, wordWidth, totalDepth,leftPixelLimit) => {
+const calculatePositions = (data, wordWidth, totalDepth, leftPixelLimit) => {
 
     // Part 0 Define parent offset dictionary. This is used in aligning children properly, in the case of adjusted parent (after unbalanced children offset)
     const parentOffset = {}
@@ -389,7 +389,7 @@ const calculatePositions = (data, wordWidth, totalDepth,leftPixelLimit) => {
     if (leftOverflow > 0) {
 
         for (const node of Object.keys(returnDict)) {
-            console.log([node, returnDict]);
+            //console.log([node, returnDict]);
             returnDict[node] = returnDict[node] + leftOverflow
         }
     }
@@ -397,7 +397,7 @@ const calculatePositions = (data, wordWidth, totalDepth,leftPixelLimit) => {
     return [returnDict, maxLeftValue]
 }
 // TO DO for each depth, go over all nodes, extract from-to relations, and calculate xs and ys
-const calculateLines = (data, wordWidth, wordHeight, depthWidth, totalDepth, positionDict) => {
+const calculateLines = (data, wordWidth, wordHeight, totalDepth, positionDict) => {
     let outLinesList = []
     let outLineNodes = []
     for (var depthNow = 0; depthNow <= totalDepth; depthNow++) {  // iterating each depth
@@ -411,7 +411,7 @@ const calculateLines = (data, wordWidth, wordHeight, depthWidth, totalDepth, pos
             let newGoToItems = derivesTo.concat(loansTo, homonymTo)
 
             for (var rel of newGoToItems) { // iterating every relation to gather lines
-                linesForDepth.push([positionDict[elt["id"]] + wordWidth / 2, positionDict[rel] + wordWidth / 2, wordHeight])
+                linesForDepth.push([positionDict[elt["id"]] + wordWidth / 2, positionDict[rel] + wordWidth / 2, wordHeight]) // x-from, x-to, height
                 nodesForDepth.push([elt["id"], rel])
             }
 
@@ -447,11 +447,26 @@ const findHighlightedWords = (wordData, filteredData, setHighlightedWords) => {
 
     setHighlightedWords([...newHighlightedWords])
 
+    return [...newHighlightedWords]
+}
 
+const calculateHighlightPositions = (posDict, setPosDict, highlightedWords) => {
+
+
+    const leafNode = highlightedWords[0]
+    const leafNodeLeftValue = posDict[leafNode]
+
+    const newPosDict = { ...posDict }
+    for (const node of highlightedWords) {
+        newPosDict[node] = leafNodeLeftValue
+    }
+
+    setPosDict(newPosDict)
+    return newPosDict
 }
 
 export {
     DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords,
     calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-    findHighlightedWords
+    findHighlightedWords, calculateHighlightPositions
 }

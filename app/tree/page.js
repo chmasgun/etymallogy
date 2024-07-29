@@ -3,8 +3,10 @@ import Image from "next/image";
 import { useEffect, useState, useRef, Suspense } from "react";
 import WordCard from "@/components/wordCard";
 import SaveToServerButton from "@/components/saveToServerButton";
-import { DrawRelation, langColors, RecalculateDepthAfter, calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-  findHighlightedWords } from "@/functions/functions";
+import {
+  DrawRelation, langColors, RecalculateDepthAfter, calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
+  findHighlightedWords, calculateHighlightPositions
+} from "@/functions/functions";
 import Legend from "@/components/legend";
 import Popup from "@/components/popup";
 import { ModeToggleDiv, HighlightToggleDiv } from "@/components/modeToggle";
@@ -39,8 +41,11 @@ export default function Tree() {
   useEffect(() => {
     const initFetchData = async () => {
       try {
+        
         console.log(cluster, initWord);
+        // setPosDict({});
         const newfilteredData = await fetchData(parseInt(cluster));
+        setFilteredData(newfilteredData);
         console.log(newfilteredData);
         const highlightWord = newfilteredData[0].findIndex(word => word.key + word.lang === initWord)
 
@@ -48,10 +53,8 @@ export default function Tree() {
         if (highlightWord > -1) {
           findHighlightedWords(newfilteredData[0][highlightWord], newfilteredData[0], setHighlightedWords)
         }
-        setFilteredData(newfilteredData);
         setSelectedCluster(cluster);
         setUnsavedWordCount(0);
-        setPosDict({});
         setWordToHighlight(highlightWord)
         setShouldFocusInitially(true)
 
@@ -89,7 +92,7 @@ export default function Tree() {
   const [wordToHighlight, setWordToHighlight] = useState(-1) // similar to mustDepthRecalculate
   const [highlightedWords, setHighlightedWords] = useState([])
   const [editModeToggle, setEditModeToggle] = useState(0)
-  const [highlightToggleFlag, setHighlightToggleFlag] = useState(0)
+  const [highlightToggleFlag, setHighlightToggleFlag] = useState(false)
 
   /*
   console.log(filteredData);
@@ -112,14 +115,25 @@ export default function Tree() {
       const depthContainer = document.getElementsByClassName(`depth-container`)[0]?.getBoundingClientRect() || 0;
 
       console.log(filteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData);
-      const [newPosDict, maxLeftValue] = calculatePositions(filteredData[0], topWrapper["width"], newMaxDepthData, leftPixelLimit)
-      setPosDict(newPosDict)
-      setPosDictReadyForInitialFocus(true)
-      setAdditionalRightMargin(maxLeftValue)
+      console.log(highlightToggleFlag, posDictReadyForInitialFocus);
+      console.log(highlightToggleFlag || !posDictReadyForInitialFocus);
+     
+      if(highlightToggleFlag || !posDictReadyForInitialFocus){ // run here either at the start, or when all data will be highlighted
 
-      // console.log(calculateLines(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData,newPosDict))
-      setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], depthContainer["width"], newMaxDepthData, newPosDict))
+        const [newPosDict, maxLeftValue] = calculatePositions(filteredData[0], topWrapper["width"], newMaxDepthData, leftPixelLimit)
+        setPosDict(newPosDict)
+        setPosDictReadyForInitialFocus(true)
+        setAdditionalRightMargin(maxLeftValue)
+        
+        // console.log(calculateLines(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData,newPosDict))
+        setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], newMaxDepthData, newPosDict))
+        
+        console.log("SETTING LINES", newPosDict, posDict);
+        if(highlightToggleFlag){
 
+          showAllTree()
+        }
+      }
       const newLanguageList = filteredData[0].map(x => x.lang)
       setLanguageList([... new Set(newLanguageList)])
 
@@ -136,10 +150,10 @@ export default function Tree() {
   }, [filteredData])
 
   useEffect(() => {
-    if (shouldFocusInitially && Object.keys(posDict).length > 0) {
+    if (shouldFocusInitially && posDictReadyForInitialFocus && Object.keys(posDict).length > 0) {
 
       console.log("EFFECT", shouldFocusInitially, posDict);
-      const divToFocus = document.querySelectorAll(".word-card-"+wordToHighlight)[0];
+      const divToFocus = document.querySelectorAll(".word-card-" + wordToHighlight)[0];
       const mainDiv = document.querySelector(".the-container")
       const bodyDiv = document.body.getBoundingClientRect()
       //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -155,14 +169,14 @@ export default function Tree() {
       //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       console.log(divToFocus.getBoundingClientRect(), divToFocus.getBoundingClientRect().top);
       mainDiv.scrollLeft = newLeftValue
-      window.scrollTo(newLeftValue, divToFocus.getBoundingClientRect().top - window.innerHeight/2  )
+      window.scrollTo(newLeftValue, divToFocus.getBoundingClientRect().top - window.innerHeight / 2)
       console.log("SET SCROLL after wait VAL", [mainDiv.scrollLeft, divToFocus.getBoundingClientRect().top]);
 
       setShouldFocusInitially(false)
       //}, 50)
     }
   }, [shouldFocusInitially, posDictReadyForInitialFocus])
-  
+
   useEffect(() => { setPopupOpen(isInsertMode) }, [isInsertMode]) // is insertion mode is activated, trigger popup
   useEffect(() => { if (!popupOpen) { setHoveredPair([-1, -1]) } }, [popupOpen]) // when closing the popup, reset hovered pair
   useEffect(() => {
@@ -172,16 +186,38 @@ export default function Tree() {
       setMustDepthRecalculate(-1)
     }
   }, [mustDepthRecalculate])
+
+  
   useEffect(() => {
+    console.log("INSIDE WORDTOHIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus);
     if (wordToHighlight > -1) {
-      console.log("CALCULATING HIGHLIGHT");
-      findHighlightedWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
+      const newHiglightedWords = findHighlightedWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
       setHighlightToggleFlag(false)
+      console.log("CALCULATING HIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus,newHiglightedWords);
+      if (posDictReadyForInitialFocus) {
+
+        const newPosDict = calculateHighlightPositions(posDict, setPosDict, newHiglightedWords)
+        const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
+        console.log(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict));
+        setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict))
+      }
+    }else{
+      // refresh the tree
+      if (posDictReadyForInitialFocus) {
+        console.log("SET FILTERED DATA HERE");
+        setFilteredData([...filteredData])
+      }
     }
-  }, [wordToHighlight])
+  }, [wordToHighlight,posDictReadyForInitialFocus])
+ 
+  console.log(lines);
 
-
-
+  function showAllTree() {
+    console.log("SHOWING TREE", filteredData[0].length);
+    setHighlightToggleFlag(true);
+    setHighlightedWords(filteredData[0].map((x, i) => i));
+    setWordToHighlight(-1)
+  }
 
   return (
     <Suspense>
@@ -207,13 +243,11 @@ export default function Tree() {
             <HighlightToggleDiv
               highlightToggleFlag={highlightToggleFlag} //toggle is unclickable in "All". User must click on a word to switch to focus mode
               highlightToggleHandler={() => {
-                !highlightToggleFlag &&
-                  setHighlightToggleFlag(true);
-                setHighlightedWords(filteredData[0].map((x, i) => i));
-                setWordToHighlight(-1)
+                !highlightToggleFlag && showAllTree()
+                 
               }}></HighlightToggleDiv>
             {isDev && <>
-              <ModeToggleDiv editModeToggle={editModeToggle} setEditModeToggle={setEditModeToggle} ></ModeToggleDiv>
+              <ModeToggleDiv editModeToggle={editModeToggle} setEditModeToggle={setEditModeToggle} showAllTree={showAllTree} ></ModeToggleDiv>
               <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
             </>
             }
@@ -239,7 +273,7 @@ export default function Tree() {
               <div className=" tree-container mb-[2000px]  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
                 {
                   Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
-                    <div className={`depth-container flex relative min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd + "_" + selectedCluster}>{ // each depth here
+                    <div className={`depth-container flex relative min-h-24 lg:min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd + "_" + selectedCluster}>{ // each depth here
                       dataCluster.filter(a => a.depth === x).map((x, i) =>
                         <WordCard x={x} key={rowInd + "_" + selectedCluster + "_" + i}
                           pos={posDict}
@@ -249,7 +283,8 @@ export default function Tree() {
                           hoveredPair={hoveredPair}
                           highlightedWords={highlightedWords}
                           editModeToggle={editModeToggle}
-                          setWordToHighlight={setWordToHighlight} ></WordCard>)
+                          setWordToHighlight={setWordToHighlight}
+                          isProd={isProd} ></WordCard>)
                     }
                       {
                         lines[0][rowInd]?.map((line, lineIndex) =>
