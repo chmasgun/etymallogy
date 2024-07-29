@@ -13,7 +13,7 @@ import { ModeToggleDiv, HighlightToggleDiv } from "@/components/modeToggle";
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 //console.log(data[1]);
 
-const depthMarginPx = 24
+const depthMarginPx = 16
 const leftPixelLimit = 400
 const marginClass = `m-[${depthMarginPx}px]`;
 
@@ -273,7 +273,6 @@ export default function Tree() {
               <div className=" tree-container mb-[2000px]  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
                 {
                   Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
-                    <div className={`depth-container flex relative min-h-24 lg:min-h-24  w-full`} style={{ margin: depthMarginPx }} key={rowInd + "_" + selectedCluster}>{ // each depth here
                       dataCluster.filter(a => a.depth === x).map((x, i) =>
                         <WordCard x={x} key={rowInd + "_" + selectedCluster + "_" + i}
                           pos={posDict}
