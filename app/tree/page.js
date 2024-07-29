@@ -296,8 +296,12 @@ export default function Tree() {
         //console.log("FOCUSING", bodyDiv);
         console.log(newPosDict, wordToHighlight, newPosDict[wordToHighlight] - bodyDiv.width / 2);
 
-        window.scrollTo(newPosDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0, divToFocus.getBoundingClientRect().top)
-        mainDiv.scrollLeft = newPosDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
+       // window.scrollTo( 0, divToFocus.getBoundingClientRect().top)
+       mainDiv.scrollLeft = newPosDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
+       setTimeout(() => {
+          divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        },500)
 
       }
 
