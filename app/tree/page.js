@@ -300,8 +300,15 @@ export default function Tree() {
         const newLeftValue = newPosDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
         console.log(newLeftValue);
        // window.scrollTo( 0, divToFocus.getBoundingClientRect().top)
-       mainDiv.scrollLeft = newLeftValue
-       console.log("SET SCROLL VAL", mainDiv.scrollLeft);
+        setTimeout(() => {
+          divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          mainDiv.scrollLeft = newLeftValue
+          console.log("SET SCROLL after wait VAL", mainDiv.scrollLeft);
+        },200)
+        mainDiv.scrollLeft = newLeftValue
+        console.log("SET SCROLL VAL", mainDiv.scrollLeft);
+
        /*setTimeout(() => {
           divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
