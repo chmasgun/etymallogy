@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 
 
 
-
+const transitionClassForLines= "transition-all duration-300"
 
 const langColors = {
     "PIE": ["bg-gradient-to-bl from-indigo-300", "Proto-Indo-European", "text-gradient-to-bl from-indigo-300"],
@@ -91,6 +91,7 @@ const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, set
             </marker>
         </defs>
         <line
+            className={transitionClassForLines}
             x1={x1}
             y1={heightOffset}
             x2={x2}
@@ -113,6 +114,7 @@ const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, set
     </>
 }
 const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
+    
     const [x1, x2] = x
     return <>
         <defs>
@@ -134,7 +136,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, se
             </marker>
         </defs>
         <line
-
+            className={transitionClassForLines}
             x1={x1}
             y1={heightOffset}
             x2={x1}
@@ -143,7 +145,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, se
             strokeWidth={lineWidth}
             opacity={lineOpacity}></line>
         <line
-
+            className={transitionClassForLines}
             x1={x1}
             y1={heightOffset + y}
             x2={x2}
@@ -152,7 +154,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, se
             strokeWidth={lineWidth}
             opacity={lineOpacity}></line>
         <line
-
+            className={transitionClassForLines}
             x1={x2}
             y1={heightOffset + y}
             x2={x2}
