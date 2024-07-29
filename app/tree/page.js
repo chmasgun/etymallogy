@@ -11,7 +11,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 //console.log(data[1]);
 
 const depthMarginPx = 24
-const leftPixelLimit = 0
+const leftPixelLimit = 400
 const marginClass = `m-[${depthMarginPx}px]`;
 
 
@@ -123,9 +123,9 @@ const calculatePositions = (data, wordWidth, depthWidth, totalDepth) => {
       returnDict[node] = returnDict[node] + leftOverflow
     }
   }
-  return returnDict
+  const maxLeftValue = Math.max(...Object.keys(returnDict).map(x => returnDict[x]))
+  return [returnDict, maxLeftValue]
 }
-
 // TO DO for each depth, go over all nodes, extract from-to relations, and calculate xs and ys
 const calculateLines = (data, wordWidth, wordHeight, depthWidth, totalDepth, positionDict) => {
   let outLinesList = []
@@ -152,59 +152,66 @@ const calculateLines = (data, wordWidth, wordHeight, depthWidth, totalDepth, pos
   }
   return [outLinesList, outLineNodes]
 }
+const findHighlightedWords = (wordData, filteredData, setHighlightedWords) => {
+
+  let newHighlightedWords = [wordData.id]
+
+  let derivesFrom = wordData["rel"]["derives"]["from"] || []
+  let loansFrom = wordData["rel"]["loans"]["from"] || []
+  let homonymFrom = wordData["rel"]["homonym"]["from"] || []
+
+  let goToItems = derivesFrom.concat(loansFrom, homonymFrom)
+  while (goToItems.length > 0) {
+    let nodeData = filteredData[goToItems[0]]//data.filter(x => x.id === idsToProcess[idNow])
+    console.log(filteredData, goToItems, nodeData);
+    derivesFrom = nodeData["rel"]["derives"]["from"] || []
+    loansFrom = nodeData["rel"]["loans"]["from"] || []
+    homonymFrom = nodeData["rel"]["homonym"]["from"] || []
+
+    let newGoToItems = derivesFrom.concat(loansFrom, homonymFrom)
+    newHighlightedWords.push(goToItems[0])
+    goToItems.push(...newGoToItems)
+
+    goToItems.shift()
+  }
+
+  setHighlightedWords([...newHighlightedWords])
+
+
+}
 
 
 export default function Tree() {
-  const findHighlightedWords = (wordData) => {
-  
-    let newHighlightedWords = [wordData.id]
-  
-    let derivesFrom = wordData["rel"]["derives"]["from"] || []
-    let loansFrom = wordData["rel"]["loans"]["from"] || []
-    let homonymFrom = wordData["rel"]["homonym"]["from"] || []
-  
-    let goToItems = derivesFrom.concat(loansFrom, homonymFrom)
-    while (goToItems.length > 0) {
-      let nodeData = filteredData[0][goToItems[0]]//data.filter(x => x.id === idsToProcess[idNow])
-      console.log(filteredData, goToItems, nodeData);
-      derivesFrom = nodeData["rel"]["derives"]["from"] || []
-      loansFrom = nodeData["rel"]["loans"]["from"] || []
-      homonymFrom = nodeData["rel"]["homonym"]["from"] || []
-      
-      let newGoToItems = derivesFrom.concat(loansFrom, homonymFrom)
-      newHighlightedWords.push(goToItems[0])
-      goToItems.push(...newGoToItems)
-  
-      goToItems.shift()
-    }
-  
-    setHighlightedWords([...newHighlightedWords])
-  
-  
-  }
 
   const router = useRouter();
   //const searchParams =  useSearchParams()
 
   let cluster = 0
+  let initWord = null
   //if(typeof document !== 'undefined'){
   //let searchParams = new URLSearchParams(document.location.search);
   let searchParams = useSearchParams()
   console.log(searchParams);
   cluster = searchParams.get("cluster");
+  initWord = searchParams.get("word")
   //}
 
 
   useEffect(() => {
     const initFetchData = async () => {
       try {
-        console.log(cluster);
+        console.log(cluster, initWord);
         const newfilteredData = await fetchData(parseInt(cluster));
-        console.log(newfilteredData["words"]);
+        console.log(newfilteredData);
+        const highlightWord = newfilteredData[0].findIndex(word => word.key === initWord)
+
+        console.log(highlightWord, newfilteredData[0]);
+        findHighlightedWords(newfilteredData[0][highlightWord], newfilteredData[0], setHighlightedWords)
         setFilteredData(newfilteredData);
         setSelectedCluster(cluster);
         setUnsavedWordCount(0);
         setPosDict({});
+        setWordToHighlight(highlightWord)
 
         let newMaxDepthData = newfilteredData.map(x => Math.max(...x.map(y => y.depth)));
         setMaxDepthData(newMaxDepthData);
@@ -219,6 +226,7 @@ export default function Tree() {
     initFetchData();
   }, []);
 
+  const [additionalRightMargin, setAdditionalRightMargin] = useState(0)
   const [selectedCluster, setSelectedCluster] = useState(cluster);
   const [filteredData, setFilteredData] = useState([])//useState([data.filter((x) => x.cluster === 0)]);
   const [maxDepthData, setMaxDepthData] = useState([].map(x => Math.max(...x.map(y => y.depth)))) //useState([data.filter((x) => x.cluster === 0)].map(x => Math.max(...x.map(y => y.depth))))
@@ -234,6 +242,7 @@ export default function Tree() {
   const popupRef = useRef();
   const [popupOpen, setPopupOpen] = useState(false)
   const [selectedWord, setSelectedWord] = useState("")
+  const [wordToHighlight, setWordToHighlight] = useState(-1) // similar to mustDepthRecalculate
   const [highlightedWords, setHighlightedWords] = useState([])
   const [editModeToggle, setEditModeToggle] = useState(0)
 
@@ -257,8 +266,9 @@ export default function Tree() {
       const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
       const depthContainer = document.getElementsByClassName(`depth-container`)[0]?.getBoundingClientRect() || 0;
 
-      const newPosDict = calculatePositions(filteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData)
+      const [newPosDict, maxLeftValue] = calculatePositions(filteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData)
       setPosDict(newPosDict)
+      setAdditionalRightMargin(maxLeftValue)
 
       // console.log(calculateLines(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData,newPosDict))
       setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], depthContainer["width"], newMaxDepthData, newPosDict))
@@ -272,10 +282,14 @@ export default function Tree() {
 
       if (typeof document !== 'undefined') {
 
-        const divToFocus = document.querySelectorAll(".the-container")[0]
+        const divToFocus = document.querySelectorAll(".word-card-individual")[wordToHighlight]?.getBoundingClientRect();
+        const mainDiv = document.querySelectorAll(".the-container")[0]
+        const bodyDiv = document.body.getBoundingClientRect()
         //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        console.log("FOCUSING", divToFocus.getBoundingClientRect());
-        divToFocus.scrollLeft  = 500
+        console.log("FOCUSING", divToFocus );
+        console.log("FOCUSING", bodyDiv);
+        console.log(newPosDict, wordToHighlight,newPosDict[wordToHighlight] - bodyDiv.width / 2);
+        mainDiv.scrollLeft = newPosDict[wordToHighlight] - bodyDiv.width / 2  + divToFocus.width   || 0
       }
 
     }
@@ -290,6 +304,13 @@ export default function Tree() {
       setMustDepthRecalculate(-1)
     }
   }, [mustDepthRecalculate])
+  useEffect(() => {
+    if (wordToHighlight > -1) {
+      console.log("CALCULATING HIGHLIGHT");
+      findHighlightedWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
+
+    }
+  }, [wordToHighlight])
 
 
 
@@ -299,7 +320,7 @@ export default function Tree() {
 
 
 
-      <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 overflow-auto dark:bg-gray-900 `}>
+      <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 overflow-auto dark:bg-gray-900 `} >
         {popupOpen &&
           <Popup word={selectedWord} popupRef={popupRef}
             setPopupOpen={setPopupOpen}
@@ -331,7 +352,9 @@ export default function Tree() {
         </div>
 
 
-        <div className={`outer-container min-w-full flex self-start ${popupOpen && "blur-xs"}`} key={selectedCluster}>
+        <div className={`outer-container min-w-full flex self-start ${popupOpen && "blur-xs"}`}
+          style={{ minWidth: additionalRightMargin + 600 }}
+          key={selectedCluster}>
 
           {
             filteredData.map((dataCluster, clusterIndex) =>
@@ -348,7 +371,7 @@ export default function Tree() {
                           hoveredPair={hoveredPair}
                           highlightedWords={highlightedWords}
                           editModeToggle={editModeToggle}
-                          findHighlightedWords={findHighlightedWords} ></WordCard>)
+                          setWordToHighlight={setWordToHighlight} ></WordCard>)
                     }
                       {
                         lines[0][rowInd]?.map((line, lineIndex) =>

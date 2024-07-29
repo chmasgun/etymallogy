@@ -66,3 +66,5 @@
 - view ve edit mode ayırdım. Toggle ekledim
 - view modda tıklanan kelimenin parenları highlight ediliyor.
 - tree için dark mod çalıştım
+- word isminde param ile, page load edildiğinde highlighted şekilde render edebiliyorum
+- leftScroll ile ortalama da tamam
