@@ -298,11 +298,11 @@ export default function Tree() {
 
        // window.scrollTo( 0, divToFocus.getBoundingClientRect().top)
        mainDiv.scrollLeft = newPosDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
-       setTimeout(() => {
+       /*setTimeout(() => {
           divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         },500)
-
+        */
       }
 
     }
