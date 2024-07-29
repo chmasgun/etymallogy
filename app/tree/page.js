@@ -286,10 +286,10 @@ export default function Tree() {
 
 
 
-      if (typeof document !== 'undefined' & wordToHighlight > -1) {
+    //  if (typeof document !== 'undefined' & wordToHighlight > -1) {
 
         const divToFocus = document.querySelectorAll(".word-card-individual")[wordToHighlight];
-        const mainDiv = document.querySelectorAll(".the-container")[0]
+        const mainDiv = document.querySelector(".the-container")
         const bodyDiv = document.body.getBoundingClientRect()
         //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         console.log("FOCUSING", divToFocus.getBoundingClientRect());
@@ -307,7 +307,7 @@ export default function Tree() {
 
         },500)
         */
-      }
+     // }
 
     }
   }, [filteredData])

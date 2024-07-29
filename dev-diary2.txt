@@ -67,5 +67,5 @@
 - view modda tıklanan kelimenin parenları highlight ediliyor.
 - tree için dark mod çalıştım
 - word isminde param ile, page load edildiğinde highlighted şekilde render edebiliyorum
-- leftScroll ile ortalama da tamam
+- leftScroll ile ortalama da tamam (NEDENSE PRODDA ÇALIŞMIYOR !!!!)
 - prod check için environment variable'ı ekledim
