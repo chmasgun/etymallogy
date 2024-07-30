@@ -129,13 +129,16 @@ export default function Tree() {
         setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], newMaxDepthData, newPosDict))
         
         console.log("SETTING LINES", newPosDict, posDict);
+        
+        const newLanguageList = filteredData[0].map(x => x.lang)
+        setLanguageList([... new Set(newLanguageList)])
+
+
         if(highlightToggleFlag){
 
           showAllTree()
         }
       }
-      const newLanguageList = filteredData[0].map(x => x.lang)
-      setLanguageList([... new Set(newLanguageList)])
 
       setSelectedWord(filteredData[0][0])
 
@@ -204,12 +207,17 @@ export default function Tree() {
         //console.log(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict));
         setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict))
         setShouldFocusInitially(true)
+        const newLanguageList = filteredData[0].filter(word => newHiglightedWords.includes(word.id) ).map(x => x.lang)
+        setLanguageList([... new Set(newLanguageList)])
+
       }
     }else{
       // refresh the tree
       if (posDictReadyForInitialFocus) {
         //console.log("SET FILTERED DATA HERE");
         setFilteredData([...filteredData])
+        const newLanguageList = filteredData[0].map(x => x.lang)
+        setLanguageList([... new Set(newLanguageList)])
       }
     }
   }, [wordToHighlight,posDictReadyForInitialFocus])
