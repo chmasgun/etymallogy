@@ -79,3 +79,4 @@
 - bu useEffect, highlight toggle'ı "All" yaparsak, bütün positionları tekrardan hesaplayarak tree'yi sıfırlıyor.
 - click focuslanan kelimeyi de centerlıyorum ama baya çirkin bir kod oldu. Mobilde overflow-visible çalışmadığı için onu overflow-auto yapmam gerekti.
 - save cluster api'ında parseInt yüzünden bug vardı çözdüm
+- delete implement ettim, fakat gerçek bir silme değil. From ilişkilerinden o node'u çıkarıp, node'un tüm relationlarını boşalttım. Hiçbir yere bağlı kalmadığı için otomatik olarak silinmiş oluyor. Ya Javascriptte uğraşıp gerçekten sileceğim, kendinden sonra gelen tüm id'leri azaltmam gerekecek vs biraz zor. Bir ihtimal python'da halledebilirim

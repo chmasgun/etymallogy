@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 
+const relationsAll = ["derives","loans","homonym"]
 
 const reqFields = [["key", ""], ["lang", ""], ["original", ""]]
 const auxiliaryField = [["gender",""],["desc", ""], ["type", ""]]
@@ -151,23 +152,23 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, se
             x1={x1}
             y1={heightOffset}
             x2={x1}
-            y2={heightOffset + y}
+            y2={heightOffset + y* 0.5}
             stroke={lineColor}
             strokeWidth={lineWidth}
             opacity={lineOpacity}></line>
         <line
             className={transitionClassForLines}
             x1={x1}
-            y1={heightOffset + y}
+            y1={heightOffset + y* 0.5}
             x2={x2}
-            y2={heightOffset + y}
+            y2={heightOffset + y* 0.5}
             stroke={lineColor}
             strokeWidth={lineWidth}
             opacity={lineOpacity}></line>
         <line
             className={transitionClassForLines}
             x1={x2}
-            y1={heightOffset + y}
+            y1={heightOffset + y* 0.5}
             x2={x2}
             y2={heightOffset + y * 2 - 8}
             stroke={lineColor}
@@ -481,5 +482,5 @@ const calculateHighlightPositions = (posDict, setPosDict, highlightedWords) => {
 export {
     DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords,
     calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-    findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields,fields
+    findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields,fields,relationsAll
 }

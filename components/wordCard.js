@@ -6,7 +6,7 @@ export default function WordCard({ x, pos, selectedCluster, setSelectedWord, set
 
     //console.log([x.id+"_"+selectedCluster , pos[x.id]]);
 
-    return <div key={x.id  } style={{ left: `${pos[x.id] || 0}px` }}
+    return <div key={x.id  } style={{ left: `${pos[x.id] || -1000}px` }}
         onClick={() => {
             if (editModeToggle) {
                 setSelectedWord(x); setPopupOpen(true)

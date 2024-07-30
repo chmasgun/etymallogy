@@ -228,7 +228,7 @@ export default function Tree() {
 
 
 
-      <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 lg:overflow-visible overflow-auto dark:bg-gray-900 `} >
+      <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 lg:overflow-visible overflow-auto  `} > {/**dark:bg-gray-900 */}
         {popupOpen &&
           <Popup word={selectedWord} popupRef={popupRef}
             setPopupOpen={setPopupOpen}
@@ -293,7 +293,7 @@ export default function Tree() {
                       {
                         lines[0][rowInd]?.map((line, lineIndex) =>
                           <DrawRelation key={rowInd + "-" + lineIndex}
-                            x1={line[0]} x2={line[1]}
+                            x1={line[0] ||-1000} x2={line[1] || -1000}
                             heightOffset={line[2]}
                             y={depthMarginPx}
                             pair={lines[1][rowInd][lineIndex]}

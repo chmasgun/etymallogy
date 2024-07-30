@@ -1,5 +1,5 @@
 
-import { langColors ,reqFields, auxiliaryField, autoReqFields, filledFields,fields} from "@/functions/functions";
+import { langColors ,reqFields, auxiliaryField, autoReqFields, filledFields,fields, relationsAll} from "@/functions/functions";
 import { useEffect } from "react";
 
 
@@ -93,7 +93,6 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         const newAllWords = [...allWords]
         newAllWords.push(newWordData)
         // Part 3 delete the previous relation
-        const relationsAll = ["derives","loans","homonym"]
         for(const rel of relationsAll){ // search for all relations to locate the relation
             console.log(newAllWords[wordIdUp]["rel"]);
             console.log(rel);
