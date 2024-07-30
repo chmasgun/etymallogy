@@ -16,7 +16,7 @@ import pymongo
 
 sys.path.append(r'C:\Users\muratcan.asgun\Desktop\github\etymallogy')
 
-#words_json_path = r'C:\Users\muratcan.asgun\Desktop\github\etymallogy\public\data.json'
+backup_json_path = r'C:\Users\muratcan.asgun\Desktop\github\etymallogy\public\dataFromDB.json'
 #relations_json_path = r'C:\Users\muratcan.asgun\Desktop\github\etymallogy\public\relations.json'
 
 #f= open(words_json_path, encoding='utf-8')
@@ -40,6 +40,12 @@ clusters = db["cluster_data"]
 word_data_collection = db["word_data"]
 cluster_data = list(clusters.find())
 
+cluster_data = [ {"cid":x["cid"], "words":x["words"]} for x in cluster_data]
+
+
+with open(backup_json_path, 'w', encoding='utf-8') as file:
+    json.dump(cluster_data, file, ensure_ascii=False, indent=4) 
+############## KEY GENERATION PART
 word_data = [ [y["key"],y["lang"],x["cid"]]   for x in cluster_data for y in x["words"]]
 word_dict = {}
 for word in word_data:
@@ -53,3 +59,8 @@ for word in word_data:
 word_data_push = [{"key": x, "data" : word_dict[x]} for x in  word_dict.keys()]
 for i in word_data_push :
     word_data_collection.replace_one({"key": i["key"]}, i, upsert = True)
+##########################################
+    
+    
+    
+    
