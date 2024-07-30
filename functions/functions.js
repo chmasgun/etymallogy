@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react"
 
 
+const reqFields = [["key", ""], ["lang", ""], ["original", ""]]
+const auxiliaryField = [["gender",""],["desc", ""], ["type", ""]]
+const autoReqFields = [["id", 0], ["depth", 0]]
+/*, ["rel", {
+    "derives": {},
+    "loans": {},
+    "homonym": {}
+}]]*/
+
+let filledFields = reqFields.concat(auxiliaryField)
+let fields = reqFields.concat(auxiliaryField, autoReqFields)
 
 const transitionClassForLines= "transition-all duration-300"
 
@@ -470,5 +481,5 @@ const calculateHighlightPositions = (posDict, setPosDict, highlightedWords) => {
 export {
     DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords,
     calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-    findHighlightedWords, calculateHighlightPositions
+    findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields,fields
 }
