@@ -78,3 +78,4 @@
 - filteredData'nın useEffect'ine baya condition koydum. Bu sayede highlight edildiği zaman verileri overwrite etmiyor
 - bu useEffect, highlight toggle'ı "All" yaparsak, bütün positionları tekrardan hesaplayarak tree'yi sıfırlıyor.
 - click focuslanan kelimeyi de centerlıyorum ama baya çirkin bir kod oldu. Mobilde overflow-visible çalışmadığı için onu overflow-auto yapmam gerekti.
+- save cluster api'ında parseInt yüzünden bug vardı çözdüm

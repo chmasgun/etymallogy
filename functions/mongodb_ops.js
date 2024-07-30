@@ -143,7 +143,7 @@ async function saveClusterData(cid, clusterData){
   const db = client.db('etymallogy_clusters');
   const collection = db.collection('cluster_data');
 
-  const result=  await collection.updateOne({"cid" : cid}, {$set: {"words": clusterData}})
+  const result=  await collection.updateOne({"cid" : parseInt(cid)}, {$set: {"words": clusterData}})
   if(result.modifiedCount > 0 ){
     return { status: 2, message: "SUCCESS" };
   }
