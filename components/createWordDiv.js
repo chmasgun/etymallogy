@@ -1,11 +1,12 @@
 
-import { langColors ,reqFields, auxiliaryField, autoReqFields, filledFields,fields, relationsAll} from "@/functions/functions";
+import { langColors, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll } from "@/functions/functions";
 import { useEffect } from "react";
 
 
+const insertSaveButtonClass = "m-4 p-2 border bg-lime-500 text-center rounded-lg cursor-pointer disabled:opacity-40 disabled:bg-gray-500 disabled:cursor-not-allowed"
 
-export default function CreateWordDiv({ newWordData, setNewWordData, relation, wordPrev, newId, allWords, setAddingData, isInsertMode,
-    insertionRelations, setMustDepthRecalculate, hoveredPair, setIsInsertMode, setFilteredData, unsavedWordCount, setUnsavedWordCount }) {  // Manual inversion of FROM and TO. Careful!
+export default function CreateWordDiv({ newWordData, setNewWordData, relation, wordPrev, newId, allWords, setAddingData, isInsertMode, initializeClusterMode, initializeClusterFunction,
+    insertionRelations, setMustDepthRecalculate, hoveredPair, setIsInsertMode, setFilteredData, unsavedWordCount, setUnsavedWordCount, buttonEnabled }) {  // Manual inversion of FROM and TO. Careful!
 
 
     useEffect(() => {
@@ -32,7 +33,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         console.log([key, e.target.value]);
 
         const newDict = { ...newWordData }
-        newDict[key] = e.target.value
+        newDict[key] = e.target.value.trim()
         setNewWordData(newDict)
 
     }
@@ -44,9 +45,10 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         const depthIncrement = relationTypeUpDown === "to" ? 1 : -1
         const parentWordDepth = wordPrev["depth"]
         newWordData["depth"] = parentWordDepth + depthIncrement
-        if(parentWordDepth+depthIncrement < 0) { 
-            console.log(["RECALCULATE FOR " , newId]);
-            setMustDepthRecalculate(newId)}
+        if (parentWordDepth + depthIncrement < 0) {
+            console.log(["RECALCULATE FOR ", newId]);
+            setMustDepthRecalculate(newId)
+        }
 
         console.log(newWordData);
         // FIND RELATION
@@ -83,7 +85,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         const wordIdUp = hoveredPair[0]
         const wordIdDown = hoveredPair[1]
         const depthUp = allWords[wordIdUp]["depth"]
-        
+
         // Part 1 prepare the new word
         newWordData["depth"] = depthUp + 1
         newWordData["rel"][firstRelation]["from"] = [wordIdUp]
@@ -93,18 +95,18 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         const newAllWords = [...allWords]
         newAllWords.push(newWordData)
         // Part 3 delete the previous relation
-        for(const rel of relationsAll){ // search for all relations to locate the relation
+        for (const rel of relationsAll) { // search for all relations to locate the relation
             console.log(newAllWords[wordIdUp]["rel"]);
             console.log(rel);
             let indToRemove = newAllWords[wordIdUp]["rel"][rel]["to"]?.indexOf(wordIdDown)
-            if(indToRemove > -1){
-                newAllWords[wordIdUp]["rel"][rel]["to"].splice(indToRemove,1)
+            if (indToRemove > -1) {
+                newAllWords[wordIdUp]["rel"][rel]["to"].splice(indToRemove, 1)
             }
             console.log(newAllWords);
             console.log([wordIdDown, wordIdUp, newId]);
             indToRemove = newAllWords[wordIdDown]["rel"][rel]["from"]?.indexOf(wordIdUp)
-            if(indToRemove > -1){
-                newAllWords[wordIdDown]["rel"][rel]["from"].splice(indToRemove,1)
+            if (indToRemove > -1) {
+                newAllWords[wordIdDown]["rel"][rel]["from"].splice(indToRemove, 1)
             }
         }
         // Part 4 modify TO of UP word  
@@ -115,7 +117,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         if (isRelationDefinedBefore) {
             newAllWords[wordIdUp]["rel"][firstRelation]["to"].push(newId)
         } else {
-            newAllWords[wordIdUp]["rel"][firstRelation]["to"]  = [newId]
+            newAllWords[wordIdUp]["rel"][firstRelation]["to"] = [newId]
         }
         // Part 5 modify FROM of DOWN word 
         const existingRelation2 = newAllWords[wordIdDown]["rel"][secondRelation]["from"]   //for the existing word, get if the relation is already defined. We will either initialize or extend the list
@@ -126,7 +128,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         } else {
             newAllWords[wordIdDown]["rel"][secondRelation]["from"] = [newId]
         }
-        
+
         setAddingData(false)
         setIsInsertMode(false)
         setFilteredData([newAllWords])
@@ -136,6 +138,9 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         console.log(newAllWords);
     }
 
+    const initializeNewCluster = () => {
+
+    }
     return <div className="flex flex-col m-4 p-2 border-2 border-slate-400 shadow-xl rounded-xl">
         {filledFields.map((x, key_ind) =>
             <div className="flex m-1" key={key_ind}>
@@ -143,8 +148,9 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
                 <input className="flex-1 rounded" onChange={(e) => handleInputChange(x[0], e)}></input>
             </div>)
         }
-        {isInsertMode ? <div className="m-4 p-2 border bg-lime-500 text-center rounded-lg cursor-pointer " onClick={() => insertWordData()}>INSERT WORD</div> :
-            <div className="m-4 p-2 border bg-lime-500 text-center rounded-lg cursor-pointer " onClick={() => saveWordData()}>SAVE WORD</div>}
+        {isInsertMode ? <div className={insertSaveButtonClass} onClick={() => insertWordData()}>INSERT WORD</div> :
+            initializeClusterMode ? <button className={insertSaveButtonClass} disabled={!buttonEnabled} onClick={() => initializeClusterFunction()}>INITIALIZE NEW CLUSTER</button> :
+                <div className={insertSaveButtonClass} onClick={() => saveWordData()}>SAVE WORD</div>}
     </div>
 
 }

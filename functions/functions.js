@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 
-const relationsAll = ["derives","loans","homonym"]
+const relationsAll = ["derives", "loans", "homonym"]
 
-const reqFields = [["key", ""], ["lang", ""], ["original", ""]]
-const auxiliaryField = [["gender",""],["desc", ""], ["type", ""]]
+const reqFields = [["key", ""], ["lang", ""]]
+const auxiliaryField = [["original", ""], ["gender", ""], ["desc", ""], ["type", ""]]
 const autoReqFields = [["id", 0], ["depth", 0]]
 /*, ["rel", {
     "derives": {},
@@ -14,7 +14,7 @@ const autoReqFields = [["id", 0], ["depth", 0]]
 let filledFields = reqFields.concat(auxiliaryField)
 let fields = reqFields.concat(auxiliaryField, autoReqFields)
 
-const transitionClassForLines= "transition-all duration-300"
+const transitionClassForLines = "transition-all duration-300"
 
 const langColors = {
     "PIE": ["bg-gradient-to-bl from-indigo-300", "Proto-Indo-European", "text-gradient-to-bl from-indigo-300"],
@@ -126,7 +126,7 @@ const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, set
     </>
 }
 const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
-    
+
     const [x1, x2] = x
     return <>
         <defs>
@@ -152,23 +152,23 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, se
             x1={x1}
             y1={heightOffset}
             x2={x1}
-            y2={heightOffset + y* 0.5}
+            y2={heightOffset + y * 0.5}
             stroke={lineColor}
             strokeWidth={lineWidth}
             opacity={lineOpacity}></line>
         <line
             className={transitionClassForLines}
             x1={x1}
-            y1={heightOffset + y* 0.5}
+            y1={heightOffset + y * 0.5}
             x2={x2}
-            y2={heightOffset + y* 0.5}
+            y2={heightOffset + y * 0.5}
             stroke={lineColor}
             strokeWidth={lineWidth}
             opacity={lineOpacity}></line>
         <line
             className={transitionClassForLines}
             x1={x2}
-            y1={heightOffset + y* 0.5}
+            y1={heightOffset + y * 0.5}
             x2={x2}
             y2={heightOffset + y * 2 - 8}
             stroke={lineColor}
@@ -302,6 +302,19 @@ async function FetchSearchWords(textkey) {
     return wordsData
 }
 
+const checkWordReady = (wordData) => {
+
+    let isReady = true
+    for (const field of reqFields) {
+        console.log(wordData, field, wordData[field] !== "", isReady && (wordData[field] !== ""));
+        isReady = isReady && (wordData[field[0]].trim() !== "")
+    }
+
+    isReady = isReady && Object.keys(langColors).includes(wordData["lang"])
+
+    return isReady
+
+}
 const calculateWidthBelowNode = (data, nodeList) => {
 
     if (nodeList.length === 0) {
@@ -482,5 +495,5 @@ const calculateHighlightPositions = (posDict, setPosDict, highlightedWords) => {
 export {
     DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords,
     calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-    findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields,fields,relationsAll
+    findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll, checkWordReady
 }

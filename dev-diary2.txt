@@ -80,3 +80,9 @@
 - click focuslanan kelimeyi de centerlıyorum ama baya çirkin bir kod oldu. Mobilde overflow-visible çalışmadığı için onu overflow-auto yapmam gerekti.
 - save cluster api'ında parseInt yüzünden bug vardı çözdüm
 - delete implement ettim, fakat gerçek bir silme değil. From ilişkilerinden o node'u çıkarıp, node'un tüm relationlarını boşalttım. Hiçbir yere bağlı kalmadığı için otomatik olarak silinmiş oluyor. Ya Javascriptte uğraşıp gerçekten sileceğim, kendinden sonra gelen tüm id'leri azaltmam gerekecek vs biraz zor. Bir ihtimal python'da halledebilirim
+
+2024-07-30
+- focus edilince dil listesini de filtreliyorum
+- /new isimli route ile yeni cluster yaratabiliyorum.
+- kelime daha önce yaratılmış mı diye search ediyorum. Anasayfadaki logic'in çok benzeri oldu.
+- uygun kriterleri test eden fonksiyon yazdım. Yoksa button disabled oluyor.
