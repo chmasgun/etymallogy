@@ -36,3 +36,4 @@ yarn-error.log*
 next-env.d.ts
 IndoEuropeanTree.svg
 public/dataFromDB.json
+/public/dataBackup

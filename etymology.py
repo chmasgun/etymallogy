@@ -13,10 +13,13 @@ import sys
 import os
 import csv
 import pymongo
+from datetime import datetime
 
 sys.path.append(r'C:\Users\muratcan.asgun\Desktop\github\etymallogy')
 
-backup_json_path = r'C:\Users\muratcan.asgun\Desktop\github\etymallogy\public\dataFromDB.json'
+
+today_date =  datetime.today().strftime('%Y%m%d')
+backup_json_path = r'C:\Users\muratcan.asgun\Desktop\github\etymallogy\public\dataBackup\dataFromDB'+today_date+'.json'
 #relations_json_path = r'C:\Users\muratcan.asgun\Desktop\github\etymallogy\public\relations.json'
 
 #f= open(words_json_path, encoding='utf-8')
