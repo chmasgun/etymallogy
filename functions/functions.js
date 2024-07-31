@@ -24,6 +24,7 @@ const langColors = {
     "LA": ["bg-gradient-to-bl from-red-600", "Latin", "text-gradient-to-bl from-red-600"],
     "PTR": ["bg-gradient-to-bl from-red-200", "Proto-Turkic", "text-gradient-to-bl from-red-300"],
     "OTR": ["bg-gradient-to-bl from-red-300", "Old-Turkic", "text-gradient-to-bl from-red-300"],
+    "OTTR": ["bg-gradient-to-bl from-red-400", "Ottoman Turkish", "text-gradient-to-bl from-red-400"],
     "PMO": ["bg-gradient-to-bl from-indigo-500", "Proto-Mongolic", "text-gradient-to-bl from-indigo-500"],
     "MEN": ["bg-gradient-to-bl from-blue-300", "Middle English", "text-gradient-to-bl from-blue-300"],
     "MDU": ["bg-gradient-to-bl from-orange-600", "Middle Dutch", "text-gradient-to-bl from-orange-600"],
@@ -46,6 +47,7 @@ const langColors = {
     , "SP": ["bg-amber-400", "Spanish", "text-amber-400"]
     , "CA": ["bg-amber-500", "Catalan", "text-amber-500"]
     , "PO": ["bg-emerald-400", "Portuguese", "text-emerald-400"]
+    , "JP": ["bg-pink-400", "Japanese", "text-pink-400"]
 }
 
 
@@ -204,21 +206,21 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, tr
             onMouseLeave={(e) => revertHoverColor(e)}
             onClick={(e) => { setClicked(true); setIsInsertMode(true); setTimeout(() => setClicked(false), 20) }}
             x1={x1}
-            y1={heightOffset + y}
+            y1={heightOffset + y * 0.5}
             x2={x2}
-            y2={heightOffset + y}
+            y2={heightOffset + y * 0.5}
             stroke={"transparent"}
-            strokeWidth={20}></line>
+            strokeWidth={8}></line>
         <line className="z-10"
             onMouseEnter={() => setHoverColor()}
             onMouseLeave={(e) => revertHoverColor(e)}
             onClick={(e) => { setClicked(true); setIsInsertMode(true); setTimeout(() => setClicked(false), 20) }}
             x1={x2}
-            y1={heightOffset + y}
+            y1={heightOffset + y * 0.5}
             x2={x2}
             y2={heightOffset + y * 2 - 8}
             stroke={"transparent"}
-            strokeWidth={20}>
+            strokeWidth={8}>
         </line>
 
     </>
