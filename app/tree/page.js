@@ -300,7 +300,7 @@ export default function Tree() {
                     }
                       {
                         lines[0][rowInd]?.map((line, lineIndex) =>
-                          <DrawRelation key={rowInd + "-" + lineIndex}
+                          <DrawRelation key={rowInd + "-" + lineIndex+"-"+line[0]+"-"+line[1]}
                             x1={line[0] ||-1000} x2={line[1] || -1000}
                             heightOffset={line[2]}
                             y={depthMarginPx}

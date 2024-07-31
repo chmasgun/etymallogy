@@ -14,7 +14,7 @@ const autoReqFields = [["id", 0], ["depth", 0]]
 let filledFields = reqFields.concat(auxiliaryField)
 let fields = reqFields.concat(auxiliaryField, autoReqFields)
 
-const transitionClassForLines = "transition-all duration-300"
+const transitionClassForLinesDefault = "transition-all duration-400"
 
 const langColors = {
     "PIE": ["bg-gradient-to-bl from-indigo-300", "Proto-Indo-European", "text-gradient-to-bl from-indigo-300"],
@@ -46,7 +46,8 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
     const [lineColor, setLineColor] = useState("#777")
     const [lineWidth, setLineWidth] = useState(1)
     const [clicked, setClicked] = useState(false)
-    const [lineOpacity, setLineOpacity] = useState(highlightedWords.includes(pair[0]) & highlightedWords.includes(pair[1]) ? 1 : 0.1)
+    const [lineOpacity, setLineOpacity] = useState(0)
+    const [transitionClass, setTransitionClass] = useState(transitionClassForLinesDefault)
 
     const setHoverColor = () => {
         setLineColor("#f77")
@@ -76,11 +77,18 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
     }, [isInsertMode])
 
     useEffect(() => {
-        setLineOpacity(highlightedWords.includes(pair[0]) & highlightedWords.includes(pair[1]) ? 1 : 0.1)
+         setLineOpacity(0)
+        setTimeout(() => {
+             setLineOpacity(highlightedWords.includes(pair[0]) & highlightedWords.includes(pair[1]) ? 1 : 0.05)
+
+
+        }, 400)
     }, [highlightedWords])
 
     return <svg className="absolute overflow-visible z-0 w-1 h-1">
-        <SteppedLine x={[x1, x2]} heightOffset={heightOffset} y={y} lineColor={lineColor} lineWidth={lineWidth} lineOpacity={lineOpacity}
+        <SteppedLine  x={[x1, x2]} heightOffset={heightOffset} y={y} 
+            lineColor={lineColor} lineWidth={lineWidth} lineOpacity={lineOpacity}
+            transitionClass={transitionClass}
             setClicked={setClicked} setHoverColor={setHoverColor} revertHoverColor={revertHoverColor} setIsInsertMode={setIsInsertMode}></SteppedLine>
 
     </svg>
@@ -88,7 +96,7 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
 }
 
 
-const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
+const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, transitionClass, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
     const [x1, x2] = x
     return <>
         <defs>
@@ -110,7 +118,7 @@ const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, set
             </marker>
         </defs>
         <line
-            className={transitionClassForLines}
+            className={transitionClass}
             x1={x1}
             y1={heightOffset}
             x2={x2}
@@ -132,7 +140,7 @@ const DirectLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, set
             strokeWidth={20}></line>
     </>
 }
-const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
+const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, transitionClass, setClicked, setHoverColor, revertHoverColor, setIsInsertMode }) => {
 
     const [x1, x2] = x
     return <>
@@ -155,7 +163,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, se
             </marker>
         </defs>
         <line
-            className={transitionClassForLines}
+            className={transitionClass}
             x1={x1}
             y1={heightOffset}
             x2={x1}
@@ -164,7 +172,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, se
             strokeWidth={lineWidth}
             opacity={lineOpacity}></line>
         <line
-            className={transitionClassForLines}
+            className={transitionClass}
             x1={x1}
             y1={heightOffset + y * 0.5}
             x2={x2}
@@ -173,7 +181,7 @@ const SteppedLine = ({ x, heightOffset, y, lineColor, lineWidth, lineOpacity, se
             strokeWidth={lineWidth}
             opacity={lineOpacity}></line>
         <line
-            className={transitionClassForLines}
+            className={transitionClass}
             x1={x2}
             y1={heightOffset + y * 0.5}
             x2={x2}
