@@ -55,8 +55,8 @@ export default function NewTree() {
           <span className="p-4 mb-4">
             Language Codes
           </span>
-          {Object.keys(langColors).map(x =>
-                <div className="flex flex-row justify-around w-full">
+          {Object.keys(langColors).map((x,i) =>
+                <div key={i} className="flex flex-row justify-around w-full">
                   <span className="w-1/6">{x}</span>
                   <span className="w-2/3">{langColors[x][1]}</span>
                 </div>
@@ -86,8 +86,8 @@ export default function NewTree() {
             <div>Loading</div>
             : noDataFound ? <div>No data found </div>
               :
-              searchCandidatesAfterFilter.map(x =>
-                <div className="flex flex-row justify-around w-full">
+              searchCandidatesAfterFilter.map((x,i) =>
+                <div  key={i} className="flex flex-row justify-around w-full">
                   <span className="w-1/2">{x[0]}</span>
                   <span className="w-1/4">{x[1]}</span>
                   <span className="w-1/6 text-center"> {x[2]}</span>
