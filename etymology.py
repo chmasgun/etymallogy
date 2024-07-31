@@ -6,7 +6,7 @@ Created on Mon Jul  1 17:54:06 2024
 """
 
 
-import pandas as pd 
+import pandas as pd
 import math
 import json
 import sys
@@ -18,7 +18,7 @@ from datetime import datetime
 sys.path.append(r'C:\Users\muratcan.asgun\Desktop\github\etymallogy')
 
 
-today_date =  datetime.today().strftime('%Y%m%d')
+today_date = datetime.today().strftime('%Y%m%d')
 backup_json_path = r'C:\Users\muratcan.asgun\Desktop\github\etymallogy\public\dataBackup\dataFromDB'+today_date+'.json'
 #relations_json_path = r'C:\Users\muratcan.asgun\Desktop\github\etymallogy\public\relations.json'
 
@@ -32,9 +32,9 @@ keys_path = "C:/Users/muratcan.asgun/Desktop/lang-platform/passwords.keys"
 with open(keys_path) as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     keys = {rows[0]: rows[1] for rows in csv_reader}
-        
-    
-relations_all = ["derives" , "loans", "homonym"]
+       
+   
+relations_all = ["derives", "loans", "homonym"]
 
 uri = "mongodb+srv://"+keys["mongodb_user"]+":"+keys["mongodb_pw"]+"@mongodblanguage.vbeft0s.mongodb.net"
 client = pymongo.MongoClient(uri)

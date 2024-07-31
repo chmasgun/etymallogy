@@ -88,3 +88,8 @@
 - uygun kriterleri test eden fonksiyon yazdım. Yoksa button disabled oluyor.
 - python'daki data backup koduna date'i de ekledim. Bu sayede sıkıntı olursa en azından bir önceki günün verisi kalacak
 - new cluster'daki search kısmını CreateWordDiv'in içine aldım, çünkü insert ve add word kısımları için de gerekli
+
+2024-07-31
+- focus'ta arka planı blur yaptım (gri renk+opacity=0.1 idi). 
+- focus'ta yeni kutu seçince, kelimeler arasındaki çizgilerin animasyonu bozuk çalışıyordu. Key değerini düzelterek ve setTimeout ekleyerek düzelttim
+- sh-r-b ağacını baya zenginleştirdim
