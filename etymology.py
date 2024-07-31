@@ -48,6 +48,7 @@ cluster_data = [ {"cid":x["cid"], "words":x["words"]} for x in cluster_data]
 
 with open(backup_json_path, 'w', encoding='utf-8') as file:
     json.dump(cluster_data, file, ensure_ascii=False, indent=4) 
+    
 ############## KEY GENERATION PART
 word_data = [ [y["key"],y["lang"],x["cid"]]   for x in cluster_data for y in x["words"]]
 word_dict = {}
@@ -64,6 +65,10 @@ for i in word_data_push :
     word_data_collection.replace_one({"key": i["key"]}, i, upsert = True)
 ##########################################
     
-    
-    
-    
+flat_data = [   y      for x in cluster_data for y in x["words"]] 
+cid_data = [   x["cid"]    for x in cluster_data for y in x["words"]] 
+ 
+data_df = pd.DataFrame(flat_data)    
+data_df["cid_data"] = cid_data    
+
+ 

@@ -185,7 +185,7 @@ const AddDataPopup = ({ popupStates, modifiedRelation, setFilteredData }) => {
 const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, hoveredPair, setIsInsertMode }) => {
     const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate, unsavedWordCount, setUnsavedWordCount,setNoDataFound, setSearchLoading,setSearchCandidatesAfterFilter] = popupStates
 
-    const [newWordData, setNewWordData] = useState(null)
+    const [newWordData, setNewWordData] = useState({})
     const newId = allWords.length
     console.log(hoveredPair);
     const wordUp = allWords[hoveredPair[0]]

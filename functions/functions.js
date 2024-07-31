@@ -21,17 +21,23 @@ const langColors = {
     "PGER": ["bg-gradient-to-bl from-orange-300", "Proto-Germanic", "text-gradient-to-bl from-orange-300"],
     "AGR": ["bg-gradient-to-bl from-sky-500", "Ancient Greek", "text-gradient-to-bl from-sky-500"],
     "OFR": ["bg-gradient-to-br from-indigo-300", "Old French", "text-gradient-to-br from-indigo-300"],
-    "LA": ["bg-gradient-to-bl from-red-600", "Latin", "bg-gradient-to-bl from-red-600"],
+    "LA": ["bg-gradient-to-bl from-red-600", "Latin", "text-gradient-to-bl from-red-600"],
+    "PTR": ["bg-gradient-to-bl from-red-200", "Proto-Turkic", "text-gradient-to-bl from-red-300"],
+    "OTR": ["bg-gradient-to-bl from-red-300", "Old-Turkic", "text-gradient-to-bl from-red-300"],
+    "PMO": ["bg-gradient-to-bl from-red-700", "Proto-Mongolic", "text-gradient-to-bl from-red-700"],
+
 
     "AR": ["bg-lime-500", "Arabic", "text-lime-500"],
-    "TR": ["bg-red-300", "Turkish", "text-red-300"],
+    "TR": ["bg-red-400", "Turkish", "text-red-400"],
     "EN": ["bg-sky-300", "English", "text-sky-300"],
     "FR": ["bg-indigo-300", "French", "text-indigo-300"],
     "IT": ["bg-green-400", "Italian", "text-green-400"],
     "GR": ["bg-sky-500", "Greek", "text-sky-500"],
     "DE": ["bg-orange-400", "German", "text-orange-400"],
     "FA": ["bg-yellow-500", "Persian", "text-yellow-500"]
-    , "DU": ["bg-orange-600", "Dutch", "text-orange-600"],
+    , "DU": ["bg-orange-600", "Dutch", "text-orange-600"]
+    , "MO": ["bg-red-700", "Mongolian", "text-red-700"]
+    , "AZ": ["bg-cyan-500", "Azerbaijani", "text-cyan-500"]
 }
 
 
@@ -303,50 +309,50 @@ async function FetchSearchWords(textkey) {
     return wordsData
 }
 async function InitiateNewClusterClient(newClusterData) {
-  let newfilteredData
-  try {
-    const response = await fetch('/api/initiate-cluster', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+    let newfilteredData
+    try {
+        const response = await fetch('/api/initiate-cluster', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
 
-      },
-      body: JSON.stringify({ newClusterData: newClusterData })
-    });
+            },
+            body: JSON.stringify({ newClusterData: newClusterData })
+        });
 
-    if (!response.ok) {
-      const message = await response.text();
-      console.log(message);
-    } else {
-      const responseResolved = await response;
-      const data = await responseResolved.json();
-      const message = data.message;
+        if (!response.ok) {
+            const message = await response.text();
+            console.log(message);
+        } else {
+            const responseResolved = await response;
+            const data = await responseResolved.json();
+            const message = data.message;
 
-      //newfilteredData = [data.responseData.clusterData[0].words]
-      //console.log(["HEY", newfilteredData]);
+            //newfilteredData = [data.responseData.clusterData[0].words]
+            //console.log(["HEY", newfilteredData]);
 
-      // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
+            // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
+        }
+
+    } catch (error) {
+        // Handle any errors that occur during the request
+        console.error(error);
     }
-
-  } catch (error) {
-    // Handle any errors that occur during the request
-    console.error(error);
-  }
-  // Pass data to the page via props
-  return newfilteredData
+    // Pass data to the page via props
+    return newfilteredData
 }
 
-const checkWordReady = (wordData , searchData) => {
+const checkWordReady = (wordData, searchData) => {
 
     let isReady = true
     for (const field of reqFields) {
         //console.log(wordData, field, wordData[field] !== "", isReady && (wordData[field] !== ""));
-        isReady = isReady && Object.keys(wordData).includes(field[0]) &&(wordData[field[0]].trim() !== "")
+        isReady = isReady && Object.keys(wordData).includes(field[0]) && (wordData[field[0]].trim() !== "")
     }
 
     isReady = isReady && Object.keys(langColors).includes(wordData["lang"])
 
-    isReady = isReady && !searchData.map(x=> x[0]+x[1]).includes(wordData["key"]+wordData["lang"])
+    isReady = isReady && !searchData.map(x => x[0] + x[1]).includes(wordData["key"] + wordData["lang"])
     return isReady
 
 }

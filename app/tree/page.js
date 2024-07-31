@@ -140,7 +140,7 @@ export default function Tree() {
         }
       }
 
-      setSelectedWord(filteredData[0][0])
+      //setSelectedWord(filteredData[0][0])
 
 
 
