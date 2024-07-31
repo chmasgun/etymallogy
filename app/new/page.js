@@ -8,8 +8,7 @@ import {
 } from "@/functions/functions";
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { FetchSearchWords } from "@/functions/functions";
-//console.log(data[1]);
+ //console.log(data[1]);
 
 import CreateWordDiv from "@/components/createWordDiv";
 
@@ -34,79 +33,17 @@ export default function NewTree() {
   const popupRef = useRef();
   const [popupOpen, setPopupOpen] = useState(false)
   const [selectedWord, setSelectedWord] = useState("")
-  const [allowInitialize, setAllowInitialize] = useState(false)
+  
 
 
   const [newWordData, setNewWordData] = useState({})
-  const [searchTextKey, setSearchTextKey] = useState("")
   const [searchLoading, setSearchLoading] = useState(false)
   const [noDataFound, setNoDataFound] = useState(false)
-  const [searchCandidates, setSearchCandidates] = useState([])
   const [searchCandidatesAfterFilter, setSearchCandidatesAfterFilter] = useState([])
 
-
   console.log(newWordData);
-  console.log(searchCandidates);
-
-  useEffect(() => {
-
-    setAllowInitialize(checkWordReady(newWordData))
-
-    if (newWordData.key && newWordData.key.length < 3) {
-      setSearchCandidates([])
-      setSearchCandidatesAfterFilter([])
-      setSearchTextKey("")
-
-      setNoDataFound(false)
-    }
-    else if (searchCandidates.length > 0) {
-      const newMatchingWords = searchCandidates.filter(x => x[0].toLocaleLowerCase().slice(0, newWordData.key.length) === newWordData.key)
-
-      setSearchCandidatesAfterFilter(newMatchingWords)
-      setNoDataFound(newMatchingWords.length === 0 && searchCandidates.length > 0)
-
-    }
-    if (newWordData.key && newWordData.key.slice(0, 3) !== searchTextKey) {
-      setSearchTextKey(newWordData.key.slice(0, 3))
-    }
-  }, [newWordData])
-
-  useEffect(() => {
-    const initFetchData = async () => {
-      try {
-
-        const newfilteredData = await FetchSearchWords(searchTextKey)
-        if (newfilteredData.length > 0) {
-
-          setSearchCandidates(newfilteredData)
-          setSearchCandidatesAfterFilter(newfilteredData)
-
-          setNoDataFound(false)
-        } else {
-          setNoDataFound(true)
-
-          console.log("NO DATA FOUND");
-        }
-        setSearchLoading(false)
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setSearchLoading(false)
-
-      }
-    };
-    if (searchTextKey.length === 3) {
-      setSearchLoading(true)
-      initFetchData();
-    }
-  }, [searchTextKey])
-
-  function initializeClusterFunction() {
-    console.log("INITALIZE CLUSTER");
-    initiateNewClusterClient(newWordData)
-    console.log(newWordData);
-  }
-
-  console.log(searchCandidatesAfterFilter);
+   
+ 
   return (
     <Suspense>
 
@@ -130,8 +67,10 @@ export default function NewTree() {
 
           newId={0} allWords={[]}
           initializeClusterMode={true}
-          initializeClusterFunction={initializeClusterFunction}
-          buttonEnabled={allowInitialize}
+          setSearchCandidatesAfterFilter={setSearchCandidatesAfterFilter}
+          setNoDataFound={setNoDataFound} 
+          setSearchLoading={setSearchLoading}
+           
         //setAddingData={setAddingData}
         //setFilteredData={setFilteredData}
         //setMustDepthRecalculate={setMustDepthRecalculate}
@@ -163,37 +102,3 @@ export default function NewTree() {
 }
 
 
-
-async function initiateNewClusterClient(newClusterData) {
-  let newfilteredData
-  try {
-    const response = await fetch('/api/initiate-cluster', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-
-      },
-      body: JSON.stringify({ newClusterData: newClusterData })
-    });
-
-    if (!response.ok) {
-      const message = await response.text();
-      console.log(message);
-    } else {
-      const responseResolved = await response;
-      const data = await responseResolved.json();
-      const message = data.message;
-
-      //newfilteredData = [data.responseData.clusterData[0].words]
-      //console.log(["HEY", newfilteredData]);
-
-      // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
-    }
-
-  } catch (error) {
-    // Handle any errors that occur during the request
-    console.error(error);
-  }
-  // Pass data to the page via props
-  return newfilteredData
-}

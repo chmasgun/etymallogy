@@ -86,3 +86,5 @@
 - /new isimli route ile yeni cluster yaratabiliyorum.
 - kelime daha önce yaratılmış mı diye search ediyorum. Anasayfadaki logic'in çok benzeri oldu.
 - uygun kriterleri test eden fonksiyon yazdım. Yoksa button disabled oluyor.
+- python'daki data backup koduna date'i de ekledim. Bu sayede sıkıntı olursa en azından bir önceki günün verisi kalacak
+- new cluster'daki search kısmını CreateWordDiv'in içine aldım, çünkü insert ve add word kısımları için de gerekli

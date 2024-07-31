@@ -19,13 +19,14 @@ const transitionClassForLines = "transition-all duration-300"
 const langColors = {
     "PIE": ["bg-gradient-to-bl from-indigo-300", "Proto-Indo-European", "text-gradient-to-bl from-indigo-300"],
     "PGER": ["bg-gradient-to-bl from-orange-300", "Proto-Germanic", "text-gradient-to-bl from-orange-300"],
-
+    "AGR": ["bg-gradient-to-bl from-sky-500", "Ancient Greek", "text-gradient-to-bl from-sky-500"],
+    "OFR": ["bg-gradient-to-br from-indigo-300", "Old French", "text-gradient-to-br from-indigo-300"],
+    "LA": ["bg-gradient-to-bl from-red-600", "Latin", "bg-gradient-to-bl from-red-600"],
 
     "AR": ["bg-lime-500", "Arabic", "text-lime-500"],
     "TR": ["bg-red-300", "Turkish", "text-red-300"],
     "EN": ["bg-sky-300", "English", "text-sky-300"],
     "FR": ["bg-indigo-300", "French", "text-indigo-300"],
-    "LA": ["bg-red-600", "Latin", "text-red-600"],
     "IT": ["bg-green-400", "Italian", "text-green-400"],
     "GR": ["bg-sky-500", "Greek", "text-sky-500"],
     "DE": ["bg-orange-400", "German", "text-orange-400"],
@@ -301,17 +302,51 @@ async function FetchSearchWords(textkey) {
     // Pass data to the page via props
     return wordsData
 }
+async function InitiateNewClusterClient(newClusterData) {
+  let newfilteredData
+  try {
+    const response = await fetch('/api/initiate-cluster', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
 
-const checkWordReady = (wordData) => {
+      },
+      body: JSON.stringify({ newClusterData: newClusterData })
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      console.log(message);
+    } else {
+      const responseResolved = await response;
+      const data = await responseResolved.json();
+      const message = data.message;
+
+      //newfilteredData = [data.responseData.clusterData[0].words]
+      //console.log(["HEY", newfilteredData]);
+
+      // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
+    }
+
+  } catch (error) {
+    // Handle any errors that occur during the request
+    console.error(error);
+  }
+  // Pass data to the page via props
+  return newfilteredData
+}
+
+const checkWordReady = (wordData , searchData) => {
 
     let isReady = true
     for (const field of reqFields) {
-        console.log(wordData, field, wordData[field] !== "", isReady && (wordData[field] !== ""));
-        isReady = isReady && (wordData[field[0]].trim() !== "")
+        //console.log(wordData, field, wordData[field] !== "", isReady && (wordData[field] !== ""));
+        isReady = isReady && Object.keys(wordData).includes(field[0]) &&(wordData[field[0]].trim() !== "")
     }
 
     isReady = isReady && Object.keys(langColors).includes(wordData["lang"])
 
+    isReady = isReady && !searchData.map(x=> x[0]+x[1]).includes(wordData["key"]+wordData["lang"])
     return isReady
 
 }
@@ -493,7 +528,7 @@ const calculateHighlightPositions = (posDict, setPosDict, highlightedWords) => {
 }
 
 export {
-    DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords,
+    DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords, InitiateNewClusterClient,
     calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
     findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll, checkWordReady
 }

@@ -1,12 +1,17 @@
 
-import { langColors, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll } from "@/functions/functions";
-import { useEffect } from "react";
+import { InitiateNewClusterClient, checkWordReady, FetchSearchWords, langColors, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll } from "@/functions/functions";
+import { useEffect, useState } from "react";
 
 
 const insertSaveButtonClass = "m-4 p-2 border bg-lime-500 text-center rounded-lg cursor-pointer disabled:opacity-40 disabled:bg-gray-500 disabled:cursor-not-allowed"
 
-export default function CreateWordDiv({ newWordData, setNewWordData, relation, wordPrev, newId, allWords, setAddingData, isInsertMode, initializeClusterMode, initializeClusterFunction,
-    insertionRelations, setMustDepthRecalculate, hoveredPair, setIsInsertMode, setFilteredData, unsavedWordCount, setUnsavedWordCount, buttonEnabled }) {  // Manual inversion of FROM and TO. Careful!
+export default function CreateWordDiv({ newWordData, setNewWordData, relation, wordPrev, newId, allWords, setAddingData, isInsertMode, initializeClusterMode, setSearchCandidatesAfterFilter, setNoDataFound, setSearchLoading,
+    insertionRelations, setMustDepthRecalculate, hoveredPair, setIsInsertMode, setFilteredData, unsavedWordCount, setUnsavedWordCount }) {  // Manual inversion of FROM and TO. Careful!
+
+    const [allowInitialize, setAllowInitialize] = useState(false)
+    const [searchTextKey, setSearchTextKey] = useState("")
+
+    const [searchCandidates, setSearchCandidates] = useState([])
 
 
     useEffect(() => {
@@ -36,6 +41,63 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         newDict[key] = e.target.value.trim()
         setNewWordData(newDict)
 
+    }
+    useEffect(() => {
+
+        setAllowInitialize(checkWordReady(newWordData, searchCandidates))
+
+        if (newWordData.key && newWordData.key.length < 3) {
+            setSearchCandidates([])
+            setSearchCandidatesAfterFilter([])
+            setSearchTextKey("")
+
+            setNoDataFound(false)
+        }
+        else if (searchCandidates.length > 0) {
+            const newMatchingWords = searchCandidates.filter(x => x[0].toLocaleLowerCase().slice(0, newWordData.key.length) === newWordData.key)
+
+            setSearchCandidatesAfterFilter(newMatchingWords)
+            setNoDataFound(newMatchingWords.length === 0 && searchCandidates.length > 0)
+
+        }
+        if (newWordData.key && newWordData.key.slice(0, 3) !== searchTextKey) {
+            setSearchTextKey(newWordData.key.slice(0, 3))
+        }
+    }, [newWordData])
+
+    useEffect(() => {
+        const initFetchData = async () => {
+            try {
+
+                const newfilteredData = await FetchSearchWords(searchTextKey)
+                if (newfilteredData.length > 0) {
+
+                    setSearchCandidates(newfilteredData)
+                    setSearchCandidatesAfterFilter(newfilteredData)
+
+                    setNoDataFound(false)
+                } else {
+                    setNoDataFound(true)
+
+                    console.log("NO DATA FOUND");
+                }
+                setSearchLoading(false)
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setSearchLoading(false)
+
+            }
+        };
+        if (searchTextKey.length === 3) {
+            setSearchLoading(true)
+            initFetchData();
+        }
+    }, [searchTextKey])
+
+    function initializeClusterFunction() {
+        console.log("INITALIZE CLUSTER");
+        InitiateNewClusterClient(newWordData)
+        console.log(newWordData);
     }
 
     const saveWordData = () => {
@@ -138,9 +200,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         console.log(newAllWords);
     }
 
-    const initializeNewCluster = () => {
 
-    }
     return <div className="flex flex-col m-4 p-2 border-2 border-slate-400 shadow-xl rounded-xl">
         {filledFields.map((x, key_ind) =>
             <div className="flex m-1" key={key_ind}>
@@ -148,9 +208,9 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
                 <input className="flex-1 rounded" onChange={(e) => handleInputChange(x[0], e)}></input>
             </div>)
         }
-        {isInsertMode ? <div className={insertSaveButtonClass} onClick={() => insertWordData()}>INSERT WORD</div> :
-            initializeClusterMode ? <button className={insertSaveButtonClass} disabled={!buttonEnabled} onClick={() => initializeClusterFunction()}>INITIALIZE NEW CLUSTER</button> :
-                <div className={insertSaveButtonClass} onClick={() => saveWordData()}>SAVE WORD</div>}
+        {isInsertMode ? <button className={insertSaveButtonClass} disabled={!allowInitialize} onClick={() => insertWordData()}>INSERT WORD</button> :
+            initializeClusterMode ? <button className={insertSaveButtonClass} disabled={!allowInitialize} onClick={() => initializeClusterFunction()}>INITIALIZE NEW CLUSTER</button> :
+                <button className={insertSaveButtonClass} disabled={!allowInitialize} onClick={() => saveWordData()}>SAVE WORD</button>}
     </div>
 
 }

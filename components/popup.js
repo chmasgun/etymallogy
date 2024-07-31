@@ -8,9 +8,14 @@ export default function Popup({ word, popupRef, setPopupOpen, setSelectedWord, a
     unsavedWordCount, setUnsavedWordCount, isInsertMode, setIsInsertMode, setMustDepthRecalculate, hoveredPair }) {
 
     const [addingData, setAddingData] = useState(false)
+
+    const [searchLoading, setSearchLoading] = useState(false)
+    const [noDataFound, setNoDataFound] = useState(false)
+    const [searchCandidatesAfterFilter, setSearchCandidatesAfterFilter] = useState([])
+
     //const [insertingData, setInsertingData] = useState(false)
     const [modifiedRelation, setModifiedRelation] = useState(["", ""])
-    const popupStates = [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate, unsavedWordCount, setUnsavedWordCount]
+    const popupStates = [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate, unsavedWordCount, setUnsavedWordCount, setNoDataFound, setSearchLoading,setSearchCandidatesAfterFilter]
 
 
     useEffect(() => {
@@ -147,9 +152,9 @@ const DefaultPopup = ({ popupStates, setFilteredData }) => {
 
 
 const AddDataPopup = ({ popupStates, modifiedRelation, setFilteredData }) => {
-    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate, unsavedWordCount, setUnsavedWordCount] = popupStates
+    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate, unsavedWordCount, setUnsavedWordCount,setNoDataFound, setSearchLoading,setSearchCandidatesAfterFilter] = popupStates
 
-    const [newWordData, setNewWordData] = useState(null)
+    const [newWordData, setNewWordData] = useState({})
     const newId = allWords.length
     console.log(["heyyyy ", allWords, word]);
     console.log(newWordData);
@@ -166,6 +171,9 @@ const AddDataPopup = ({ popupStates, modifiedRelation, setFilteredData }) => {
             newId={newId} allWords={allWords}
             setAddingData={setAddingData}
             setFilteredData={setFilteredData}
+            setNoDataFound={setNoDataFound}
+            setSearchLoading={setSearchLoading}
+            setSearchCandidatesAfterFilter={setSearchCandidatesAfterFilter }
             setMustDepthRecalculate={setMustDepthRecalculate}
             unsavedWordCount={unsavedWordCount}
             setUnsavedWordCount={setUnsavedWordCount} ></CreateWordDiv>
@@ -175,7 +183,7 @@ const AddDataPopup = ({ popupStates, modifiedRelation, setFilteredData }) => {
 }
 
 const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, hoveredPair, setIsInsertMode }) => {
-    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate, unsavedWordCount, setUnsavedWordCount] = popupStates
+    const [word, setPopupOpen, setSelectedWord, allWords, setAddingData, setModifiedRelation, setMustDepthRecalculate, unsavedWordCount, setUnsavedWordCount,setNoDataFound, setSearchLoading,setSearchCandidatesAfterFilter] = popupStates
 
     const [newWordData, setNewWordData] = useState(null)
     const newId = allWords.length
@@ -207,6 +215,9 @@ const InsertDataPopup = ({ popupStates, modifiedRelation, setFilteredData, hover
             setIsInsertMode={setIsInsertMode}
             insertionRelations={[firstRelation, secondRelation, relationsAll]}
             setMustDepthRecalculate={setMustDepthRecalculate}
+            setNoDataFound={setNoDataFound}
+            setSearchLoading={setSearchLoading}
+            setSearchCandidatesAfterFilter={setSearchCandidatesAfterFilter }            
             hoveredPair={hoveredPair}
             setAddingData={setAddingData}
             setFilteredData={setFilteredData}
