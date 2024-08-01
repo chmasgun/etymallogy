@@ -95,3 +95,6 @@
 - sh-r-b ağacını baya zenginleştirdim
 - /new route'unda kelimeyi kaydedip dönen veriyi kullanarak /tree route'una yönlendiren kod geliştirdim.
 - createWordDiv'deki lang'ın input kısmında, eğer dil bulunursa onu yazdırıyorum artık. Bu sayede yanlış dil kodu girme ihtimali azalıyor
+
+2024-08-01
+- searchBar componentını tamamen ayrık yaptım.
