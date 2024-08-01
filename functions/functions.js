@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 const relationsAll = ["derives", "loans", "homonym"]
 
 const reqFields = [["key", ""], ["lang", ""]]
-const auxiliaryField = [["original", ""], ["gender", ""], ["desc", ""], ["type", ""]]
+const auxiliaryField = [["original", ""], ["gender", ""], ["desc", ""], ["type", ""],["detail",""],["alt",""]]
 const autoReqFields = [["id", 0], ["depth", 0]]
 /*, ["rel", {
     "derives": {},
@@ -47,7 +47,9 @@ const langColors = {
     , "SP": ["bg-amber-400", "Spanish", "text-amber-400"]
     , "CA": ["bg-amber-500", "Catalan", "text-amber-500"]
     , "PO": ["bg-emerald-400", "Portuguese", "text-emerald-400"]
-    , "JP": ["bg-pink-400", "Japanese", "text-pink-400"]
+    , "JP": ["bg-rose-400", "Japanese", "text-rose-400"]
+    , "ZH": ["bg-red-600", "Mandarin Chinese", "text-red-600"]
+    , "CN": ["bg-pink-600", "Cantonese", "text-pink-600"]
 }
 
 
@@ -327,7 +329,7 @@ async function FetchSearchWords(textkey) {
     return wordsData
 }
 async function InitiateNewClusterClient(newClusterData) {
-    let newfilteredData
+    let newfilteredData = {}
     try {
         const response = await fetch('/api/initiate-cluster', {
             method: 'POST',
@@ -346,7 +348,7 @@ async function InitiateNewClusterClient(newClusterData) {
             const data = await responseResolved.json();
             const message = data.message;
 
-            //newfilteredData = [data.responseData.clusterData[0].words]
+            newfilteredData = data.responseData.clusterData 
             //console.log(["HEY", newfilteredData]);
 
             // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list

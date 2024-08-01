@@ -163,13 +163,15 @@ async function initiateNewClusterDB(newClusterData){
   const collection = db.collection('cluster_data');
   const documentCount =  await collection.countDocuments()
 
-  const result=  await collection.insertOne({"cid" :documentCount, "words": [newClusterData]}  )
+  const documentToUpload = {"cid" :documentCount, "words": [newClusterData]}
+
+  const result=  await collection.insertOne( documentToUpload )
   console.log(result,documentCount);
   if(result.acknowledged   ){
-    return { status: 2, message: "SUCCESS" };
+    return { status: 2, clusterData: documentToUpload };
   }
   else{
-    return { status: -3, message:"error"};
+    return { status: -3, clusterData:"error"};
   }
 }
 

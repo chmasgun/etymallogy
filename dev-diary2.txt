@@ -93,3 +93,5 @@
 - focus'ta arka planı blur yaptım (gri renk+opacity=0.1 idi). 
 - focus'ta yeni kutu seçince, kelimeler arasındaki çizgilerin animasyonu bozuk çalışıyordu. Key değerini düzelterek ve setTimeout ekleyerek düzelttim
 - sh-r-b ağacını baya zenginleştirdim
+- /new route'unda kelimeyi kaydedip dönen veriyi kullanarak /tree route'una yönlendiren kod geliştirdim.
+- createWordDiv'deki lang'ın input kısmında, eğer dil bulunursa onu yazdırıyorum artık. Bu sayede yanlış dil kodu girme ihtimali azalıyor

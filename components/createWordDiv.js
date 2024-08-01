@@ -1,18 +1,19 @@
 
 import { InitiateNewClusterClient, checkWordReady, FetchSearchWords, langColors, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll } from "@/functions/functions";
 import { useEffect, useState } from "react";
-
+import { useRouter } from "next/navigation";
 
 const insertSaveButtonClass = "m-4 p-2 border bg-lime-500 text-center rounded-lg cursor-pointer disabled:opacity-40 disabled:bg-gray-500 disabled:cursor-not-allowed"
 
 export default function CreateWordDiv({ newWordData, setNewWordData, relation, wordPrev, newId, allWords, setAddingData, isInsertMode, initializeClusterMode, setSearchCandidatesAfterFilter, setNoDataFound, setSearchLoading,
     insertionRelations, setMustDepthRecalculate, hoveredPair, setIsInsertMode, setFilteredData, unsavedWordCount, setUnsavedWordCount }) {  // Manual inversion of FROM and TO. Careful!
-
+    const router = useRouter();
     const [allowInitialize, setAllowInitialize] = useState(false)
     const [searchTextKey, setSearchTextKey] = useState("")
 
     const [searchCandidates, setSearchCandidates] = useState([])
 
+    const [errorMessage, setErrorMessage] = useState("")
 
     useEffect(() => {
         let WordDefault = {}
@@ -94,10 +95,21 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         }
     }, [searchTextKey])
 
-    function initializeClusterFunction() {
+    async function initializeClusterFunction() {
         console.log("INITALIZE CLUSTER");
-        InitiateNewClusterClient(newWordData)
-        console.log(newWordData);
+        const response = await InitiateNewClusterClient(newWordData)
+        if(Object.keys(response).length===0 ){
+            setErrorMessage("An error occurred during new cluster creation")
+        }else{
+            setErrorMessage("Cluster created successfully, redirecting now")
+            console.log(newWordData);
+            console.log("Cluster creation successful")
+            console.log(response["cid"], response["words"][0]["key"]);
+            setTimeout(() => {
+                router.push(`/tree?cluster=${response["cid"]}&word=${response["words"][0]["key"]+response["words"][0]["lang"]}`);
+            }, 500)
+        }
+
     }
 
     const saveWordData = () => {
@@ -201,13 +213,17 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
     }
 
 
-    return <div className="flex flex-col m-4 p-2 border-2 border-slate-400 shadow-xl rounded-xl">
+    return <div className="flex flex-col m-4 p-2 border-2 border-slate-400 shadow-xl rounded-xl self-center">
         {filledFields.map((x, key_ind) =>
-            <div className="flex m-1" key={key_ind}>
+            <div className="flex m-1 relative"  key={key_ind}>
                 <span className="flex-1 m-1">{x[0]} </span>
                 <input className="flex-1 rounded" onChange={(e) => handleInputChange(x[0], e)}></input>
+                {x[0] === "lang" ?
+                     <div className="absolute right-0 flex text-xs h-full max-w-20 text-center items-center "> {  Object.keys(langColors).includes(newWordData["lang"]) ? langColors[newWordData["lang"]][1]: ""}</div>  
+                          : <></>}
             </div>)
         }
+        {errorMessage !== "" ? <div>{errorMessage}</div>:<></>}
         {isInsertMode ? <button className={insertSaveButtonClass} disabled={!allowInitialize} onClick={() => insertWordData()}>INSERT WORD</button> :
             initializeClusterMode ? <button className={insertSaveButtonClass} disabled={!allowInitialize} onClick={() => initializeClusterFunction()}>INITIALIZE NEW CLUSTER</button> :
                 <button className={insertSaveButtonClass} disabled={!allowInitialize} onClick={() => saveWordData()}>SAVE WORD</button>}
