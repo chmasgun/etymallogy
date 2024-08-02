@@ -26,13 +26,13 @@ export default function Home() {
 
     setTimeout(() => {
         setPositions([0,1000,1000])
-    }, 300 )
+    }, 0 )
     setTimeout(() => {
       setPositions([0,0,1000])
-    }, 1000 )
+    }, 500 )
     setTimeout(() => {
       setPositions([0,0,0])
-    }, 2000 )
+    }, 1000 )
   }, [])
 
   return (
