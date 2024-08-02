@@ -98,3 +98,9 @@
 
 2024-08-01
 - searchBar componentını tamamen ayrık yaptım.
+- searchBar'ı /tree'ye aldım. Düzgün görünmesi için epey css ile uğraştım.
+- searchBar için small ve normal mode yaptım. Bu sayede search istenmediği zaman küçük kalabilecek
+- tree içinde search ile redirect ederken initial useEffect baya failladı. Tüm state'leri sıfırdan initialize etmem gerekti.
+- searchBar'a (sadece /tree için) useRef ekledim bu sayede dışına tıklandığında küçültebiliyorum
+- mobilde searchBar büyüyünce legend width 0 yapıyorum, bar da bütün ekranı kaplayabiliyor.
+- search'ü reset edebilmek için içine state ve setter pass etmem gerekti.

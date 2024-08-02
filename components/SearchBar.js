@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect,  } from "react";
 const maxSearchResults = 8
 
-export default function SearchBar({smallMode, setSmallMode }) {
+export default function SearchBar({smallMode, setSmallMode , searchMustReset, setSearchMustReset }) {
 
     const router = useRouter()
 
@@ -89,6 +89,16 @@ export default function SearchBar({smallMode, setSmallMode }) {
 
 
     }, [searchTextKey])
+
+
+    useEffect(() => {
+        if(searchMustReset){
+            resetSearch()
+            setSearchMustReset(false)
+        }
+    }, [searchMustReset])
+
+    
     return <div className="flex flex-col justify-center self-center w-full  relative z-50" onClick={() => setSmallMode(false)}>
         <div>
             { /*<span className="absolute right-0 top-0 bottom-0 text-center">{'\uD83D\uDD0D'}</span>*/}
