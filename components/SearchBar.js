@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect,  } from "react";
 const maxSearchResults = 8
 
-export default function SearchBar({ x, pos, selectedCluster, setSelectedWord, setPopupOpen, hoveredPair, highlightedWords, editModeToggle, setWordToHighlight, isProd }) {
+export default function SearchBar({smallMode, setSmallMode }) {
 
     const router = useRouter()
 
@@ -89,12 +89,13 @@ export default function SearchBar({ x, pos, selectedCluster, setSelectedWord, se
 
 
     }, [searchTextKey])
-    return <div className="flex flex-col justify-center self-center w-80 lg:w-[32rem] m-16 relative ">
+    return <div className="flex flex-col justify-center self-center w-full  relative z-50" onClick={() => setSmallMode(false)}>
         <div>
+            { /*<span className="absolute right-0 top-0 bottom-0 text-center">{'\uD83D\uDD0D'}</span>*/}
             <input
                 type="text"
-                className="self-center w-full placeholder-gray-400 text-gray-900 p-4 rounded-t-xl outline-0 text-lg"
-                placeholder="Search for a word"
+                className={`self-center w-full placeholder-gray-400 text-gray-900 p-4 ${smallMode ? "rounded-xl":"rounded-t-xl" }  outline-0 text-lg`}
+                placeholder={smallMode ? '\uD83D\uDD0D' : 'Search for a word'}
                 onChange={searchHandle}
                 value={searchText}
 
@@ -115,7 +116,7 @@ export default function SearchBar({ x, pos, selectedCluster, setSelectedWord, se
                 {searchCandidatesAfterFilter.slice(0, maxSearchResults).map((x, i) =>
                     <span key={i} className="p-2 lg:pl-6 dark:bg-gray-500 dark:hover:bg-gray-400  hover:bg-gray-300 flex  justify-between" onClick={() => dropdownItemClickHandle(i)}>
                         <span>{x[0]}</span>
-                        <span className={`right italic mr-2 lg:mr-4 ${langColors[x[1]][2]}`}>{langColors[x[1]][1]}</span>
+                        <span className={`right italic mr-2 text-sm lg:text-base lg:mr-4 ${langColors[x[1]][2]}`}>{langColors[x[1]][1]}</span>
                     </span>
                 )}
                 {noDataFound ? <div className="p-2 pl-6 italic text-sm  dark:bg-gray-500"> No matching result</div> : <></>}

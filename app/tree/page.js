@@ -11,6 +11,7 @@ import Legend from "@/components/legend";
 import Popup from "@/components/popup";
 import { ModeToggleDiv, HighlightToggleDiv } from "@/components/modeToggle";
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import SearchBar from "@/components/SearchBar";
 //console.log(data[1]);
 
 const depthMarginPx = 16
@@ -27,7 +28,7 @@ export default function Tree() {
   const router = useRouter();
   //const searchParams =  useSearchParams()
 
-  let cluster = 0
+  let cluster = -1
   let initWord = null
   //if(typeof document !== 'undefined'){
   //let searchParams = new URLSearchParams(document.location.search);
@@ -67,9 +68,14 @@ export default function Tree() {
         console.error('Error fetching data:', error);
       }
     };
-
+    setDataFetchComplete(false)
+    setPosDictReadyForInitialFocus(false)
+    setShouldFocusInitially(false)
+    setLines([[], []])
+    setPosDict({})
+    setSearchBarSmallMode(true)
     initFetchData();
-  }, []);
+  }, [cluster, initWord]);
 
   const [additionalRightMargin, setAdditionalRightMargin] = useState(0)
   const [selectedCluster, setSelectedCluster] = useState(cluster);
@@ -93,6 +99,7 @@ export default function Tree() {
   const [highlightedWords, setHighlightedWords] = useState([])
   const [editModeToggle, setEditModeToggle] = useState(0)
   const [highlightToggleFlag, setHighlightToggleFlag] = useState(false)
+  const [searchBarSmallMode, setSearchBarSmallMode] = useState(true)
 
   /*
   console.log(filteredData);
@@ -263,7 +270,9 @@ export default function Tree() {
               <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
             </>
             }
-
+            <div className={`${searchBarSmallMode ? "w-[0%]": "w-[100%] lg:w-[200%]"} min-w-16 max-w-[32rem] transition-all`} >
+              <SearchBar key={cluster} smallMode={searchBarSmallMode} setSmallMode={setSearchBarSmallMode}></SearchBar>
+            </div>
           </div>
           <Legend languages={languageList}></Legend>
         </div>

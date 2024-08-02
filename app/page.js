@@ -33,8 +33,11 @@ export default function Home() {
         </div>
 
         <div className="bg-slate-300 dark:bg-zinc-800 left-0 right-0 w-full flex flex-col h-[100svh]">
-          <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center">
-            <SearchBar   ></SearchBar>
+          <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center ">
+            <div className="w-80 lg:w-[32rem] pt-32 mb-32 self-center">
+              <SearchBar smallMode={false} setSmallMode={()=>{}}  ></SearchBar>
+
+            </div>
             <p className=" text-xl self-center m-8 lg:m-24 text-center ">An online collection of etymological knowledge</p>
 
 
