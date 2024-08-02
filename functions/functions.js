@@ -376,6 +376,28 @@ const checkWordReady = (wordData, searchData) => {
     return isReady
 
 }
+const calculateAllChildrenRecursively = (data, nodeList) => {
+
+    console.log(data, nodeList);
+    if (nodeList.length === 0) {
+        return []
+    }
+    else {
+
+        let result = []
+        for (const node of nodeList) {
+            let derivesTo = data[node]["rel"]["derives"]["to"] || []
+            let loansTo = data[node]["rel"]["loans"]["to"] || []
+            let homonymTo = data[node]["rel"]["homonym"]["to"] || []
+
+            let goToItems = derivesTo.concat(loansTo, homonymTo)
+            result.push(node)
+            result.push(calculateAllChildrenRecursively(data, goToItems))
+        }
+        return result.flat(1)
+    }
+}
+
 const calculateWidthBelowNode = (data, nodeList) => {
 
     if (nodeList.length === 0) {
@@ -556,5 +578,6 @@ const calculateHighlightPositions = (posDict, setPosDict, highlightedWords) => {
 export {
     DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords, InitiateNewClusterClient,
     calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-    findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll, checkWordReady
+    findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll, checkWordReady,
+    calculateAllChildrenRecursively
 }
