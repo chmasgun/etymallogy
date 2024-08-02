@@ -6,9 +6,9 @@ function ModeToggleDiv({ editModeToggle,  setEditModeToggle, showAllTree }) {
     return <div className="m-2 p-0 w-40 h-12 bg-gray-100 rounded-full relative dark:bg-gray-400 dark:text-slate-800"
         onClick={() => {
             setEditModeToggle(1 - editModeToggle)
-            if(!editModeToggle){
+            //if(!editModeToggle){
                 showAllTree()  // this modifies Highlight toggle (Focus -> All)
-            }
+            //}
             } }>
         <div className={`h-full w-1/2 aspect-square ${editModeToggle ? "bg-green-300" : "bg-red-300"} rounded-full relative  transition-all`}
             style={{ left: editModeToggle ? "50%" : "0%" }}></div>

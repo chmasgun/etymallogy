@@ -104,3 +104,9 @@
 - searchBar'a (sadece /tree için) useRef ekledim bu sayede dışına tıklandığında küçültebiliyorum
 - mobilde searchBar büyüyünce legend width 0 yapıyorum, bar da bütün ekranı kaplayabiliyor.
 - search'ü reset edebilmek için içine state ve setter pass etmem gerekti.
+- children node'ları hesaplayan recursive fonksiyon yaptım
+
+2024-08-02
+- Transfer için yeni popup yaptım, çünkü diğer popup açıkken başka yere tıklayamıyordum
+- transfer kodunu yazdım
+- kelime ekledikten sonra, filteredData değiştiği için showAllTree tetikleniyor, selectedWord ""'a set ediliyor ve hata oluyordu, onu düzelttim (addDataPopup'ın içinde)

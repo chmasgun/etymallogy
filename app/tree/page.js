@@ -5,10 +5,10 @@ import WordCard from "@/components/wordCard";
 import SaveToServerButton from "@/components/saveToServerButton";
 import {
   DrawRelation, langColors, RecalculateDepthAfter, calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-  findHighlightedWords, calculateHighlightPositions
+  findHighlightedWords, calculateHighlightPositions, calculateAllChildrenRecursively, relationsAll
 } from "@/functions/functions";
 import Legend from "@/components/legend";
-import Popup from "@/components/popup";
+import { Popup, TransferNodePopup } from "@/components/popup";
 import { ModeToggleDiv, HighlightToggleDiv } from "@/components/modeToggle";
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import SearchBar from "@/components/SearchBar";
@@ -42,7 +42,7 @@ export default function Tree() {
   useEffect(() => {
     const initFetchData = async () => {
       try {
-        
+
         console.log(cluster, initWord);
         // setPosDict({});
         const newfilteredData = await fetchData(parseInt(cluster));
@@ -93,13 +93,22 @@ export default function Tree() {
   const [posDictReadyForInitialFocus, setPosDictReadyForInitialFocus] = useState(false)
 
   const popupRef = useRef();
+  const searchBarRef = useRef()
   const [popupOpen, setPopupOpen] = useState(false)
   const [selectedWord, setSelectedWord] = useState("")
   const [wordToHighlight, setWordToHighlight] = useState(-1) // similar to mustDepthRecalculate
   const [highlightedWords, setHighlightedWords] = useState([])
   const [editModeToggle, setEditModeToggle] = useState(0)
   const [highlightToggleFlag, setHighlightToggleFlag] = useState(false)
+
+  // transfer variables
+  const [transferEnabled, setTransferEnabled] = useState(false)
+  const [childrenNodes, setChildrenNodes] = useState([])
+  const [transferNodeUnder, setTransferNodeUnder] = useState(null)
+  const [transferRelation, setTransferRelation] = useState(1)
+  // Search bar states
   const [searchBarSmallMode, setSearchBarSmallMode] = useState(true)
+  const [searchMustReset, setSearchMustReset] = useState(false)
 
   /*
   console.log(filteredData);
@@ -124,24 +133,28 @@ export default function Tree() {
       console.log(filteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData);
       console.log(highlightToggleFlag, posDictReadyForInitialFocus);
       console.log(highlightToggleFlag || !posDictReadyForInitialFocus);
-     
-      if(highlightToggleFlag || !posDictReadyForInitialFocus){ // run here either at the start, or when all data will be highlighted
+
+      if (highlightToggleFlag || !posDictReadyForInitialFocus) { // run here either at the start, or when all data will be highlighted
 
         const [newPosDict, maxLeftValue] = calculatePositions(filteredData[0], topWrapper["width"], newMaxDepthData, leftPixelLimit)
         setPosDict(newPosDict)
         setPosDictReadyForInitialFocus(true)
         setAdditionalRightMargin(maxLeftValue)
-        
+
         // console.log(calculateLines(newfilteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData,newPosDict))
         setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], newMaxDepthData, newPosDict))
-        
+
         console.log("SETTING LINES", newPosDict, posDict);
-        
+
         const newLanguageList = filteredData[0].map(x => x.lang)
         setLanguageList([... new Set(newLanguageList)])
 
 
-        if(highlightToggleFlag){
+        console.log(selectedWord);
+        console.log(selectedWord, calculateAllChildrenRecursively(filteredData[0], [3]));
+
+
+        if (highlightToggleFlag) {
 
           showAllTree()
         }
@@ -177,20 +190,20 @@ export default function Tree() {
       const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
 
       //FOR MOBILE
-      mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2|| 0
+      mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2 || 0
       divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       console.log(divToFocus.getBoundingClientRect(), divToFocus.getBoundingClientRect().top);
       // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
-      window.scrollTo( { left: newLeftValue  + bodyDiv.width * 0.3, top:divToFocus.getBoundingClientRect().top - bodyDiv.top- window.innerHeight * 0.75, behavior: 'smooth' })
+      window.scrollTo({ left: newLeftValue + bodyDiv.width * 0.3, top: divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.75, behavior: 'smooth' })
       //console.log("SET SCROLL after wait VAL", [newLeftValue, divToFocus.getBoundingClientRect().top]);
 
       setShouldFocusInitially(false)
       //console.log("SETTING SHOULD FOCUS FALSE");
-       
+
     }
   }, [shouldFocusInitially, posDictReadyForInitialFocus])
 
-  useEffect(() => { setPopupOpen(isInsertMode) }, [isInsertMode]) // is insertion mode is activated, trigger popup
+  useEffect(() => { console.log("YES", isInsertMode); setPopupOpen(isInsertMode) }, [isInsertMode]) // is insertion mode is activated, trigger popup
   useEffect(() => { if (!popupOpen) { setHoveredPair([-1, -1]) } }, [popupOpen]) // when closing the popup, reset hovered pair
   useEffect(() => {
     if (mustDepthRecalculate > -1) {
@@ -200,13 +213,22 @@ export default function Tree() {
     }
   }, [mustDepthRecalculate])
 
-  
+  useEffect(() => {
+    if (transferEnabled) {
+
+      setChildrenNodes(calculateAllChildrenRecursively(filteredData[0], [selectedWord["id"]]))
+    } else {
+      setChildrenNodes([])
+      setTransferNodeUnder(null)
+    }
+  }, [transferEnabled])
+
   useEffect(() => {
     console.log("INSIDE WORDTOHIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus, shouldFocusInitially);
     if (wordToHighlight > -1) {
       const newHiglightedWords = findHighlightedWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
       setHighlightToggleFlag(false)
-      console.log("CALCULATING HIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus,newHiglightedWords);
+      console.log("CALCULATING HIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus, newHiglightedWords);
       if (posDictReadyForInitialFocus) {
 
         const newPosDict = calculateHighlightPositions(posDict, setPosDict, newHiglightedWords)
@@ -214,29 +236,102 @@ export default function Tree() {
         //console.log(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict));
         setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict))
         setShouldFocusInitially(true)
-        const newLanguageList = filteredData[0].filter(word => newHiglightedWords.includes(word.id) ).map(x => x.lang)
+        const newLanguageList = filteredData[0].filter(word => newHiglightedWords.includes(word.id)).map(x => x.lang)
         setLanguageList([... new Set(newLanguageList)])
 
       }
-    }else{
+    } else {
       // refresh the tree
       if (posDictReadyForInitialFocus) {
         //console.log("SET FILTERED DATA HERE");
         setFilteredData([...filteredData])
         const newLanguageList = filteredData[0].map(x => x.lang)
         setLanguageList([... new Set(newLanguageList)])
+
       }
     }
-  }, [wordToHighlight,posDictReadyForInitialFocus])
- 
+  }, [wordToHighlight, posDictReadyForInitialFocus])
+
   //console.log("SHOULD FOCUS",shouldFocusInitially);
 
   function showAllTree() {
     //console.log("SHOWING TREE", filteredData[0].length);
+
+    console.log("showAllTree triggered");
     setHighlightToggleFlag(true);
     setHighlightedWords(filteredData[0].map((x, i) => i));
     setWordToHighlight(-1)
+    setChildrenNodes([])
+    setTransferNodeUnder(null)
+    setTransferEnabled(false)
+    //setSelectedWord("")
   }
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
+        setSearchBarSmallMode(true)
+        setSearchMustReset(true)
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [searchBarRef]);
+
+
+
+  function transferExecute() {
+
+    const relationStr = relationsAll[transferRelation]
+    const childNodeId = selectedWord["id"]
+    const parentNodeId = transferNodeUnder["id"]
+    let oldParentNodesId = []
+    for (const rel of relationsAll) {
+      const tempFrom = filteredData[0][childNodeId]["rel"][rel]["from"] || []
+      oldParentNodesId.push(...tempFrom)
+
+    }
+
+    const newFilteredData = [...filteredData[0]]
+    // Step 1 - Assign new parent's TO value
+    const existingRelationParent = newFilteredData[parentNodeId]["rel"][relationStr]["to"]
+    const isRelationDefinedBeforeParent = (existingRelationParent || []).length > 0
+    if (isRelationDefinedBeforeParent) {
+      newFilteredData[parentNodeId]["rel"][relationStr]["to"].push(childNodeId)
+    } else {
+      newFilteredData[parentNodeId]["rel"][relationStr]["to"] = [childNodeId]
+    }
+    // Step 2 - Assign child's new FROM value
+    //// step 2.1 Reset child's all FROM values
+    for (const rel of relationsAll) {
+      delete newFilteredData[childNodeId]["rel"][rel]["from"]
+    }
+    //// step 2.2 Set child's proper FROM value
+    newFilteredData[childNodeId]["rel"][relationStr]["from"] = [parentNodeId]
+
+    // Step 3 - Remove previous parent's proper TO value
+    for (const oldParentNow of oldParentNodesId) {
+      for (const rel of relationsAll) { // search for all relations to locate the relation
+
+        let indToRemove = newFilteredData[oldParentNow]["rel"][rel]["to"]?.indexOf(childNodeId)
+        if (indToRemove > -1) {
+          newFilteredData[oldParentNow]["rel"][rel]["to"].splice(indToRemove, 1)
+        }
+
+      }
+    }
+
+    setFilteredData([newFilteredData])
+    setUnsavedWordCount(unsavedWordCount+1)
+    setMustDepthRecalculate(parentNodeId)
+    console.log(parentNodeId, childNodeId, oldParentNodesId);
+  }
+
+  console.log(popupOpen, childrenNodes);
 
   return (
     <Suspense>
@@ -244,6 +339,16 @@ export default function Tree() {
 
 
       <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 lg:overflow-visible overflow-auto  `} > {/**dark:bg-gray-900 */}
+        {transferEnabled &&
+          <TransferNodePopup
+            selectedWord={selectedWord}
+            transferNodeUnder={transferNodeUnder}
+            setTransferEnabled={setTransferEnabled}
+            transferExecute={transferExecute}
+            transferRelation={transferRelation}
+            setTransferRelation={setTransferRelation}
+            childrenNodes={childrenNodes}
+          ></TransferNodePopup>}
         {popupOpen &&
           <Popup word={selectedWord} popupRef={popupRef}
             setPopupOpen={setPopupOpen}
@@ -255,26 +360,33 @@ export default function Tree() {
             isInsertMode={isInsertMode}
             setIsInsertMode={setIsInsertMode}
             setMustDepthRecalculate={setMustDepthRecalculate}
-            hoveredPair={hoveredPair} ></Popup>}
+            hoveredPair={hoveredPair}
+            transferEnabled={transferEnabled}
+            setTransferEnabled={setTransferEnabled} ></Popup>}
 
-        <div className="fixed z-50 max-w-[98vw] right-0 top-0 flex flex-row justify-center">
-          <div className="flex flex-col items-center">
+        <div className="fixed z-50 max-w-[98vw] right-0 top-0 flex flex-row justify-end lg:w-auto w-full">
+          <div className="flex flex-1 flex-col items-end">
+            {/* SEARCH BAR OUTER CONTAINER */}
+            <div className={`${searchBarSmallMode ? "w-[0%]" : "w-[100%] lg:w-[200%]"} relative min-w-16 max-w-[32rem] transition-all flex m-2 mr-0 lg:m-2`} ref={searchBarRef}>
+              {/*<div className="left-0 z-10 w-8 h-8 bg-gray-400 self-center rounded-l-xl"></div>*/}
+              <SearchBar key={cluster + "_" + initWord} smallMode={searchBarSmallMode}
+                setSmallMode={setSearchBarSmallMode}
+                searchMustReset={searchMustReset} setSearchMustReset={setSearchMustReset}></SearchBar>
+            </div>
             <HighlightToggleDiv
               highlightToggleFlag={highlightToggleFlag} //toggle is unclickable in "All". User must click on a word to switch to focus mode
               highlightToggleHandler={() => {
                 !highlightToggleFlag && showAllTree()
-                 
+
               }}></HighlightToggleDiv>
             {isDev && <>
               <ModeToggleDiv editModeToggle={editModeToggle} setEditModeToggle={setEditModeToggle} showAllTree={showAllTree} ></ModeToggleDiv>
               <SaveToServerButton unsavedWordCount={unsavedWordCount} setUnsavedWordCount={setUnsavedWordCount} cid={selectedCluster} filteredData={filteredData}></SaveToServerButton>
             </>
             }
-            <div className={`${searchBarSmallMode ? "w-[0%]": "w-[100%] lg:w-[200%]"} min-w-16 max-w-[32rem] transition-all`} >
-              <SearchBar key={cluster} smallMode={searchBarSmallMode} setSmallMode={setSearchBarSmallMode}></SearchBar>
-            </div>
+
           </div>
-          <Legend languages={languageList}></Legend>
+          <Legend languages={languageList} isHiddenOnMobile={!searchBarSmallMode}></Legend>
         </div>
 
 
@@ -285,7 +397,7 @@ export default function Tree() {
         </div>
 
 
-        <div className={`outer-container min-w-full flex self-start ${popupOpen && "blur-xs"}`}
+        <div className={`outer-container min-w-full flex self-start ${(popupOpen && !transferEnabled) && "blur-xs"}`}
           style={{ minWidth: additionalRightMargin + 600 }}
           key={selectedCluster}>
 
@@ -305,12 +417,16 @@ export default function Tree() {
                           highlightedWords={highlightedWords}
                           editModeToggle={editModeToggle}
                           setWordToHighlight={setWordToHighlight}
-                          isProd={isProd} ></WordCard>)
+                          isProd={isProd}
+                          transferEnabled={transferEnabled}
+                          childrenNodesOfTransfer={childrenNodes}
+                          setTransferNodeUnder={setTransferNodeUnder}
+                        ></WordCard>)
                     }
                       {
                         lines[0][rowInd]?.map((line, lineIndex) =>
-                          <DrawRelation key={rowInd + "-" + lineIndex+"-"+line[0]+"-"+line[1]}
-                            x1={line[0] ||-1000} x2={line[1] || -1000}
+                          <DrawRelation key={rowInd + "-" + lineIndex + "-" + line[0] + "-" + line[1]}
+                            x1={line[0] || -1000} x2={line[1] || -1000}
                             heightOffset={line[2]}
                             y={depthMarginPx}
                             pair={lines[1][rowInd][lineIndex]}
