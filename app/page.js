@@ -2,7 +2,7 @@
 
 
 import { Cairo } from "next/font/google";
-
+import Image from 'next/image'
 
 
 export const cairo = Cairo({
@@ -36,12 +36,12 @@ export default function Home() {
   }, [])
 
   return (
-    <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className}`}>
+    <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className} overflow-x-hidden overflow-y-scroll h-svh snap-y snap-mandatory`}>
 
-      <div className="bg-gray-200 z-10  w-full overflow-hidden  items-center justify-center  dark:bg-zinc-800  text-sm lg:flex flex-col">   {/* max-w-5xl*/}
-        <div className="relative flex flex-col  items-center lg:flex-row left-0 top-0 flex w-full justify-center  
+      <div className="bg-gray-200 z-10 h-[200svh] min-h-[200svh] w-full   items-center justify-center  dark:bg-zinc-800  text-sm lg:flex flex-col">   {/* max-w-5xl*/}
+        <div className="relative flex flex-col  items-center lg:flex-row left-0 top-0 flex  justify-center  
          pb-6 pt-8 mt-24 mb-96 backdrop-blur-2xl  dark:bg-zinc-800 dark:from-inherit lg:static lg:w-auto  
-        lg:rounded-xl   lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800"> {/* fixed bg-gradient-to-b   border-gray-300 
+        lg:rounded-xl   lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800 snap-center snap-always "> {/* fixed bg-gradient-to-b   border-gray-300 
           from-zinc-200 */}
 
           <span className="relative transition-all duration-1000 lg:mr-32 lg:h-60 flex items-center font-bold text-4xl" style={{ left: `${positions[0]}vw` }}>Etymallogy</span>
@@ -53,24 +53,67 @@ export default function Home() {
           </div>
 
         </div>
-        <div className="relative w-full flex flex-col" >
+        <div className="relative w-full flex flex-col snap-center snap-always" >
 
-          <div className="relative transition-all duration-1000  search-bar-container w-80 lg:w-[32rem]  mb-32 self-center"  style={{ top: `${positions[2]}px` }}>
+          <div className="relative transition-all duration-1000  search-bar-container w-80 lg:w-[32rem]  mb-32 self-center" style={{ top: `${positions[2]}px` }}>
             <SearchBar smallMode={false} setSmallMode={() => { }}  ></SearchBar>
 
           </div>
         </div>
-        <div className="bg-slate-300 dark:bg-zinc-800 left-0 right-0 w-full flex flex-col h-[100svh]" >
+        <div className="bg-slate-300 dark:bg-zinc-800 left-0 right-0 w-full flex flex-col h-[200svh]" >
+
+
           <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center ">
 
-            <p className=" text-xl self-center m-8 lg:m-24 text-center ">An online collection of etymological knowledge</p>
 
-
-            <div className=" text-xl self-center m-4 ">1000+ Turkish words</div>
-            <div className=" text-xl self-center m-4 ">1000+ English words</div>
-            <div className=" text-xl self-center m-4 ">1000+ Arabic words</div>
           </div>
 
+          {/*Carousel */}
+          <div className="overflow-hidden snap-center  snap-always w-96 lg:w-[800px] lg:h-[40svh] h-[70svh] border self-center bg-gray-200  shadow-xl rounded-2xl">
+
+
+            <div className="features-div  snap-x h-full snap-mandatory   snap-normal overflow-x-scroll flex flex-row items-center   ">
+
+
+
+              <div className="w-96 lg:w-[800px] h-full flex items-center justify-center flex-none bg-white   ">
+
+                <div className="w-1/2 lg:w-[400px] h-12  flex-none  snap-always snap-center ">
+
+                </div>
+                  <Image src="/img/emoji.PNG"
+                    width={500}
+                    height={300}
+                    quality={100}
+                    alt="Picture of the author"
+
+                  ></Image>
+              </div>
+              <div className="w-96 lg:w-[800px] h-full flex items-center justify-center flex-none bg-yellow-100  ">
+
+                <div className="w-1/2 lg:w-[400px] h-12  flex-none bg-gray-300 snap-always snap-center ">
+
+
+                </div>
+              </div>
+              <div className="w-96 lg:w-[800px] h-full flex items-center justify-center flex-none bg-green-100  ">
+
+                <div className="w-1/2 lg:w-[400px] h-12  flex-none bg-gray-300 snap-always snap-center ">
+
+
+                </div>
+              </div>
+              <div className="w-96 lg:w-[800px] h-full flex items-center justify-center flex-none bg-orange-100  ">
+
+                <div className="w-1/2 lg:w-[400px] h-12  flex-none bg-gray-300 snap-always snap-center ">
+
+
+                </div>
+              </div>
+
+
+            </div>
+          </div>
         </div>
 
 

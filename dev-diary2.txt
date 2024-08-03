@@ -112,4 +112,6 @@
 - kelime ekledikten sonra, filteredData değiştiği için showAllTree tetikleniyor, selectedWord ""'a set ediliyor ve hata oluyordu, onu düzelttim (addDataPopup'ın içinde)
 
 2024-08-03
-- search async olduğu için, arama sonuçları döndüğünde user daha çok harf girmiş olabiliyordu ama filtreleyemiyordum. Search fonksiyonunun içinde filtrelemeye çalıştım ama olmadı çünkü daha çok harfli haline erişimi olmuyordu fonksiyoun. O yüzden, search biter bitmez bir useEffect ile yaptım.
+- search async olduğu için, arama sonuçları döndüğünde user daha çok harf girmiş olabiliyordu ama filtreleyemiyordum. Search fonksiyonunun içinde filtrelemeye çalıştım ama olmadı çünkü daha çok harfli haline erişimi olmuyordu fonksiyoun. O yüzden, search biter bitmez bir useEffect ile yaptım. 
+- search sonuçlarına scrollIntoView ile odaklama attım
+- carousel için scroll-snap ve scroll customization ile epey uğraştım
