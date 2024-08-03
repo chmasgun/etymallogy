@@ -72,6 +72,10 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
                     console.log("NO DATA FOUND");
                 }
                 setSearchLoading(false)
+                setTimeout(() => {
+
+                    document.getElementsByClassName("search-result")[0].scrollIntoView({behavior: 'smooth', block: "center"})
+                },50)
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setSearchLoading(false)
@@ -90,6 +94,18 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
 
     }, [searchTextKey])
 
+    
+    useEffect(() => {
+        if(!searchLoading){
+            if(searchText.length >3){  //user typed in more letters before the search results are returned, hence need more filter
+                 
+                
+                const newMatchingWords = searchCandidates.filter(x => x[0].toLocaleLowerCase().slice(0, searchText.length) === searchText)
+                setSearchCandidatesAfterFilter(newMatchingWords)
+                setNoDataFound(newMatchingWords.length === 0 && searchCandidates.length > 0)
+            }
+        }
+    }, [searchLoading])
 
     useEffect(() => {
         if(searchMustReset){
@@ -124,12 +140,12 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
                 </div> : <></>}
             {isSearchDropdownOpen ? <div className="flex absolute flex-col w-full justify-center text-lg bg-gray-200 rounded-b-xl overflow-auto">
                 {searchCandidatesAfterFilter.slice(0, maxSearchResults).map((x, i) =>
-                    <span key={i} className="p-2 lg:pl-6 dark:bg-gray-500 dark:hover:bg-gray-400  hover:bg-gray-300 flex  justify-between" onClick={() => dropdownItemClickHandle(i)}>
+                    <span key={i} className="search-result p-2 lg:pl-6 dark:bg-gray-500 dark:hover:bg-gray-400  hover:bg-gray-300 flex  justify-between" onClick={() => dropdownItemClickHandle(i)}>
                         <span>{x[0]}</span>
                         <span className={`right italic mr-2 text-sm lg:text-base lg:mr-4 ${langColors[x[1]][2]}`}>{langColors[x[1]][1]}</span>
                     </span>
                 )}
-                {noDataFound ? <div className="p-2 pl-6 italic text-sm  dark:bg-gray-500"> No matching result</div> : <></>}
+                {noDataFound ? <div className="search-result p-2 pl-6 italic text-sm  dark:bg-gray-500"> No matching result</div> : <></>}
 
             </div> : <></>}
 
