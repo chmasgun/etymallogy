@@ -21,11 +21,11 @@ import { useEffect, useState } from "react";
 export default function Home() {
 
 
-  const [positions, setPositions] = useState([-1000, 1000, 1000])
+  const [positions, setPositions] = useState([-100, 100, 1000])
   useEffect(() => {
 
     setTimeout(() => {
-      setPositions([0, 1000, 1000])
+      setPositions([0, 100, 1000])
     }, 0)
     setTimeout(() => {
       setPositions([0, 0, 1000])
@@ -44,8 +44,8 @@ export default function Home() {
         lg:rounded-xl   lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800"> {/* fixed bg-gradient-to-b   border-gray-300 
           from-zinc-200 */}
 
-          <span className="relative transition-all duration-1000 lg:mr-32 lg:h-60 flex items-center font-bold text-4xl" style={{ left: `${positions[0]}px` }}>Etymallogy</span>
-          <div className="relative transition-all duration-[1000ms] " style={{ left: `${positions[1]}px` }}>
+          <span className="relative transition-all duration-1000 lg:mr-32 lg:h-60 flex items-center font-bold text-4xl" style={{ left: `${positions[0]}vw` }}>Etymallogy</span>
+          <div className="relative transition-all duration-[1000ms] " style={{ left: `${positions[1]}vw` }}>
 
             <Etymoball words={["şerbet", "şarap", "meclis", "wine", "şurup", "語", "kitap", "lycée", "bilim", "science",
 
@@ -53,14 +53,14 @@ export default function Home() {
           </div>
 
         </div>
-        <div className="w-full flex flex-col">
+        <div className="relative w-full flex flex-col" >
 
-          <div className="search-bar-container w-80 lg:w-[32rem]  mb-32 self-center" onClick={() => {document.getElementsByClassName("search-bar-container")[0].focus()}}>
+          <div className="relative transition-all duration-1000  search-bar-container w-80 lg:w-[32rem]  mb-32 self-center"  style={{ top: `${positions[2]}px` }}>
             <SearchBar smallMode={false} setSmallMode={() => { }}  ></SearchBar>
 
           </div>
         </div>
-        <div className="relative transition-all duration-1000 bg-slate-300 dark:bg-zinc-800 left-0 right-0 w-full flex flex-col h-[100svh]" style={{ top: `${positions[2]}px` }}>
+        <div className="bg-slate-300 dark:bg-zinc-800 left-0 right-0 w-full flex flex-col h-[100svh]" >
           <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center ">
 
             <p className=" text-xl self-center m-8 lg:m-24 text-center ">An online collection of etymological knowledge</p>
