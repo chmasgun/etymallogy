@@ -101,8 +101,7 @@ export default function Etymoball({ words }) {
             <div key={i}className="m-2 absolute transition-all" style={{
                 transitionTimingFunction: "linear",
                 transitionDuration: "1000ms", 
-                left: Math.round(coordinates[i]?.x) -20,
-                top: radius + coordinates[i]?.y,
+                transform: `translate(${Math.round(coordinates[i]?.x) - 20}px, ${radius + coordinates[i]?.y}px)`,
                 opacity: coordinates[i]?.alpha,
                 fontSize: `${coordinates[i]?.per * 6 + 8}px`
             }}> {x} </div>
