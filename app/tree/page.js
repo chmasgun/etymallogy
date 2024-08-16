@@ -338,7 +338,7 @@ export default function Tree() {
 
 
 
-      <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 lg:overflow-visible overflow-auto  `} > {/**dark:bg-gray-900 */}
+      <main className={`the-container flex min-h-screen flex-col items-center place-content-start p-16 lg:overflow-visible overflow-auto scroll-smooth `} > {/**dark:bg-gray-900 */}
         {transferEnabled &&
           <TransferNodePopup
             selectedWord={selectedWord}
