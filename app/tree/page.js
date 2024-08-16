@@ -364,7 +364,7 @@ export default function Tree() {
             transferEnabled={transferEnabled}
             setTransferEnabled={setTransferEnabled} ></Popup>}
 
-        <div className="fixed z-50 max-w-[98vw] right-0 top-0 flex flex-row justify-end lg:w-auto w-full">
+        <div className="fixed z-50 max-w-[98vw] right-0 top-0 flex flex-row justify-end lg:w-auto w-full pointer-events-none">
           <div className="flex flex-1 flex-col items-end">
             {/* SEARCH BAR OUTER CONTAINER */}
             <div className={`${searchBarSmallMode ? "w-[0%]" : "w-[100%] lg:w-[200%]"} relative min-w-16 max-w-[32rem] transition-all flex m-2 mr-0 lg:m-2`} ref={searchBarRef}>

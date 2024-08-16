@@ -115,7 +115,7 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
     }, [searchMustReset])
 
     
-    return <div className="flex flex-col justify-center self-center w-full  relative z-50" onClick={() => setSmallMode(false)}>
+    return <div className="flex flex-col justify-center self-center w-full  relative z-50 pointer-events-auto" onClick={() => setSmallMode(false)}>
         <div>
             { /*<span className="absolute right-0 top-0 bottom-0 text-center">{'\uD83D\uDD0D'}</span>*/}
             <input

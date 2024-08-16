@@ -115,3 +115,12 @@
 - search async olduğu için, arama sonuçları döndüğünde user daha çok harf girmiş olabiliyordu ama filtreleyemiyordum. Search fonksiyonunun içinde filtrelemeye çalıştım ama olmadı çünkü daha çok harfli haline erişimi olmuyordu fonksiyoun. O yüzden, search biter bitmez bir useEffect ile yaptım. 
 - search sonuçlarına scrollIntoView ile odaklama attım
 - carousel için scroll-snap ve scroll customization ile epey uğraştım
+
+2024-08-09
+- bu aradaki günlerde kendi websitemle uğraştım.
+- transition left yerine transform ile daha efficient. Etymoball'daki left ve topları değiştirdim.
+- will-change'i de deneyebilirim! transition-all da verimsizmiş
+
+2024-08-16
+- mobile için scroll-smooth'u düzelttim
+- pointer-events ile üstteki arayüzün tıklamalara engel olmasını hallettim

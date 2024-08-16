@@ -3,7 +3,7 @@
 function ModeToggleDiv({ editModeToggle,  setEditModeToggle, showAllTree }) {
 
 
-    return <div className="m-2 p-0 w-40 h-12 bg-gray-100 rounded-full relative dark:bg-gray-400 dark:text-slate-800"
+    return <div className="pointer-events-auto m-2 p-0 w-40 h-12 bg-gray-100 rounded-full relative dark:bg-gray-400 dark:text-slate-800"
         onClick={() => {
             setEditModeToggle(1 - editModeToggle)
             //if(!editModeToggle){
@@ -22,7 +22,7 @@ function ModeToggleDiv({ editModeToggle,  setEditModeToggle, showAllTree }) {
 function HighlightToggleDiv({ highlightToggleFlag, highlightToggleHandler }) {
 
 
-    return <div className={`m-2 p-0 w-40 h-12 bg-gray-100 rounded-full relative dark:bg-gray-400 dark:text-slate-800  ${highlightToggleFlag ? " opacity-50" : ""}`}
+    return <div className={`pointer-events-auto m-2 p-0 w-40 h-12 bg-gray-100 rounded-full relative dark:bg-gray-400 dark:text-slate-800  ${highlightToggleFlag ? " opacity-50" : ""}`}
         onClick={() => { highlightToggleHandler()} }>
         <div className={`h-full w-1/2 aspect-square ${highlightToggleFlag ? "bg-gray-300" : "bg-orange-300"} rounded-full relative  transition-all`}
             style={{ left: highlightToggleFlag ? "50%" : "0%" }}></div>

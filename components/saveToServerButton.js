@@ -43,7 +43,7 @@ export default function SaveToServerButton({ unsavedWordCount, setUnsavedWordCou
   //console.log(pos);
   console.log([cid, filteredData]);
   const dataToSave = filteredData[0]
-  return unsavedWordCount > 0 && <div className="flex relative justify-center items-center z-30 pl-8 pr-8 w-48 h-12 ">
+  return unsavedWordCount > 0 && <div className="pointer-events-auto flex relative justify-center items-center z-30 pl-8 pr-8 w-48 h-12 ">
    <div className="absolute left-0 top-0 backdrop-blur-sm w-full h-full rounded-xl z-10"></div>
    <div className="bg-lime-300 border shadow-lg border-gray-400/50  rounded-xl  z-20 relative "
     onClick={() => saveClusterToDB({ cid, dataToSave, setUnsavedWordCount })}>
