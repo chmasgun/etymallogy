@@ -24,11 +24,11 @@ import Etymoball from "@/components/etymoball";
 import SearchBar from "@/components/SearchBar";
 import { useEffect, useState } from "react";
 
-const carouselItems = [ 
+const carouselItems = [
   <CarouselSlide key={0} text={"Discover related words from different languages!"} filename={"tree2"} />,
   <CarouselSlide key={1} text={"See how the modern words took their final forms!"} filename={"sarap"} />,
-  <CarouselSlide  key={2}text={" Focus on the words to discover their origin, observe cultural interactions!"} filename={"syrup"} />,
-  <CarouselSlide  key={3}text={"Analyze the roots and the words derived from them"} filename={"soru"} />
+  <CarouselSlide key={2} text={" Focus on the words to discover their origin, observe cultural interactions!"} filename={"syrup"} />,
+  <CarouselSlide key={3} text={"Analyze the roots and the words derived from them"} filename={"soru"} />
 ]
 
 
@@ -125,8 +125,8 @@ export default function Home() {
 
             <div className="projects-all-div grid grid-flow-col auto-cols-[100%]  grid-rows-1 h-full motion-safe:transition-transform  motion-safe:duration-500" style={{ transform: `translate(-${100 * selectedCarouselImage}%)` }}>
 
-             
-                {carouselItems}
+
+              {carouselItems}
 
 
 

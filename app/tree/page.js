@@ -430,9 +430,9 @@ export default function Tree() {
                             heightOffset={line[2]}
                             y={depthMarginPx}
                             pair={lines[1][rowInd][lineIndex]}
-                            setHoveredPair={setHoveredPair}
+                            setHoveredPair={editModeToggle ? setHoveredPair : (()=>{})}
                             isInsertMode={isInsertMode}
-                            setIsInsertMode={setIsInsertMode}
+                            setIsInsertMode={editModeToggle ? setIsInsertMode: (()=>{})} // only if edit mode is enabled
                             highlightedWords={highlightedWords}></DrawRelation>
                         )
                       }
