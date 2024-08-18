@@ -150,8 +150,8 @@ export default function Tree() {
         setLanguageList([... new Set(newLanguageList)])
 
 
-        console.log(selectedWord);
-        console.log(selectedWord, calculateAllChildrenRecursively(filteredData[0], [3]));
+        //console.log(selectedWord);
+        //console.log(selectedWord, calculateAllChildrenRecursively(filteredData[0], [3]));
 
 
         if (highlightToggleFlag) {

@@ -36,7 +36,7 @@ export default function Home() {
   }, [])
 
   return (
-    <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className} overflow-x-hidden overflow-y-scroll h-svh snap-y snap-mandatory`}>
+    <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className} overflow-x-hidden overflow-y-scroll h-svh scroll-smooth snap-y snap-mandatory`}>
 
       <div className="bg-gray-200 z-10 h-[200svh] min-h-[200svh] w-full   items-center justify-center  dark:bg-zinc-800  text-sm lg:flex flex-col">   {/* max-w-5xl*/}
         <div className="relative flex flex-col  items-center lg:flex-row left-0 top-0 flex  justify-center  
@@ -63,53 +63,99 @@ export default function Home() {
         <div className="bg-slate-300 dark:bg-zinc-800 left-0 right-0 w-full flex flex-col h-[200svh]" >
 
 
-          <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center ">
+          <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center items-center text-2xl">
 
-
+                The online, visual corpus of etymology
           </div>
 
           {/*Carousel */}
-          <div className="overflow-hidden snap-center  snap-always w-96 lg:w-[800px] lg:h-[40svh] h-[70svh] border self-center bg-gray-200  shadow-xl rounded-2xl">
+          <div className="overflow-hidden snap-center  snap-always md:w-[640px] lg:w-[800px] lg:h-[40svh] h-[70svh] border self-center bg-gray-200  shadow-xl rounded-2xl">
 
 
-            <div className="features-div  snap-x h-full snap-mandatory   snap-normal overflow-x-scroll flex flex-row items-center   ">
+            <div className="features-div scroll-smooth snap-x h-full snap-mandatory    overflow-x-scroll flex flex-row items-center   ">
 
 
 
-              <div className="w-96 lg:w-[800px] h-full flex items-center justify-center flex-none bg-white   ">
-
-                <div className="w-1/2 lg:w-[400px] h-12  flex-none  snap-always snap-center ">
-
-                </div>
+              <div className="w-96 lg:w-[798px] h-full flex items-center justify-center flex-none bg-white  snap-always snap-center   ">
+                <div className="h-full   items-center flex flex-row">
+                  <div className="w-1/2 lg:w-[400px] text-lg flex justify-center flex-none   ">
+                    Discover words of Japanese origin !
+                  </div>
+                  <div className="  h-full flex-1 flex items-center    ">
                   <Image src="/img/emoji.PNG"
-                    width={500}
-                    height={300}
-                    quality={100}
-                    alt="Picture of the author"
+                      width={500}
+                      height={300}
+                      style={{maxHeight: "100%"}}
+                      quality={100}
+                      alt="Picture of the author"
 
-                  ></Image>
-              </div>
-              <div className="w-96 lg:w-[800px] h-full flex items-center justify-center flex-none bg-yellow-100  ">
+                    ></Image>
 
-                <div className="w-1/2 lg:w-[400px] h-12  flex-none bg-gray-300 snap-always snap-center ">
-
-
+                  </div>
                 </div>
               </div>
-              <div className="w-96 lg:w-[800px] h-full flex items-center justify-center flex-none bg-green-100  ">
+              {/* <Image src="/img/emoji.PNG"
+                      width={500}
+                      height={300}
+                      quality={100}
+                      alt="Picture of the author"
 
-                <div className="w-1/2 lg:w-[400px] h-12  flex-none bg-gray-300 snap-always snap-center ">
+                    ></Image> */}
 
+              <div className="w-96 lg:w-[798px] h-full flex items-center justify-center flex-none bg-white  snap-always snap-center ">
+                <div className="h-full   items-center flex flex-row">
+                  <div className="w-1/2 lg:w-[400px] text-lg flex justify-center flex-none   ">
+                    Discover words of Japanese origin !
+                  </div>
+                  <div className=" relative w-1/2 lg:w-[398px] h-full flex-1 flex items-center  max-h-full  ">
+                  <Image src="/img/sarap.JPG"
+                      
+                      style={{maxHeight: "100%"}}
+                      quality={100}
+                      alt="Picture of the author"
+                      layout={'fill'} objectFit={'contain'}
+                    ></Image>
 
+                  </div>
                 </div>
               </div>
-              <div className="w-96 lg:w-[800px] h-full flex items-center justify-center flex-none bg-orange-100  ">
+              <div className="w-96 lg:w-[798px] h-full flex items-center justify-center flex-none bg-white  snap-always snap-center   ">
+                <div className="h-full   items-center flex flex-row">
+                  <div className="w-1/2 lg:w-[400px] text-lg flex justify-center flex-none   ">
+                    Discover words of Japanese origin !
+                  </div>
+                  <div className="  h-full flex-1 flex items-center  max-h-full   ">
+                  <Image src="/img/emoji.PNG"
+                      width={500}
+                      height={300}
+                      quality={100}
+                      style={{maxHeight: "100%"}}
+                      alt="Picture of the author"
 
-                <div className="w-1/2 lg:w-[400px] h-12  flex-none bg-gray-300 snap-always snap-center ">
+                    ></Image>
 
-
+                  </div>
                 </div>
               </div>
+              <div className="w-96 lg:w-[798px] h-full flex items-center justify-center flex-none bg-white  snap-always snap-center  ">
+                <div className="h-full   items-center flex flex-row">
+                  <div className="w-1/2 lg:w-[400px] text-lg flex justify-center flex-none   ">
+                    Discover words of Japanese origin !
+                  </div>
+                  <div className="  h-full flex-1 flex items-center    max-h-full ">
+                  <Image src="/img/emoji.PNG"
+                      width={500}
+                      height={300}
+                      style={{maxHeight: "100%"}}
+                      quality={100}
+                      alt="Picture of the author"
+
+                    ></Image>
+
+                  </div>
+                </div>
+              </div>
+
 
 
             </div>
