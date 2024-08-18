@@ -4,7 +4,16 @@
 import { Cairo } from "next/font/google";
 import Image from 'next/image'
 
+const CarouselSlide = ({ text, filename }) => {
 
+  return <div className="flex flex-col lg:flex-row">
+
+    <span className="flex-auto basis-1/3 md:basis-1/2 text-center content-center p-4">{text}</span>
+    <div className="flex-auto  basis-2/3 md:basis-1/2 flex h-full p-4">
+      <ImageWrapper filename={filename}></ImageWrapper>
+    </div>
+  </div>
+}
 export const cairo = Cairo({
   variable: '--font-cairo',
   subsets: ["latin"],
@@ -15,12 +24,17 @@ import Etymoball from "@/components/etymoball";
 import SearchBar from "@/components/SearchBar";
 import { useEffect, useState } from "react";
 
-
+const carouselItems = [ 
+  <CarouselSlide key={0} text={"Discover related words from different languages!"} filename={"tree2"} />,
+  <CarouselSlide key={1} text={"See how the modern words took their final forms!"} filename={"sarap"} />,
+  <CarouselSlide  key={2}text={" Focus on the words to discover their origin, observe cultural interactions!"} filename={"syrup"} />,
+  <CarouselSlide  key={3}text={"Analyze the roots and the words derived from them"} filename={"soru"} />
+]
 
 
 export default function Home() {
 
-
+  const [selectedCarouselImage, setSelectedCarouselImage] = useState(0)
   const [positions, setPositions] = useState([-100, 100, 1000])
   useEffect(() => {
 
@@ -35,8 +49,42 @@ export default function Home() {
     }, 1000)
   }, [])
 
+  const imageSwipeTimeMilli = 10000
+  const imgCount = carouselItems.length
+
+  const [currentTime, setCurrentTime] = useState(0)
+
+  useEffect(() => {
+    let imageIncrement
+
+    imageIncrement = setInterval(() => {
+      setSelectedCarouselImage(selectedCarouselImage => (selectedCarouselImage + 1) % imgCount)
+      setCurrentTime(500)
+    }, imageSwipeTimeMilli)
+
+    return () => {
+      clearInterval(imageIncrement);
+
+    };
+  }, [selectedCarouselImage])
+
+  useEffect(() => {
+    setCurrentTime(500)
+    let timeIncrement
+
+    timeIncrement = setInterval(() => {
+      setCurrentTime(currentTime => (currentTime + 1000))
+    }, 1000)
+
+    return () => {
+      clearInterval(timeIncrement);
+    };
+  }, [selectedCarouselImage])
+
+
   return (
-    <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className} overflow-x-hidden overflow-y-scroll h-svh scroll-smooth snap-y snap-mandatory`}>
+    <main className={`flex min-h-screen flex-col items-center place-content-start p-0 ${cairo.className} overflow-x-hidden overflow-y-scroll h-svh scroll-smooth  snap-y snap-mandatory`}>
+
 
       <div className="bg-gray-200 z-10 h-[200svh] min-h-[200svh] w-full   items-center justify-center  dark:bg-zinc-800  text-sm lg:flex flex-col">   {/* max-w-5xl*/}
         <div className="relative flex flex-col  items-center lg:flex-row left-0 top-0 flex  justify-center  
@@ -63,103 +111,41 @@ export default function Home() {
         <div className="bg-slate-300 dark:bg-zinc-800 left-0 right-0 w-full flex flex-col h-[200svh]" >
 
 
-          <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center items-center text-2xl">
+          <div className="bg-gradient-to-b from-gray-200 dark:from-zinc-800/30 h-1/3 flex flex-col justify-center items-center text-center text-2xl">
 
-                The online, visual corpus of etymology
+            The online, visual corpus of etymology
           </div>
 
           {/*Carousel */}
-          <div className="overflow-hidden snap-center  snap-always md:w-[640px] lg:w-[800px] lg:h-[40svh] h-[70svh] border self-center bg-gray-200  shadow-xl rounded-2xl">
+
+          <div className=" overflow-x-hidden flex flex-col snap-center  w-[95%] md:w-[640px] lg:w-[800px] lg:h-[40svh] h-[70svh] min-h-[400px] self-center text-xl rounded-xl bg-slate-200 shadow-lg shadow-gray-500" >
 
 
-            <div className="features-div scroll-smooth snap-x h-full snap-mandatory    overflow-x-scroll flex flex-row items-center   ">
 
 
+            <div className="projects-all-div grid grid-flow-col auto-cols-[100%]  grid-rows-1 h-full motion-safe:transition-transform  motion-safe:duration-500" style={{ transform: `translate(-${100 * selectedCarouselImage}%)` }}>
 
-              <div className="w-96 lg:w-[798px] h-full flex items-center justify-center flex-none bg-white  snap-always snap-center   ">
-                <div className="h-full   items-center flex flex-row">
-                  <div className="w-1/2 lg:w-[400px] text-lg flex justify-center flex-none   ">
-                    Discover words of Japanese origin !
-                  </div>
-                  <div className="  h-full flex-1 flex items-center    ">
-                  <Image src="/img/emoji.PNG"
-                      width={500}
-                      height={300}
-                      style={{maxHeight: "100%"}}
-                      quality={100}
-                      alt="Picture of the author"
-
-                    ></Image>
-
-                  </div>
-                </div>
-              </div>
-              {/* <Image src="/img/emoji.PNG"
-                      width={500}
-                      height={300}
-                      quality={100}
-                      alt="Picture of the author"
-
-                    ></Image> */}
-
-              <div className="w-96 lg:w-[798px] h-full flex items-center justify-center flex-none bg-white  snap-always snap-center ">
-                <div className="h-full   items-center flex flex-row">
-                  <div className="w-1/2 lg:w-[400px] text-lg flex justify-center flex-none   ">
-                    Discover words of Japanese origin !
-                  </div>
-                  <div className=" relative w-1/2 lg:w-[398px] h-full flex-1 flex items-center  max-h-full  ">
-                  <Image src="/img/sarap.JPG"
-                      
-                      style={{maxHeight: "100%"}}
-                      quality={100}
-                      alt="Picture of the author"
-                      layout={'fill'} objectFit={'contain'}
-                    ></Image>
-
-                  </div>
-                </div>
-              </div>
-              <div className="w-96 lg:w-[798px] h-full flex items-center justify-center flex-none bg-white  snap-always snap-center   ">
-                <div className="h-full   items-center flex flex-row">
-                  <div className="w-1/2 lg:w-[400px] text-lg flex justify-center flex-none   ">
-                    Discover words of Japanese origin !
-                  </div>
-                  <div className="  h-full flex-1 flex items-center  max-h-full   ">
-                  <Image src="/img/emoji.PNG"
-                      width={500}
-                      height={300}
-                      quality={100}
-                      style={{maxHeight: "100%"}}
-                      alt="Picture of the author"
-
-                    ></Image>
-
-                  </div>
-                </div>
-              </div>
-              <div className="w-96 lg:w-[798px] h-full flex items-center justify-center flex-none bg-white  snap-always snap-center  ">
-                <div className="h-full   items-center flex flex-row">
-                  <div className="w-1/2 lg:w-[400px] text-lg flex justify-center flex-none   ">
-                    Discover words of Japanese origin !
-                  </div>
-                  <div className="  h-full flex-1 flex items-center    max-h-full ">
-                  <Image src="/img/emoji.PNG"
-                      width={500}
-                      height={300}
-                      style={{maxHeight: "100%"}}
-                      quality={100}
-                      alt="Picture of the author"
-
-                    ></Image>
-
-                  </div>
-                </div>
-              </div>
+             
+                {carouselItems}
 
 
 
             </div>
+
+            <div className="w-full   flex items-center justify-center gap-1 p-2 bg-white/40 dark:bg-black/20 rounded-xl">
+              {Array(imgCount).fill(0).map((x, i) => <div onClick={() => setSelectedCarouselImage(i)}
+                className={`h-5 overflow-clip bg-gray-400 rounded-full flex-initial transition-[width] duration-1000 
+                                                    ${selectedCarouselImage === i ? "w-[3.75rem]  " : "w-5  "}`} key={i}>
+                {selectedCarouselImage === i && <div key={i} className="bg-emerald-400 h-full " style={{ width: `${100 * currentTime / imageSwipeTimeMilli}%`, transition: "width 1s linear" }} />}
+              </div>
+              )}
+            </div>
+
+
+
           </div>
+
+
         </div>
 
 
@@ -174,3 +160,19 @@ export default function Home() {
 }
 
 
+
+const ImageWrapper = ({ filename }) => {
+  //max-h-[3rem] max-w-[4.5rem] h-[3rem] w-[4.5rem] md:h-[4rem]   md:max-h-[4rem]  md:w-[6rem]  md:max-w-[6rem] 
+  return <div className={`project-visual  flex items-center justify-center overflow-clip  w-full   relative  transition-transform hover:scale-110`}  >
+    <Image src={`/img/${filename}.PNG`}
+      style={{ objectFit: "contain", position: "absolute", height: "100%", width: "100%", inset: "0px" }}
+
+      width={0}
+      height={0}
+      sizes="100%"
+      quality={100}
+      alt={""}
+
+    ></Image>
+  </div>
+}
