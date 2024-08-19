@@ -133,3 +133,4 @@
 - detaylar için divi yaptım. Relationship textini hazırlayan fonksiyon yazdım
 - descendantları hazırlayan fonksiyonu yazdım. Highlight hesaplayanın tam tersi olduğu için kolay oldu
 - açılan popup diğer kelimelerin üstüne binmesin diye pozisyonlara bakıp gerekirse kaydırma yapan bir mantık ekledim
+- word node'lardaki left değerlerini translateX ile değiştirdim

@@ -17,7 +17,7 @@ export default function WordCard({ x, pos, selectedCluster, setSelectedWord, set
         setInfoPopupOpen(false)
     }, [wordToHighlight])
 
-    return <div key={x.id} style={{ left: `${pos[x.id] || -1000}px` }}
+    return <div key={x.id} style={{ transform: `translateX(${pos[x.id] || -1000}px)` }}
         onClick={() => {
             if (editModeToggle) {
                 if (transferEnabled) {
