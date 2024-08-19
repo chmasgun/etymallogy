@@ -576,7 +576,7 @@ const calculateHighlightPositions = (posDict, setPosDict, highlightedWords, offs
 
     if(changedAny){  //if the left offset is changing, meaning that a relocation needed
 
-        const nodesRight = Object.keys(newPosDict).filter(x => newPosDict[x] > leafNodeLeftValue)
+        const nodesRight = Object.keys(newPosDict).filter(x => newPosDict[x] > leafNodeLeftValue + 125)
         const minOffset = Math.min(...nodesRight.map(x => newPosDict[x] - leafNodeLeftValue))
         console.log(nodesRight,minOffset);
         // if the space is not enough, add some offset for everything to the right
