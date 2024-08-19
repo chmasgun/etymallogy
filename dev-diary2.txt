@@ -124,3 +124,12 @@
 2024-08-16
 - mobile için scroll-smooth'u düzelttim
 - pointer-events ile üstteki arayüzün tıklamalara engel olmasını hallettim
+
+2024-08-18
+- view modda kelimeye tıklayınca, details ve descendants diye opsiyonların çıktığı bir popup yaptım.
+
+2024-08-19
+- bu popup z-index yüzünden bazen blurlanıyodu.
+- detaylar için divi yaptım. Relationship textini hazırlayan fonksiyon yazdım
+- descendantları hazırlayan fonksiyonu yazdım. Highlight hesaplayanın tam tersi olduğu için kolay oldu
+- açılan popup diğer kelimelerin üstüne binmesin diye pozisyonlara bakıp gerekirse kaydırma yapan bir mantık ekledim

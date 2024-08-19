@@ -4,7 +4,7 @@ const relationsAll = ["derives", "loans", "homonym"]
 const relationsAllForText = ["derives from", "is loaned from", "is homonym of"]
 
 const reqFields = [["key", ""], ["lang", ""]]
-const auxiliaryField = [["original", ""], ["gender", ""], ["desc", ""], ["type", ""],["detail",""],["alt",""]]
+const auxiliaryField = [["original", ""], ["gender", ""], ["desc", ""], ["type", ""], ["detail", ""], ["alt", ""]]
 const autoReqFields = [["id", 0], ["depth", 0]]
 /*, ["rel", {
     "derives": {},
@@ -90,16 +90,16 @@ const DrawRelation = ({ x1, x2, heightOffset, y, depthDiff, pair, setHoveredPair
     }, [isInsertMode])
 
     useEffect(() => {
-         setLineOpacity(0)
+        setLineOpacity(0)
         setTimeout(() => {
-             setLineOpacity(highlightedWords.includes(pair[0]) & highlightedWords.includes(pair[1]) ? 1 : 0.05)
+            setLineOpacity(highlightedWords.includes(pair[0]) & highlightedWords.includes(pair[1]) ? 1 : 0.05)
 
 
         }, 400)
     }, [highlightedWords])
 
     return <svg className="absolute overflow-visible z-0 w-1 h-1">
-        <SteppedLine  x={[x1, x2]} heightOffset={heightOffset} y={y} 
+        <SteppedLine x={[x1, x2]} heightOffset={heightOffset} y={y}
             lineColor={lineColor} lineWidth={lineWidth} lineOpacity={lineOpacity}
             transitionClass={transitionClass}
             setClicked={setClicked} setHoverColor={setHoverColor} revertHoverColor={revertHoverColor} setIsInsertMode={setIsInsertMode}></SteppedLine>
@@ -349,7 +349,7 @@ async function InitiateNewClusterClient(newClusterData) {
             const data = await responseResolved.json();
             const message = data.message;
 
-            newfilteredData = data.responseData.clusterData 
+            newfilteredData = data.responseData.clusterData
             //console.log(["HEY", newfilteredData]);
 
             // newfilteredData = [data.filter((x) => x.cluster === cluster)]; // we will have multiple clusters, hence making a list
@@ -560,8 +560,34 @@ const findHighlightedWords = (wordData, filteredData, setHighlightedWords) => {
 
     return [...newHighlightedWords]
 }
+const findDescendantWords = (wordData, filteredData, setHighlightedWords) => {
 
-const calculateHighlightPositions = (posDict, setPosDict, highlightedWords, offsetAdded) => {
+    let newHighlightedWords = [wordData.id]
+
+    let derivesFrom = wordData["rel"]["derives"]["to"] || []
+    let loansFrom = wordData["rel"]["loans"]["to"] || []
+    let homonymFrom = wordData["rel"]["homonym"]["to"] || []
+
+    let goToItems = derivesFrom.concat(loansFrom, homonymFrom)
+    while (goToItems.length > 0) {
+        let nodeData = filteredData[goToItems[0]]//data.filter(x => x.id === idsToProcess[idNow])
+        console.log(filteredData, goToItems, nodeData);
+        derivesFrom = nodeData["rel"]["derives"]["to"] || []
+        loansFrom = nodeData["rel"]["loans"]["to"] || []
+        homonymFrom = nodeData["rel"]["homonym"]["to"] || []
+
+        let newGoToItems = derivesFrom.concat(loansFrom, homonymFrom)
+        newHighlightedWords.push(goToItems[0])
+        goToItems.push(...newGoToItems)
+
+        goToItems.shift()
+    }
+
+    setHighlightedWords([...newHighlightedWords])
+
+    return [...newHighlightedWords]
+}
+const calculateHighlightPositions = (posDict, setPosDict, highlightedWords) => {
 
 
     const leafNode = highlightedWords[0]
@@ -574,46 +600,46 @@ const calculateHighlightPositions = (posDict, setPosDict, highlightedWords, offs
         newPosDict[node] = leafNodeLeftValue
     }
 
-    if(changedAny){  //if the left offset is changing, meaning that a relocation needed
+    if (changedAny) {  //if the left offset is changing, meaning that a relocation needed
 
         const nodesRight = Object.keys(newPosDict).filter(x => newPosDict[x] > leafNodeLeftValue + 125)
         const minOffset = Math.min(...nodesRight.map(x => newPosDict[x] - leafNodeLeftValue))
-        console.log(nodesRight,minOffset);
+        console.log(nodesRight, minOffset);
         // if the space is not enough, add some offset for everything to the right
-        if(minOffset<200){
-            for(const node of nodesRight){
+        if (minOffset < 200) {
+            for (const node of nodesRight) {
                 newPosDict[node] += 75
             }
         }
-        
+
     }
 
     setPosDict(newPosDict)
     return newPosDict
 }
 
-function prepareInheritanceTextShort (wordId,filteredData ){
+function prepareInheritanceTextShort(wordId, filteredData) {
     const word = filteredData[wordId]
     let fromRelDict = {}
     let fromRelTexts = []
-     for ( const [id, rel] of relationsAll.entries()){
-         let relFrom = word["rel"][rel]["from"] || []
-        if(relFrom.length>0){
-            for(const parentNow of relFrom){ //in case there are several parents with same relation
+    for (const [id, rel] of relationsAll.entries()) {
+        let relFrom = word["rel"][rel]["from"] || []
+        if (relFrom.length > 0) {
+            for (const parentNow of relFrom) { //in case there are several parents with same relation
 
                 const thisWordLang = langColors[word.lang][1]
                 const parentWord = filteredData[parentNow]
                 const parentWordLang = langColors[parentWord.lang][1]
-                fromRelTexts.push(<span>{"The "+ thisWordLang+ " "+ (word.type || "word") +" "} <span className="font-bold">{word.original || word.key} </span>{" "+relationsAllForText[id] +" the " +parentWordLang+ " "+ (parentWord.type || "word")+ " "} <span className="font-bold">{parentWord.original|| parentWord.key} </span></span>)
+                fromRelTexts.push(<span>{"The " + thisWordLang + " " + (word.type || "word") + " "} <span className="font-bold">{word.original || word.key} </span>{" " + relationsAllForText[id] + " the " + parentWordLang + " " + (parentWord.type || "word") + " "} <span className="font-bold">{parentWord.original || parentWord.key} </span></span>)
             }
-        } 
-     }
-     return fromRelTexts 
+        }
+    }
+    return fromRelTexts
 }
 
 export {
     DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords, InitiateNewClusterClient,
     calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-    findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll, checkWordReady,
-    calculateAllChildrenRecursively,prepareInheritanceTextShort
+    findHighlightedWords, findDescendantWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll, checkWordReady,
+    calculateAllChildrenRecursively, prepareInheritanceTextShort
 }

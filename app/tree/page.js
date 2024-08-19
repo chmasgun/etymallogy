@@ -5,7 +5,8 @@ import WordCard from "@/components/wordCard";
 import SaveToServerButton from "@/components/saveToServerButton";
 import {
   DrawRelation, langColors, RecalculateDepthAfter, calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-  findHighlightedWords, calculateHighlightPositions, calculateAllChildrenRecursively, relationsAll, prepareInheritanceTextShort
+  findHighlightedWords, calculateHighlightPositions, calculateAllChildrenRecursively, relationsAll, prepareInheritanceTextShort,
+  findDescendantWords
 } from "@/functions/functions";
 import Legend from "@/components/legend";
 import { Popup, TransferNodePopup } from "@/components/popup";
@@ -56,8 +57,8 @@ export default function Tree() {
         setSelectedCluster(cluster);
         setUnsavedWordCount(0);
         setWordToHighlight(highlightWord)
-        //setShouldFocusInitially(true)
 
+        
         let newMaxDepthData = newfilteredData.map(x => Math.max(...x.map(y => y.depth)));
         setMaxDepthData(newMaxDepthData);
 
@@ -112,8 +113,7 @@ export default function Tree() {
   // after selecting the word
   const [afterClickSmallPopupOn, setAfterClickSmallPopupOn] = useState(false)
   const [inheritanceTextShort, setInheritanceTextShort] = useState([])
-  const [offsetAdded, setOffsetAdded] = useState(false)
-
+   const [shouldFindDescendants,setShouldFindDescendants] = useState(false)
   /*
   console.log(filteredData);
   console.log(maxDepthData);
@@ -181,33 +181,23 @@ export default function Tree() {
   }, [filteredData])
 
   useEffect(() => {
-    //console.log("CHECK", shouldFocusInitially, posDictReadyForInitialFocus, posDict);
-    if (shouldFocusInitially && posDictReadyForInitialFocus && Object.keys(posDict).length > 0) {
+     if (shouldFocusInitially && posDictReadyForInitialFocus && Object.keys(posDict).length > 0) {
 
-      //console.log("EFFECT", shouldFocusInitially, posDict);
+      // FOCUS PART
       const divToFocus = document.querySelectorAll(".word-card-" + wordToHighlight)[0];
       const mainDiv = document.querySelector(".the-container")
       const bodyDiv = document.body.getBoundingClientRect()
-      //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      //console.log("FOCUSING", divToFocus.getBoundingClientRect());
-      //console.log("FOCUSING", mainDiv.getBoundingClientRect());
-      //console.log("FOCUSING", divToFocus.getBoundingClientRect());
-      //console.log("FOCUSING BODY", bodyDiv);
-      //console.log(posDict, wordToHighlight, posDict[wordToHighlight] - bodyDiv.width / 2, divToFocus?.getBoundingClientRect());
-
+     
       const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
 
       //FOR MOBILE
       mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2 || 0
       divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      //console.log(divToFocus.getBoundingClientRect(), divToFocus.getBoundingClientRect().top);
-      // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
+       // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
       window.scrollTo({ left: newLeftValue + bodyDiv.width * 0.3, top: divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.75, behavior: 'smooth' })
-      //console.log("SET SCROLL after wait VAL", [newLeftValue, divToFocus.getBoundingClientRect().top]);
-
+ 
       setShouldFocusInitially(false)
-      //console.log("SETTING SHOULD FOCUS FALSE");
-
+ 
     }
   }, [shouldFocusInitially, posDictReadyForInitialFocus])
 
@@ -231,14 +221,14 @@ export default function Tree() {
   }, [transferEnabled])
 
   useEffect(() => {
-    //console.log("INSIDE WORDTOHIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus, shouldFocusInitially);
+     
     if (wordToHighlight > -1) {
       const newHiglightedWords = findHighlightedWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
       setHighlightToggleFlag(false)
       //console.log("CALCULATING HIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus, newHiglightedWords);
       if (posDictReadyForInitialFocus) {
 
-        const newPosDict = calculateHighlightPositions(posDict, setPosDict, newHiglightedWords, offsetAdded)
+        const newPosDict = calculateHighlightPositions(posDict, setPosDict, newHiglightedWords)
         const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
         //console.log(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict));
         setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict))
@@ -247,8 +237,7 @@ export default function Tree() {
         setLanguageList([... new Set(newLanguageList)])
         setAfterClickSmallPopupOn(true)
         setInheritanceTextShort(prepareInheritanceTextShort(wordToHighlight, filteredData[0]))
-        setOffsetAdded(true)
-      }
+       }
     } else {
       // refresh the tree
       if (posDictReadyForInitialFocus) {
@@ -261,8 +250,15 @@ export default function Tree() {
     }
   }, [wordToHighlight, posDictReadyForInitialFocus])
 
-  //console.log("SHOULD FOCUS",shouldFocusInitially);
-  console.log("word to highlight", wordToHighlight);
+  useEffect(() => {
+    if (shouldFindDescendants) {
+      findDescendantWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
+      setShouldFocusInitially(true)
+      setShouldFindDescendants(false)
+    }
+  }, [shouldFindDescendants])
+
+   console.log("word to highlight", wordToHighlight);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -289,8 +285,7 @@ export default function Tree() {
     setChildrenNodes([])
     setTransferNodeUnder(null)
     setTransferEnabled(false)
-    setOffsetAdded(false)
-    //setSelectedWord("")
+     //setSelectedWord("")
   }
 
 
@@ -436,6 +431,7 @@ export default function Tree() {
                           setTransferNodeUnder={setTransferNodeUnder}
                           afterClickSmallPopupOn={afterClickSmallPopupOn}
                           inheritanceTextShort={inheritanceTextShort}
+                          setShouldFindDescendants={setShouldFindDescendants}
                         ></WordCard>)
                     }
                       {
