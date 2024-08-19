@@ -5,7 +5,7 @@ import WordCard from "@/components/wordCard";
 import SaveToServerButton from "@/components/saveToServerButton";
 import {
   DrawRelation, langColors, RecalculateDepthAfter, calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
-  findHighlightedWords, calculateHighlightPositions, calculateAllChildrenRecursively, relationsAll
+  findHighlightedWords, calculateHighlightPositions, calculateAllChildrenRecursively, relationsAll, prepareInheritanceTextShort
 } from "@/functions/functions";
 import Legend from "@/components/legend";
 import { Popup, TransferNodePopup } from "@/components/popup";
@@ -22,7 +22,6 @@ const isProd = process.env.NEXT_PUBLIC_IS_PROD === "1";
 const isDev = process.env.NEXT_PUBLIC_IS_PROD === "0";
 
 
-
 export default function Tree() {
 
   const router = useRouter();
@@ -33,7 +32,7 @@ export default function Tree() {
   //if(typeof document !== 'undefined'){
   //let searchParams = new URLSearchParams(document.location.search);
   let searchParams = useSearchParams()
-  console.log(searchParams);
+  // console.log(searchParams);
   cluster = searchParams.get("cluster");
   initWord = searchParams.get("word")
   //}
@@ -43,14 +42,14 @@ export default function Tree() {
     const initFetchData = async () => {
       try {
 
-        console.log(cluster, initWord);
+        //console.log(cluster, initWord);
         // setPosDict({});
         const newfilteredData = await fetchData(parseInt(cluster));
         setFilteredData(newfilteredData);
-        console.log(newfilteredData);
+        //console.log(newfilteredData);
         const highlightWord = newfilteredData[0].findIndex(word => word.key + word.lang === initWord)
 
-        console.log(highlightWord, newfilteredData[0]);
+        //console.log(highlightWord, newfilteredData[0]);
         if (highlightWord > -1) {
           findHighlightedWords(newfilteredData[0][highlightWord], newfilteredData[0], setHighlightedWords)
         }
@@ -110,6 +109,11 @@ export default function Tree() {
   const [searchBarSmallMode, setSearchBarSmallMode] = useState(true)
   const [searchMustReset, setSearchMustReset] = useState(false)
 
+  // after selecting the word
+  const [afterClickSmallPopupOn, setAfterClickSmallPopupOn] = useState(false)
+  const [inheritanceTextShort, setInheritanceTextShort] = useState([])
+  const [offsetAdded, setOffsetAdded] = useState(false)
+
   /*
   console.log(filteredData);
   console.log(maxDepthData);
@@ -120,6 +124,10 @@ export default function Tree() {
   console.log(posDict);
   console.log(highlightedWords);
 */
+  function putHighlightFirstFunction(word) {
+    return highlightedWords.includes(word.id) ? 1 : -1
+  }
+
   useEffect(() => {
     if (dataFetchComplete) {
 
@@ -183,16 +191,16 @@ export default function Tree() {
       //divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       //console.log("FOCUSING", divToFocus.getBoundingClientRect());
       //console.log("FOCUSING", mainDiv.getBoundingClientRect());
-      console.log("FOCUSING", divToFocus.getBoundingClientRect());
-      console.log("FOCUSING BODY", bodyDiv);
-      console.log(posDict, wordToHighlight, posDict[wordToHighlight] - bodyDiv.width / 2, divToFocus?.getBoundingClientRect());
+      //console.log("FOCUSING", divToFocus.getBoundingClientRect());
+      //console.log("FOCUSING BODY", bodyDiv);
+      //console.log(posDict, wordToHighlight, posDict[wordToHighlight] - bodyDiv.width / 2, divToFocus?.getBoundingClientRect());
 
       const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
 
       //FOR MOBILE
       mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2 || 0
       divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      console.log(divToFocus.getBoundingClientRect(), divToFocus.getBoundingClientRect().top);
+      //console.log(divToFocus.getBoundingClientRect(), divToFocus.getBoundingClientRect().top);
       // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
       window.scrollTo({ left: newLeftValue + bodyDiv.width * 0.3, top: divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.75, behavior: 'smooth' })
       //console.log("SET SCROLL after wait VAL", [newLeftValue, divToFocus.getBoundingClientRect().top]);
@@ -215,7 +223,6 @@ export default function Tree() {
 
   useEffect(() => {
     if (transferEnabled) {
-
       setChildrenNodes(calculateAllChildrenRecursively(filteredData[0], [selectedWord["id"]]))
     } else {
       setChildrenNodes([])
@@ -224,21 +231,23 @@ export default function Tree() {
   }, [transferEnabled])
 
   useEffect(() => {
-    console.log("INSIDE WORDTOHIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus, shouldFocusInitially);
+    //console.log("INSIDE WORDTOHIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus, shouldFocusInitially);
     if (wordToHighlight > -1) {
       const newHiglightedWords = findHighlightedWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
       setHighlightToggleFlag(false)
-      console.log("CALCULATING HIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus, newHiglightedWords);
+      //console.log("CALCULATING HIGHLIGHT", wordToHighlight, posDictReadyForInitialFocus, newHiglightedWords);
       if (posDictReadyForInitialFocus) {
 
-        const newPosDict = calculateHighlightPositions(posDict, setPosDict, newHiglightedWords)
+        const newPosDict = calculateHighlightPositions(posDict, setPosDict, newHiglightedWords, offsetAdded)
         const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
         //console.log(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict));
         setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict))
         setShouldFocusInitially(true)
         const newLanguageList = filteredData[0].filter(word => newHiglightedWords.includes(word.id)).map(x => x.lang)
         setLanguageList([... new Set(newLanguageList)])
-
+        setAfterClickSmallPopupOn(true)
+        setInheritanceTextShort(prepareInheritanceTextShort(wordToHighlight, filteredData[0]))
+        setOffsetAdded(true)
       }
     } else {
       // refresh the tree
@@ -253,19 +262,8 @@ export default function Tree() {
   }, [wordToHighlight, posDictReadyForInitialFocus])
 
   //console.log("SHOULD FOCUS",shouldFocusInitially);
+  console.log("word to highlight", wordToHighlight);
 
-  function showAllTree() {
-    //console.log("SHOWING TREE", filteredData[0].length);
-
-    console.log("showAllTree triggered");
-    setHighlightToggleFlag(true);
-    setHighlightedWords(filteredData[0].map((x, i) => i));
-    setWordToHighlight(-1)
-    setChildrenNodes([])
-    setTransferNodeUnder(null)
-    setTransferEnabled(false)
-    //setSelectedWord("")
-  }
   useEffect(() => {
     function handleClickOutside(event) {
       if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
@@ -282,6 +280,18 @@ export default function Tree() {
     };
   }, [searchBarRef]);
 
+  function showAllTree() {
+    //console.log("SHOWING TREE", filteredData[0].length);
+
+    setHighlightToggleFlag(true);
+    setHighlightedWords(filteredData[0].map((x, i) => i));
+    setWordToHighlight(-1)
+    setChildrenNodes([])
+    setTransferNodeUnder(null)
+    setTransferEnabled(false)
+    setOffsetAdded(false)
+    //setSelectedWord("")
+  }
 
 
   function transferExecute() {
@@ -328,12 +338,11 @@ export default function Tree() {
 
 
     setFilteredData([newFilteredData])
-    setUnsavedWordCount(unsavedWordCount+1)
+    setUnsavedWordCount(unsavedWordCount + 1)
     setMustDepthRecalculate(parentNodeId)
     console.log(parentNodeId, childNodeId, oldParentNodesId);
   }
 
-  console.log(popupOpen, childrenNodes);
 
   return (
     <Suspense>
@@ -393,13 +402,13 @@ export default function Tree() {
 
 
 
-        <div className="z-10 mb-60 max-w-5xl w-full items-center justify-center   font-mono text-sm lg:flex">
+        {/* <div className="z-10 mb-60 max-w-5xl w-full items-center justify-center   font-mono text-sm lg:flex">
 
 
-        </div>
+        </div> */}
 
 
-        <div className={`outer-container min-w-full flex self-start ${(popupOpen && !transferEnabled) && "blur-xs"}`}
+        <div className={`outer-container min-w-full flex self-start mt-60 ${(popupOpen && !transferEnabled) && "blur-xs"}`}
           style={{ minWidth: additionalRightMargin + 600 }}
           key={selectedCluster}>
 
@@ -407,9 +416,10 @@ export default function Tree() {
             filteredData.map((dataCluster, clusterIndex) =>
               <div className=" tree-container mb-80  flex flex-col flex-auto text-center  justify-center lg:text-left items-center" key={clusterIndex + "_" + selectedCluster}>
                 {
-                  Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((x, rowInd) =>
+                  Array.from(Array(maxDepthData[clusterIndex] + 1).keys()).map((d, rowInd) =>
                     <div className={`depth-container flex relative min-h-16 lg:min-h-20  w-full`} style={{ margin: depthMarginPx }} key={rowInd + "_" + selectedCluster}>{ // each depth here
-                      dataCluster.filter(a => a.depth === x).map((x, i) =>
+                      // sorting the array so that the highlighted words are rendered the last, to avoid blurring
+                      dataCluster.filter(a => a.depth === d).sort(putHighlightFirstFunction).map((x, i) =>
                         <WordCard x={x} key={rowInd + "_" + selectedCluster + "_" + i}
                           pos={posDict}
                           selectedCluster={selectedCluster}
@@ -418,11 +428,14 @@ export default function Tree() {
                           hoveredPair={hoveredPair}
                           highlightedWords={highlightedWords}
                           editModeToggle={editModeToggle}
+                          wordToHighlight={wordToHighlight}
                           setWordToHighlight={setWordToHighlight}
                           isProd={isProd}
                           transferEnabled={transferEnabled}
                           childrenNodesOfTransfer={childrenNodes}
                           setTransferNodeUnder={setTransferNodeUnder}
+                          afterClickSmallPopupOn={afterClickSmallPopupOn}
+                          inheritanceTextShort={inheritanceTextShort}
                         ></WordCard>)
                     }
                       {
@@ -432,9 +445,9 @@ export default function Tree() {
                             heightOffset={line[2]}
                             y={depthMarginPx}
                             pair={lines[1][rowInd][lineIndex]}
-                            setHoveredPair={editModeToggle ? setHoveredPair : (()=>{})}
+                            setHoveredPair={editModeToggle ? setHoveredPair : (() => { })}
                             isInsertMode={isInsertMode}
-                            setIsInsertMode={editModeToggle ? setIsInsertMode: (()=>{})} // only if edit mode is enabled
+                            setIsInsertMode={editModeToggle ? setIsInsertMode : (() => { })} // only if edit mode is enabled
                             highlightedWords={highlightedWords}></DrawRelation>
                         )
                       }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 const relationsAll = ["derives", "loans", "homonym"]
+const relationsAllForText = ["derives from", "is loaned from", "is homonym of"]
 
 const reqFields = [["key", ""], ["lang", ""]]
 const auxiliaryField = [["original", ""], ["gender", ""], ["desc", ""], ["type", ""],["detail",""],["alt",""]]
@@ -560,24 +561,59 @@ const findHighlightedWords = (wordData, filteredData, setHighlightedWords) => {
     return [...newHighlightedWords]
 }
 
-const calculateHighlightPositions = (posDict, setPosDict, highlightedWords) => {
+const calculateHighlightPositions = (posDict, setPosDict, highlightedWords, offsetAdded) => {
 
 
     const leafNode = highlightedWords[0]
     const leafNodeLeftValue = posDict[leafNode]
 
     const newPosDict = { ...posDict }
+    let changedAny = false
     for (const node of highlightedWords) {
+        changedAny = changedAny || (newPosDict[node] !== leafNodeLeftValue)
         newPosDict[node] = leafNodeLeftValue
+    }
+
+    if(changedAny){  //if the left offset is changing, meaning that a relocation needed
+
+        const nodesRight = Object.keys(newPosDict).filter(x => newPosDict[x] > leafNodeLeftValue)
+        const minOffset = Math.min(...nodesRight.map(x => newPosDict[x] - leafNodeLeftValue))
+        console.log(nodesRight,minOffset);
+        // if the space is not enough, add some offset for everything to the right
+        if(minOffset<200){
+            for(const node of nodesRight){
+                newPosDict[node] += 75
+            }
+        }
+        
     }
 
     setPosDict(newPosDict)
     return newPosDict
 }
 
+function prepareInheritanceTextShort (wordId,filteredData ){
+    const word = filteredData[wordId]
+    let fromRelDict = {}
+    let fromRelTexts = []
+     for ( const [id, rel] of relationsAll.entries()){
+         let relFrom = word["rel"][rel]["from"] || []
+        if(relFrom.length>0){
+            for(const parentNow of relFrom){ //in case there are several parents with same relation
+
+                const thisWordLang = langColors[word.lang][1]
+                const parentWord = filteredData[parentNow]
+                const parentWordLang = langColors[parentWord.lang][1]
+                fromRelTexts.push(<span>{"The "+ thisWordLang+ " "+ (word.type || "word") +" "} <span className="font-bold">{word.original || word.key} </span>{" "+relationsAllForText[id] +" the " +parentWordLang+ " "+ (parentWord.type || "word")+ " "} <span className="font-bold">{parentWord.original|| parentWord.key} </span></span>)
+            }
+        } 
+     }
+     return fromRelTexts 
+}
+
 export {
     DrawRelation, langColors, RecalculateDepthAfter, FetchSearchWords, InitiateNewClusterClient,
     calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
     findHighlightedWords, calculateHighlightPositions, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll, checkWordReady,
-    calculateAllChildrenRecursively
+    calculateAllChildrenRecursively,prepareInheritanceTextShort
 }
