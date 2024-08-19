@@ -3,7 +3,7 @@ import { langColors , relationsAll} from "@/functions/functions";
 import { useEffect, useRef, useState } from "react";
 
 
-export default function WordCard({ x, pos, selectedCluster, setSelectedWord, setPopupOpen, hoveredPair, highlightedWords, editModeToggle, wordToHighlight, setWordToHighlight, isProd, transferEnabled, childrenNodesOfTransfer, setTransferNodeUnder, afterClickSmallPopupOn,setAfterClickSmallPopupOn, inheritanceTextShort, setShouldFindDescendants }) {
+export default function WordCard({ x, pos, selectedCluster, setSelectedWord, setPopupOpen, hoveredPair, highlightedWords, editModeToggle, wordToHighlight, setWordToHighlight, isProd, transferEnabled, childrenNodesOfTransfer, setTransferNodeUnder, afterClickSmallPopupOn,setAfterClickSmallPopupOn, inheritanceTextShort, handleFindDescendants }) {
 
     //console.log([x.id+"_"+selectedCluster , pos[x.id]]);
     const [infoPopupOpen, setInfoPopupOpen] = useState(false)
@@ -40,7 +40,7 @@ export default function WordCard({ x, pos, selectedCluster, setSelectedWord, set
         {/* popup to whether see details, or show the descendant words */}
         {openSmallFirstPopup && <div className="absolute right-0 opacity-90" style={{ transform: "translateX(100%)" }}>
             <div className={`text-sm text-nowrap rounded-r-lg p-px ${langColors[x.lang][0]} border-s mb-1`} onClick={() => {setInfoPopupOpen(true);setAfterClickSmallPopupOn(false)}}>See details</div>
-             {hasDescendants && <div className={`text-sm text-nowrap rounded-r-lg p-px ${langColors[x.lang][0]} border-s`} onClick={()=> {setShouldFindDescendants(true);setAfterClickSmallPopupOn(false) }}>Descendants</div>}
+             {hasDescendants && <div className={`text-sm text-nowrap rounded-r-lg p-px ${langColors[x.lang][0]} border-s`} onClick={()=> {handleFindDescendants();setAfterClickSmallPopupOn(false) }}>Descendants</div>}
         </div>}
         {/* info popup */}
         {infoPopupOpen && <WordDetailsPopup word={x} infoPopupRef={infoPopupRef} setInfoPopupOpen={setInfoPopupOpen} inheritanceTextShort={inheritanceTextShort}></WordDetailsPopup>}

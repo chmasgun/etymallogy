@@ -113,7 +113,7 @@ export default function Tree() {
   // after selecting the word
   const [afterClickSmallPopupOn, setAfterClickSmallPopupOn] = useState(false)
   const [inheritanceTextShort, setInheritanceTextShort] = useState([])
-  const [shouldFindDescendants, setShouldFindDescendants] = useState(false)
+  
   /*
   console.log(filteredData);
   console.log(maxDepthData);
@@ -244,15 +244,12 @@ export default function Tree() {
     }
   }, [wordToHighlight, posDictReadyForInitialFocus])
 
-  useEffect(() => {
-    if (shouldFindDescendants) {
+ 
+   function handleFindDescendants () {
       // Descendants calculation, positions are recalculated. Similar to showAllTree. Logic is from filteredData useEffect because when wordToHighlight is set to 1, filteredData is modified
       const newHiglightedWords = findDescendantWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
        
-      setShouldFindDescendants(false)
-
       const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
-      const depthContainer = document.getElementsByClassName(`depth-container`)[0]?.getBoundingClientRect() || 0;
 
       const [newPosDict, maxLeftValue] = calculatePositions(filteredData[0], topWrapper["width"], maxDepthData, leftPixelLimit)
       setPosDict(newPosDict)
@@ -261,26 +258,23 @@ export default function Tree() {
 
       setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict))
 
-      console.log("SETTING LINES", newPosDict, posDict);
-
       const newLanguageList = filteredData[0].filter(x=> newHiglightedWords.includes(x.id)).map(x => x.lang)
       setLanguageList([... new Set(newLanguageList)])
-
        // FOCUS PART
        const divToFocus = document.querySelectorAll(".word-card-" + wordToHighlight)[0];
        const mainDiv = document.querySelector(".the-container")
        const bodyDiv = document.body.getBoundingClientRect()
  
-       const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 
+       const newLeftValue = newPosDict[wordToHighlight] - bodyDiv.width / 2 + 64 + divToFocus?.getBoundingClientRect().width / 2 || 0// due to the padding of 4rem
  
        //FOR MOBILE
-       mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2 || 0
+       mainDiv.scrollLeft = newLeftValue + bodyDiv.width * 0.0 
        divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
        // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
        window.scrollTo({ left: newLeftValue + bodyDiv.width * 0.0, top: divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.3, behavior: 'smooth' })
-        console.log(newLeftValue + bodyDiv.width * 0.7,divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.3 );
-    }
-  }, [shouldFindDescendants])
+
+      }
+  
 
   console.log("word to highlight", wordToHighlight);
 
@@ -456,7 +450,7 @@ export default function Tree() {
                           afterClickSmallPopupOn={afterClickSmallPopupOn}
                           setAfterClickSmallPopupOn={setAfterClickSmallPopupOn}
                           inheritanceTextShort={inheritanceTextShort}
-                          setShouldFindDescendants={setShouldFindDescendants}
+                          handleFindDescendants={handleFindDescendants}
                         ></WordCard>)
                     }
                       {
