@@ -297,6 +297,18 @@ export default function Tree() {
     }
 
     const newFilteredData = [...filteredData[0]]
+
+    // Step 3 - Remove previous parent's proper TO value
+    for (const oldParentNow of oldParentNodesId) {
+      for (const rel of relationsAll) { // search for all relations to locate the relation
+
+        let indToRemove = newFilteredData[oldParentNow]["rel"][rel]["to"]?.indexOf(childNodeId)
+        if (indToRemove > -1) {
+          newFilteredData[oldParentNow]["rel"][rel]["to"].splice(indToRemove, 1)
+        }
+
+      }
+    }
     // Step 1 - Assign new parent's TO value
     const existingRelationParent = newFilteredData[parentNodeId]["rel"][relationStr]["to"]
     const isRelationDefinedBeforeParent = (existingRelationParent || []).length > 0
@@ -313,17 +325,7 @@ export default function Tree() {
     //// step 2.2 Set child's proper FROM value
     newFilteredData[childNodeId]["rel"][relationStr]["from"] = [parentNodeId]
 
-    // Step 3 - Remove previous parent's proper TO value
-    for (const oldParentNow of oldParentNodesId) {
-      for (const rel of relationsAll) { // search for all relations to locate the relation
 
-        let indToRemove = newFilteredData[oldParentNow]["rel"][rel]["to"]?.indexOf(childNodeId)
-        if (indToRemove > -1) {
-          newFilteredData[oldParentNow]["rel"][rel]["to"].splice(indToRemove, 1)
-        }
-
-      }
-    }
 
     setFilteredData([newFilteredData])
     setUnsavedWordCount(unsavedWordCount+1)
