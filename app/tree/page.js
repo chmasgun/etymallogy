@@ -194,7 +194,7 @@ export default function Tree() {
       mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2 || 0
       divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
        // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
-      window.scrollTo({ left: newLeftValue + bodyDiv.width * 0.3, top: divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.75, behavior: 'smooth' })
+      window.scrollTo({ left: newLeftValue + bodyDiv.width * 0.3, top: divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.6, behavior: 'smooth' })
  
       setShouldFocusInitially(false)
  

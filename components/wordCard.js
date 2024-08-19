@@ -63,7 +63,7 @@ const WordDetailsPopup = ({word, infoPopupRef, setInfoPopupOpen,inheritanceTextS
 
     console.log(word);
     //const fromRelationText = getFromRelation(word)
-    return <div ref={infoPopupRef} className="z-30 absolute right-0 top-0 bg-stone-300 p-2 rounded-xl shadow-lg shadow-stone-400 dark:bg-stone-600 dark:shadow-stone-200/40" style={{ transform: "translateX(105%)", width: "20rem", height: "" }}>
+    return <div ref={infoPopupRef} className="z-30 absolute right-0 top-0 bg-stone-300 p-2 rounded-xl shadow-lg shadow-stone-400 dark:bg-stone-600 dark:shadow-stone-200/40 w-64 md:w-96" style={{ transform: "translateX(105%)" , height: "" }}>
 
         <div className={`text-sm  rounded-r-lg p-px `}>
             {langColors[word.lang][1]}  word
