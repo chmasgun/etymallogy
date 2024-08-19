@@ -3,7 +3,7 @@ import { langColors , relationsAll} from "@/functions/functions";
 import { useEffect, useRef, useState } from "react";
 
 
-export default function WordCard({ x, pos, selectedCluster, setSelectedWord, setPopupOpen, hoveredPair, highlightedWords, editModeToggle, wordToHighlight, setWordToHighlight, isProd, transferEnabled, childrenNodesOfTransfer, setTransferNodeUnder, afterClickSmallPopupOn, inheritanceTextShort, setShouldFindDescendants }) {
+export default function WordCard({ x, pos, selectedCluster, setSelectedWord, setPopupOpen, hoveredPair, highlightedWords, editModeToggle, wordToHighlight, setWordToHighlight, isProd, transferEnabled, childrenNodesOfTransfer, setTransferNodeUnder, afterClickSmallPopupOn,setAfterClickSmallPopupOn, inheritanceTextShort, setShouldFindDescendants }) {
 
     //console.log([x.id+"_"+selectedCluster , pos[x.id]]);
     const [infoPopupOpen, setInfoPopupOpen] = useState(false)
@@ -19,6 +19,7 @@ export default function WordCard({ x, pos, selectedCluster, setSelectedWord, set
 
     return <div key={x.id} style={{ transform: `translateX(${pos[x.id] || -1000}px)` }}
         onClick={() => {
+            if(!afterClickSmallPopupOn){setAfterClickSmallPopupOn(true) }
             if (editModeToggle) {
                 if (transferEnabled) {
                     setTransferNodeUnder(x)
@@ -29,7 +30,7 @@ export default function WordCard({ x, pos, selectedCluster, setSelectedWord, set
                 setWordToHighlight(x.id)
             }
         }}
-        className={`word-card-${x.id} word-card-individual  absolute min-w-24 max-w-24 min-h-16  lg:min-w-32 lg:max-w-32 lg:min-h-20 z-10 text-center  justify-center rounded-lg flex flex-col transition-all duration-300 ${langColors[x.lang][0]} hover:shadow-lg hover:shadow-gray-600/50 ${hoveredPair.includes(x.id) ? "shadow border-gray-500 border-4" : ""} ${highlightedWords.includes(x.id) ? "z-20" : "  opacity-30 dark:!bg-gray-500 dark:!opacity-10 " 
+        className={`word-card-${x.id} word-card-individual  absolute min-w-24 max-w-24 min-h-16  lg:min-w-32 lg:max-w-32 lg:min-h-20 z-10 text-center  justify-center rounded-lg flex flex-col transition-all duration-300 ${langColors[x.lang][0]} hover:shadow-lg hover:shadow-gray-600/50 ${hoveredPair.includes(x.id) ? "shadow border-gray-500 border-4" : ""} ${highlightedWords.includes(x.id) ? "z-20" : " blur-xs opacity-20 dark:!bg-gray-500 dark:!opacity-10 " 
             }  ${x.id === wordToHighlight ? "z-40" : ""}  ${childrenNodesOfTransfer.includes(x.id) ? "bg-gray-500 opacity-30" : ""} dark:border-gray-600`} >
 
         <span className="text-sm"> {x.key}</span>
@@ -38,8 +39,8 @@ export default function WordCard({ x, pos, selectedCluster, setSelectedWord, set
 
         {/* popup to whether see details, or show the descendant words */}
         {openSmallFirstPopup && <div className="absolute right-0 opacity-90" style={{ transform: "translateX(100%)" }}>
-            <div className={`text-sm text-nowrap rounded-r-lg p-px ${langColors[x.lang][0]} border-s mb-1`} onClick={() => setInfoPopupOpen(true)}>See details</div>
-             {hasDescendants && <div className={`text-sm text-nowrap rounded-r-lg p-px ${langColors[x.lang][0]} border-s`} onClick={()=>setShouldFindDescendants(true)}>Descendants</div>}
+            <div className={`text-sm text-nowrap rounded-r-lg p-px ${langColors[x.lang][0]} border-s mb-1`} onClick={() => {setInfoPopupOpen(true);setAfterClickSmallPopupOn(false)}}>See details</div>
+             {hasDescendants && <div className={`text-sm text-nowrap rounded-r-lg p-px ${langColors[x.lang][0]} border-s`} onClick={()=> {setShouldFindDescendants(true);setAfterClickSmallPopupOn(false) }}>Descendants</div>}
         </div>}
         {/* info popup */}
         {infoPopupOpen && <WordDetailsPopup word={x} infoPopupRef={infoPopupRef} setInfoPopupOpen={setInfoPopupOpen} inheritanceTextShort={inheritanceTextShort}></WordDetailsPopup>}

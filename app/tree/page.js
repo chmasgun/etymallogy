@@ -430,6 +430,7 @@ export default function Tree() {
                           childrenNodesOfTransfer={childrenNodes}
                           setTransferNodeUnder={setTransferNodeUnder}
                           afterClickSmallPopupOn={afterClickSmallPopupOn}
+                          setAfterClickSmallPopupOn={setAfterClickSmallPopupOn}
                           inheritanceTextShort={inheritanceTextShort}
                           setShouldFindDescendants={setShouldFindDescendants}
                         ></WordCard>)
