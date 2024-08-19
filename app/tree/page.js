@@ -58,7 +58,7 @@ export default function Tree() {
         setUnsavedWordCount(0);
         setWordToHighlight(highlightWord)
 
-        
+
         let newMaxDepthData = newfilteredData.map(x => Math.max(...x.map(y => y.depth)));
         setMaxDepthData(newMaxDepthData);
 
@@ -113,7 +113,7 @@ export default function Tree() {
   // after selecting the word
   const [afterClickSmallPopupOn, setAfterClickSmallPopupOn] = useState(false)
   const [inheritanceTextShort, setInheritanceTextShort] = useState([])
-   const [shouldFindDescendants,setShouldFindDescendants] = useState(false)
+  const [shouldFindDescendants, setShouldFindDescendants] = useState(false)
   /*
   console.log(filteredData);
   console.log(maxDepthData);
@@ -138,9 +138,9 @@ export default function Tree() {
       const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
       const depthContainer = document.getElementsByClassName(`depth-container`)[0]?.getBoundingClientRect() || 0;
 
-      console.log(filteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData);
-      console.log(highlightToggleFlag, posDictReadyForInitialFocus);
-      console.log(highlightToggleFlag || !posDictReadyForInitialFocus);
+      //console.log(filteredData[0], topWrapper["width"], depthContainer["width"], newMaxDepthData);
+      //console.log(highlightToggleFlag, posDictReadyForInitialFocus);
+      //console.log(highlightToggleFlag || !posDictReadyForInitialFocus);
 
       if (highlightToggleFlag || !posDictReadyForInitialFocus) { // run here either at the start, or when all data will be highlighted
 
@@ -168,36 +168,30 @@ export default function Tree() {
         }
       }
 
-      //setSelectedWord(filteredData[0][0])
-
-
-
-
-
-
-
-
     }
   }, [filteredData])
 
+
+
+
   useEffect(() => {
-     if (shouldFocusInitially && posDictReadyForInitialFocus && Object.keys(posDict).length > 0) {
+    if (shouldFocusInitially && posDictReadyForInitialFocus && Object.keys(posDict).length > 0) {
 
       // FOCUS PART
       const divToFocus = document.querySelectorAll(".word-card-" + wordToHighlight)[0];
       const mainDiv = document.querySelector(".the-container")
       const bodyDiv = document.body.getBoundingClientRect()
-     
+
       const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
 
       //FOR MOBILE
       mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2 || 0
       divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-       // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
+      // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
       window.scrollTo({ left: newLeftValue + bodyDiv.width * 0.3, top: divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.6, behavior: 'smooth' })
  
       setShouldFocusInitially(false)
- 
+
     }
   }, [shouldFocusInitially, posDictReadyForInitialFocus])
 
@@ -221,7 +215,7 @@ export default function Tree() {
   }, [transferEnabled])
 
   useEffect(() => {
-     
+
     if (wordToHighlight > -1) {
       const newHiglightedWords = findHighlightedWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
       setHighlightToggleFlag(false)
@@ -237,7 +231,7 @@ export default function Tree() {
         setLanguageList([... new Set(newLanguageList)])
         setAfterClickSmallPopupOn(true)
         setInheritanceTextShort(prepareInheritanceTextShort(wordToHighlight, filteredData[0]))
-       }
+      }
     } else {
       // refresh the tree
       if (posDictReadyForInitialFocus) {
@@ -252,13 +246,43 @@ export default function Tree() {
 
   useEffect(() => {
     if (shouldFindDescendants) {
-      findDescendantWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
-      setShouldFocusInitially(true)
+      // Descendants calculation, positions are recalculated. Similar to showAllTree. Logic is from filteredData useEffect because when wordToHighlight is set to 1, filteredData is modified
+      const newHiglightedWords = findDescendantWords(filteredData[0][wordToHighlight], filteredData[0], setHighlightedWords)
+       
       setShouldFindDescendants(false)
+
+      const topWrapper = document.getElementsByClassName(`word-card-individual`)[0]?.getBoundingClientRect() || 0;
+      const depthContainer = document.getElementsByClassName(`depth-container`)[0]?.getBoundingClientRect() || 0;
+
+      const [newPosDict, maxLeftValue] = calculatePositions(filteredData[0], topWrapper["width"], maxDepthData, leftPixelLimit)
+      setPosDict(newPosDict)
+      setPosDictReadyForInitialFocus(true)
+      setAdditionalRightMargin(maxLeftValue)
+
+      setLines(calculateLines(filteredData[0], topWrapper["width"], topWrapper["height"], maxDepthData, newPosDict))
+
+      console.log("SETTING LINES", newPosDict, posDict);
+
+      const newLanguageList = filteredData[0].filter(x=> newHiglightedWords.includes(x.id)).map(x => x.lang)
+      setLanguageList([... new Set(newLanguageList)])
+
+       // FOCUS PART
+       const divToFocus = document.querySelectorAll(".word-card-" + wordToHighlight)[0];
+       const mainDiv = document.querySelector(".the-container")
+       const bodyDiv = document.body.getBoundingClientRect()
+ 
+       const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 
+ 
+       //FOR MOBILE
+       mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2 || 0
+       divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+       // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
+       window.scrollTo({ left: newLeftValue + bodyDiv.width * 0.0, top: divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.3, behavior: 'smooth' })
+        console.log(newLeftValue + bodyDiv.width * 0.7,divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.3 );
     }
   }, [shouldFindDescendants])
 
-   console.log("word to highlight", wordToHighlight);
+  console.log("word to highlight", wordToHighlight);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -285,7 +309,7 @@ export default function Tree() {
     setChildrenNodes([])
     setTransferNodeUnder(null)
     setTransferEnabled(false)
-     //setSelectedWord("")
+    //setSelectedWord("")
   }
 
 
