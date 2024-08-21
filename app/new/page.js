@@ -4,12 +4,11 @@ import { useEffect, useState, useRef, Suspense } from "react";
 
 import SaveToServerButton from "@/components/saveToServerButton";
 import {
-  reqFields, langColors, checkWordReady
+  reqFields,  checkWordReady
 } from "@/functions/functions";
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
- //console.log(data[1]);
-
+import langColors from "@/functions/languageColors";
 import CreateWordDiv from "@/components/createWordDiv";
 
 
