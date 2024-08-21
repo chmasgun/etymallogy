@@ -1,5 +1,5 @@
 
-import { langColors } from "@/functions/functions";
+import langColors from "@/functions/languageColors";
 import { FetchSearchWords } from "@/functions/functions";
 import { useRouter } from "next/navigation";
 import { useState, useEffect,  } from "react";

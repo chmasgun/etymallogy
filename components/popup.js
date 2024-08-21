@@ -1,6 +1,7 @@
-import { langColors, filledFields, relationsAll } from "@/functions/functions";
+import { filledFields, relationsAll } from "@/functions/functions";
 import { useEffect, useState } from "react";
 import CreateWordDiv from "./createWordDiv";
+import langColors from "@/functions/languageColors";
 
 const relationContainerClassName = "relative flex-1 flex flex-col justify-center items-center border border-slate-300 shadow-md m-2 rounded dark:!border-slate-500"
 

@@ -1,7 +1,8 @@
 
-import { InitiateNewClusterClient, checkWordReady, FetchSearchWords, langColors, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll } from "@/functions/functions";
+import { InitiateNewClusterClient, checkWordReady, FetchSearchWords, reqFields, auxiliaryField, autoReqFields, filledFields, fields, relationsAll } from "@/functions/functions";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import langColors from "@/functions/languageColors";
 
 const insertSaveButtonClass = "m-4 p-2 border bg-lime-500 text-center rounded-lg cursor-pointer disabled:opacity-40 disabled:bg-gray-500 disabled:cursor-not-allowed"
 
@@ -98,15 +99,15 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
     async function initializeClusterFunction() {
         console.log("INITALIZE CLUSTER");
         const response = await InitiateNewClusterClient(newWordData)
-        if(Object.keys(response).length===0 ){
+        if (Object.keys(response).length === 0) {
             setErrorMessage("An error occurred during new cluster creation")
-        }else{
+        } else {
             setErrorMessage("Cluster created successfully, redirecting now")
             console.log(newWordData);
             console.log("Cluster creation successful")
             console.log(response["cid"], response["words"][0]["key"]);
             setTimeout(() => {
-                router.push(`/tree?cluster=${response["cid"]}&word=${response["words"][0]["key"]+response["words"][0]["lang"]}`);
+                router.push(`/tree?cluster=${response["cid"]}&word=${response["words"][0]["key"] + response["words"][0]["lang"]}`);
             }, 500)
         }
 
@@ -215,7 +216,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
 
     return <div className="flex flex-col m-4 p-2 border-2 border-slate-400 shadow-xl rounded-xl self-center">
         {filledFields.map((x, key_ind) =>
-            <div className="flex m-1 relative"  key={key_ind}>
+            <div className="flex m-1 relative" key={key_ind}>
                 <span className="flex-1 m-1">{x[0]} </span>
                 <input
                     className="flex-1 rounded"
@@ -227,7 +228,7 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
                     : <></>}
             </div>)
         }
-        {errorMessage !== "" ? <div>{errorMessage}</div>:<></>}
+        {errorMessage !== "" ? <div>{errorMessage}</div> : <></>}
         {isInsertMode ? <button className={insertSaveButtonClass} disabled={!allowInitialize} onClick={() => insertWordData()}>INSERT WORD</button> :
             initializeClusterMode ? <button className={insertSaveButtonClass} disabled={!allowInitialize} onClick={() => initializeClusterFunction()}>INITIALIZE NEW CLUSTER</button> :
                 <button className={insertSaveButtonClass} disabled={!allowInitialize} onClick={() => saveWordData()}>SAVE WORD</button>}

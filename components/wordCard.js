@@ -1,7 +1,7 @@
 
-import { langColors , relationsAll} from "@/functions/functions";
+import {  relationsAll} from "@/functions/functions";
 import { useEffect, useRef, useState } from "react";
-
+import langColors from "@/functions/languageColors";
 
 export default function WordCard({ x, pos, selectedCluster, setSelectedWord, setPopupOpen, hoveredPair, highlightedWords, editModeToggle, wordToHighlight, setWordToHighlight, isProd, transferEnabled, childrenNodesOfTransfer, setTransferNodeUnder, afterClickSmallPopupOn,setAfterClickSmallPopupOn, inheritanceTextShort, handleFindDescendants }) {
 
@@ -30,9 +30,9 @@ export default function WordCard({ x, pos, selectedCluster, setSelectedWord, set
                 setWordToHighlight(x.id)
             }
         }}
-        className={`word-card-${x.id} word-card-individual  absolute min-w-24 max-w-24 min-h-16  lg:min-w-32 lg:max-w-32 lg:min-h-20 z-10 text-center  justify-center rounded-lg flex flex-col transition-all duration-300 ${langColors[x.lang][0]} hover:shadow-lg hover:shadow-gray-600/50 ${hoveredPair.includes(x.id) ? "shadow border-gray-500 border-4" : ""} ${highlightedWords.includes(x.id) ? "z-20" : " blur-xs opacity-20 dark:!bg-gray-500 dark:!opacity-10 " 
+        className={`word-card-${x.id} word-card-individual  absolute min-w-24 max-w-24 min-h-16  lg:min-w-32 lg:max-w-32 lg:min-h-20 z-10 text-center  justify-center rounded-lg flex flex-col transition-all duration-300 shadow shadow-gray-600 ${langColors[x.lang][0]} hover:shadow-lg hover:shadow-gray-600/50 ${hoveredPair.includes(x.id) ? "shadow border-gray-500 border-2" : ""} ${highlightedWords.includes(x.id) ? "z-20" : " blur-xs opacity-20 dark:!bg-gray-500 dark:!opacity-10 " 
             }  ${x.id === wordToHighlight ? "z-40" : ""}  ${childrenNodesOfTransfer.includes(x.id) ? "bg-gray-500 opacity-30" : ""} dark:border-gray-600`} >
-
+        <span className="text-xs text-gray-600/80"> {langColors[x.lang][1]}</span>
         <span className="text-sm"> {x.key}</span>
         <span className="text-xl"> {x.original}</span>
         {!isProd && <span className="text-xs"> {x.id}</span>}

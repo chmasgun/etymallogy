@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, Suspense } from "react";
 import WordCard from "@/components/wordCard";
 import SaveToServerButton from "@/components/saveToServerButton";
 import {
-  DrawRelation, langColors, RecalculateDepthAfter, calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
+  DrawRelation,   RecalculateDepthAfter, calculateWidthBelowNode, prepareWidthBelowNode, calculateLines, calculatePositions,
   findHighlightedWords, calculateHighlightPositions, calculateAllChildrenRecursively, relationsAll, prepareInheritanceTextShort,
   findDescendantWords
 } from "@/functions/functions";

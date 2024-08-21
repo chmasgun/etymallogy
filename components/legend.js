@@ -1,4 +1,4 @@
-import { langColors } from "@/functions/functions";
+import langColors from "@/functions/languageColors"
 
 
 export default function Legend({languages, isHiddenOnMobile}) {
