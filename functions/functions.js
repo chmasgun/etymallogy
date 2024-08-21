@@ -4,7 +4,7 @@ const relationsAll = ["derives", "loans", "homonym"]
 const relationsAllForText = ["derives from", "is loaned from", "is homonym of"]
 
 const reqFields = [["key", ""], ["lang", ""]]
-const auxiliaryField = [["original", ""], ["gender", ""], ["desc", ""], ["type", ""], ["detail", ""], ["alt", ""]]
+const auxiliaryField = [["original", ""], ["gender", ""], ["desc", ""], ["type", "noun"], ["detail", ""], ["alt", ""]]
 const autoReqFields = [["id", 0], ["depth", 0]]
 /*, ["rel", {
     "derives": {},

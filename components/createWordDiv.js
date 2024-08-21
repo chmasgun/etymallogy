@@ -217,10 +217,14 @@ export default function CreateWordDiv({ newWordData, setNewWordData, relation, w
         {filledFields.map((x, key_ind) =>
             <div className="flex m-1 relative"  key={key_ind}>
                 <span className="flex-1 m-1">{x[0]} </span>
-                <input className="flex-1 rounded" onChange={(e) => handleInputChange(x[0], e)}></input>
-                {x[0] === "lang" ?
-                     <div className="absolute right-0 flex text-xs h-full max-w-20 text-center items-center "> {  Object.keys(langColors).includes(newWordData["lang"]) ? langColors[newWordData["lang"]][1]: ""}</div>  
-                          : <></>}
+                <input
+                    className="flex-1 rounded"
+                    onChange={(e) => handleInputChange(x[0], e)}
+                    defaultValue={x[1] || ""}
+                />
+                {x[0] === "lang" ? //if the language name is found, print it
+                    <div className="absolute right-0 flex text-xs h-full max-w-20 text-center items-center "> {Object.keys(langColors).includes(newWordData["lang"]) ? langColors[newWordData["lang"]][1] : ""}</div>
+                    : <></>}
             </div>)
         }
         {errorMessage !== "" ? <div>{errorMessage}</div>:<></>}
