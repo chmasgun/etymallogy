@@ -121,7 +121,7 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
             <input
                 type="text"
                 className={`self-center w-full placeholder-gray-400 text-gray-900 p-4 ${smallMode ? "rounded-xl":"rounded-t-xl" }  outline-0 text-lg`}
-                placeholder={smallMode ? '\uD83D\uDD0D' : 'Search for a word'}
+                placeholder={smallMode ? '\uD83D\uDD0D' : 'Search for a word, try \'wine\' or \'şarap\''}
                 onChange={searchHandle}
                 value={searchText}
 
