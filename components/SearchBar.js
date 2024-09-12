@@ -35,7 +35,7 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
 
         } else {
             console.log(searchCandidates);
-            const newText = e.target.value.toLocaleLowerCase()
+            const newText = e.target.value.toLocaleLowerCase().trim()
             const newTextKey = newText.slice(0, 3)
             const newMatchingWords = searchCandidates.filter(x => x[0].toLocaleLowerCase().slice(0, newText.length) === newText)
 
