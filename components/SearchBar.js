@@ -34,7 +34,7 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
             resetSearch()
 
         } else {
-            console.log(searchCandidates);
+            //console.log(searchCandidates);
             const newText = e.target.value.toLocaleLowerCase().trim()
             const newTextKey = newText.slice(0, 3)
             const newMatchingWords = searchCandidates.filter(x => x[0].toLocaleLowerCase().slice(0, newText.length) === newText)
@@ -42,8 +42,10 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
             setSearchCandidatesAfterFilter(newMatchingWords)
             setSearchTextKey(newTextKey)
             setIsSearchDropdownOpen(true)
-            setNoDataFound(newMatchingWords.length === 0 && searchCandidates.length > 0)
+            setNoDataFound(newMatchingWords.length === 0 ) // && searchCandidates.length > 0
         }
+
+        // be careful while changing this
         setSearchText(e.target.value)
     }
 
@@ -102,7 +104,7 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
                 
                 const newMatchingWords = searchCandidates.filter(x => x[0].toLocaleLowerCase().slice(0, searchText.length) === searchText)
                 setSearchCandidatesAfterFilter(newMatchingWords)
-                setNoDataFound(newMatchingWords.length === 0 && searchCandidates.length > 0)
+                setNoDataFound(newMatchingWords.length === 0 ) //&& searchCandidates.length > 0
             }
         }
     }, [searchLoading])
@@ -145,7 +147,7 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
                         <span className={`right italic mr-2 text-sm lg:text-base lg:mr-4 ${langColors[x[1]][2]}`}>{langColors[x[1]][1]}</span>
                     </span>
                 )}
-                {noDataFound ? <div className="search-result p-2 pl-6 italic text-sm  dark:bg-gray-500"> No matching result</div> : <></>}
+                {noDataFound && !searchLoading ? <div className="search-result p-2 pl-6 italic text-sm  dark:bg-gray-500"> No matching result</div> : <></>}
 
             </div> : <></>}
 
