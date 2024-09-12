@@ -2,10 +2,10 @@
 import langColors from "@/functions/languageColors";
 import { FetchSearchWords } from "@/functions/functions";
 import { useRouter } from "next/navigation";
-import { useState, useEffect,  } from "react";
+import { useState, useEffect, } from "react";
 const maxSearchResults = 8
 
-export default function SearchBar({smallMode, setSmallMode , searchMustReset, setSearchMustReset }) {
+export default function SearchBar({ smallMode, setSmallMode, searchMustReset, setSearchMustReset }) {
 
     const router = useRouter()
 
@@ -42,7 +42,19 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
             setSearchCandidatesAfterFilter(newMatchingWords)
             setSearchTextKey(newTextKey)
             setIsSearchDropdownOpen(true)
-            setNoDataFound(newMatchingWords.length === 0 ) // && searchCandidates.length > 0
+            
+            setNoDataFound(newMatchingWords.length === 0) // && searchCandidates.length > 0
+            
+            //console.log(newTextKey, searchTextKey);
+            if (newTextKey !== searchTextKey) {
+                //if (searchTextKey.length === 3) { // this condition is mostly satisfied above, but I can make a search like 'su ' right now, with a space
+                console.log("fetching", newTextKey);
+                setSearchLoading(true)   // now modified together with noDataFound
+                initFetchData(newTextKey);
+                //}
+            }
+
+
         }
 
         // be careful while changing this
@@ -57,72 +69,64 @@ export default function SearchBar({smallMode, setSmallMode , searchMustReset, se
         console.log(wordSelected);
     }
 
-    useEffect(() => {
-        const initFetchData = async () => {
-            try {
+    async function initFetchData  (searchInput)  {
+        try {
 
-                const newfilteredData = await FetchSearchWords(searchTextKey)
-                if (newfilteredData.length > 0) {
+            const newfilteredData = await FetchSearchWords(searchInput)
+            if (newfilteredData.length > 0) {
 
-                    setSearchCandidates(newfilteredData)
-                    setSearchCandidatesAfterFilter(newfilteredData)
-                    setIsSearchDropdownOpen(true)
-                    setNoDataFound(false)
-                } else {
-                    setNoDataFound(true)
+                setSearchCandidates(newfilteredData)
+                setSearchCandidatesAfterFilter(newfilteredData)
+                setIsSearchDropdownOpen(true)
+                setNoDataFound(false)
+            } else {
+                setNoDataFound(true)
 
-                    console.log("NO DATA FOUND");
-                }
-                setSearchLoading(false)
-                setTimeout(() => {
-
-                    document.getElementsByClassName("search-result")[0].scrollIntoView({behavior: 'smooth', block: "center"})
-                },50)
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setSearchLoading(false)
-
+                console.log("NO DATA FOUND");
             }
-        };
+            setSearchLoading(false)
+            setTimeout(() => {
+                if(document.getElementsByClassName("search-result").length> 0){
+                    document.getElementsByClassName("search-result")[0].scrollIntoView({ behavior: 'smooth', block: "center" })
+                }
+            }, 50)
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setSearchLoading(false)
 
-
-        if (searchTextKey.length === 3) {
-            setSearchLoading(true)
-            initFetchData();
         }
+    };
 
 
 
 
-    }, [searchTextKey])
 
-    
     useEffect(() => {
-        if(!searchLoading){
-            if(searchText.length >3){  //user typed in more letters before the search results are returned, hence need more filter
-                 
-                
+        if (!searchLoading) {
+            if (searchText.length > 3) {  //user typed in more letters before the search results are returned, hence need more filter
+
+
                 const newMatchingWords = searchCandidates.filter(x => x[0].toLocaleLowerCase().slice(0, searchText.length) === searchText)
                 setSearchCandidatesAfterFilter(newMatchingWords)
-                setNoDataFound(newMatchingWords.length === 0 ) //&& searchCandidates.length > 0
+                setNoDataFound(newMatchingWords.length === 0) //&& searchCandidates.length > 0
             }
         }
     }, [searchLoading])
 
     useEffect(() => {
-        if(searchMustReset){
+        if (searchMustReset) {
             resetSearch()
             setSearchMustReset(false)
         }
     }, [searchMustReset])
 
-    
+
     return <div className="flex flex-col justify-center self-center w-full  relative z-50 pointer-events-auto" onClick={() => setSmallMode(false)}>
         <div>
             { /*<span className="absolute right-0 top-0 bottom-0 text-center">{'\uD83D\uDD0D'}</span>*/}
             <input
                 type="text"
-                className={`self-center w-full placeholder-gray-400 text-gray-900 p-4 ${smallMode ? "rounded-xl":"rounded-t-xl" }  outline-0 text-lg`}
+                className={`self-center w-full placeholder-gray-400 text-gray-900 p-4 ${smallMode ? "rounded-xl" : "rounded-t-xl"}  outline-0 text-lg`}
                 placeholder={smallMode ? '\uD83D\uDD0D' : 'Search for a word, try \'wine\' or \'şarap\''}
                 onChange={searchHandle}
                 value={searchText}
