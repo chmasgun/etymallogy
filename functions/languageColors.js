@@ -38,6 +38,7 @@ const langColors = {
     , "CA": ["bg-amber-500", "Catalan", "text-amber-500"]
     , "PO": ["bg-emerald-500", "Portuguese", "text-emerald-500"]
     , "JP": ["bg-rose-400", "Japanese", "text-rose-400"]
+    , "OKJP": ["bg-rose-300", "Okinawan", "text-rose-300"]
     , "ZH": ["bg-red-600", "Mandarin Chinese", "text-red-600"]
     , "CN": ["bg-pink-600", "Cantonese", "text-pink-600"]
     , "RO": ["bg-yellow-300", "Romanian", "text-yellow-300"]
