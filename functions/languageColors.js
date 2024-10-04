@@ -8,6 +8,7 @@ const langColors = {
     "MGR": ["bg-gradient-to-bl from-sky-300", "Medieval Greek", "text-gradient-to-bl from-sky-300"],
     "OFR": ["bg-gradient-to-b from-indigo-200", "Old French", "text-gradient-to-br from-indigo-200"],
     "MFR": ["bg-gradient-to-t from-indigo-300", "Middle French", "text-gradient-to-bl from-indigo-300"],
+    "PIT": ["bg-gradient-to-bl from-red-500", "Proto-Italic", "text-gradient-to-bl from-red-500"],
     "LA": ["bg-gradient-to-bl from-red-600", "Latin", "text-gradient-to-bl from-red-600"],
     "PTR": ["bg-gradient-to-bl from-red-200", "Proto-Turkic", "text-gradient-to-bl from-red-300"],
     "OTR": ["bg-gradient-to-bl from-red-300", "Old-Turkic", "text-gradient-to-bl from-red-300"],
@@ -21,6 +22,7 @@ const langColors = {
     "OCA": ["bg-gradient-to-b from-amber-400", "Old Catalan", "text-gradient-to-bl from-amber-400"],
     "OGP": ["bg-gradient-to-bl from-emerald-200", "Old Galician-Portuguese", "text-gradient-to-bl from-emerald-200"],
     "AAR": ["bg-gradient-to-bl from-lime-500", "Andalusian Arabic", "text-gradient-to-bl from-lime-500"],
+    "OBG": ["bg-gradient-to-bl from-emerald-300", "Old Church Slavonic", "text-gradient-to-bl from-emerald-300"],
 
 
     "AR": ["bg-lime-500", "Arabic", "text-lime-500"],
@@ -43,6 +45,10 @@ const langColors = {
     , "CN": ["bg-pink-600", "Cantonese", "text-pink-600"]
     , "RO": ["bg-yellow-300", "Romanian", "text-yellow-300"]
     , "AF": ["bg-blue-500", "Afrikaans", "text-sky-600"]
+    , "ARM": ["bg-orange-300", "Armenian", "text-orange-300"]  
+    , "BG": ["bg-emerald-300", "Bulgarian", "text-emerald-300"] 
+
+
 }
 
 
