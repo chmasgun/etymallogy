@@ -47,6 +47,8 @@ const langColors = {
     , "AF": ["bg-blue-500", "Afrikaans", "text-sky-600"]
     , "ARM": ["bg-orange-300", "Armenian", "text-orange-300"]  
     , "BG": ["bg-emerald-300", "Bulgarian", "text-emerald-300"] 
+    , "HU": ["bg-green-300", "Hungarian", "text-green-300"] 
+    , "RU": ["bg-blue-400", "Russian", "text-blue-400"] 
 
 
 }
