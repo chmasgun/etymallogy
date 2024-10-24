@@ -185,11 +185,15 @@ export default function Tree() {
       const newLeftValue = posDict[wordToHighlight] - bodyDiv.width / 2 + divToFocus?.getBoundingClientRect().width || 0
 
       //FOR MOBILE
-      mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2 || 0
       divToFocus?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       // LEFT IS FOR WEB. TOP IS FOR MOBILE+WEB
       window.scrollTo({ left: newLeftValue + bodyDiv.width * 0.3, top: divToFocus.getBoundingClientRect().top - bodyDiv.top - window.innerHeight * 0.6, behavior: 'smooth' })
+      //FOR MOBILE
+      mainDiv.scrollLeft = newLeftValue + bodyDiv.width / 2 - divToFocus?.getBoundingClientRect().width / 2 || 0
  
+      // console.log("div to focus", divToFocus);
+      // console.log("scroll to",newLeftValue, bodyDiv.width,newLeftValue + bodyDiv.width * 0.3);
+      // console.log("scroll left", newLeftValue, bodyDiv.width / 2,  divToFocus?.getBoundingClientRect().width / 2 || 0);
       setShouldFocusInitially(false)
 
     }
